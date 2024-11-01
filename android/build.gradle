@@ -1,0 +1,37 @@
+buildscript {
+    ext {
+        kotlinVersion = "1.9.22"
+        kotlin_version = "1.9.22" //지훈이와의 호환성
+        buildToolsVersion = "34.0.0" //31이상!
+        minSdkVersion = 23 // 23 이상!
+        compileSdkVersion = 34 //31이상!
+        targetSdkVersion = 34 //31이상!
+        ndkVersion =  "23.1.7779620"
+    }
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath("com.facebook.react:react-native-gradle-plugin")
+    }
+}
+
+
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            url("$rootDir/../node_modules/react-native/android")
+            url("https://devrepo.kakao.com/nexus/content/groups/public/")
+        }
+        maven{
+            url("$rootDir/../node-module/@notifee/react-native/android/libs")
+        }
+        google()
+        jcenter()
+    }
+}
