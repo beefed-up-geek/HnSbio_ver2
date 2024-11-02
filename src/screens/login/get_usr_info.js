@@ -391,15 +391,15 @@ const Get_User_Info = () => {
         </View>
         <View style={styles.fixedButtonContainer}>
           <TouchableOpacity
-            // onPress={
-            //   isFormValid
-            //     ? handleSave
-            //     : () =>
-            //         Alert.alert(
-            //            '입력 오류',
-            //            '모든 필드를 형식에 맞게 입력해주세요.',
-            //          )
-            // }
+            onPress={
+              isFormValid
+                ? handleSave
+                : () =>
+                    Alert.alert(
+                       '입력 오류',
+                       '모든 필드를 형식에 맞게 입력해주세요.',
+                     )
+            }
             style={[
               styles.button,
               isFormValid ? styles.buttonEnabled : styles.buttonDisabled,
