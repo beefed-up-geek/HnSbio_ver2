@@ -1,5 +1,5 @@
 // src/screens/login/login.js
-import React, {useEffect, useState} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,380 +8,299 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Button,
+  TextInput,
   Dimensions,
+  Keyboard,
+  Animated,
+  TouchableWithoutFeedback,
+  BackHandler,
 } from 'react-native';
 import theme from '../../theme';
 import LinearGradient from 'react-native-linear-gradient';
-import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import splashImage from '../../images/login/splash2.png';
 import naverIcon from '../../images/login/naver.png';
 import kakaoIcon from '../../images/login/kakao.png';
 import googleIcon from '../../images/login/google.png';
-import {login as kakaoLogin, me} from '@react-native-kakao/user';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import { login as kakaoLogin, me as getKakaoProfile } from '@react-native-kakao/user';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import NaverLogin from '@react-native-seoul/naver-login';
-import axios from 'axios'; // axios to handle HTTP requests
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios'; 
+import defaultUserImage from '../../images/login/defualt_user.png';
+
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
 
+// Google 로그인 설정
+GoogleSignin.configure({
+  webClientId: '553674684367-g30th1q22jbqjs30jgad63i95vdntcmu.apps.googleusercontent.com',
+  androidClientId: '553674684367-emj97ff7kjitq1qbn03ok9hebps9ijsg.apps.googleusercontent.com',
+  iosClientId: '553674684367-sr2m1jems5sai07qgq710dvhdoqm6npv.apps.googleusercontent.com',
+  scopes: ['profile', 'email'],
+});
+
+// Naver 로그인 설정
 const consumerKey = 'fujiEAut2m84ybqDQOoq';
 const consumerSecret = 'yXEW6CuruC';
 const appName = 'HS바이오랩';
 const serviceUrlScheme = 'com.apple';
-
-GoogleSignin.configure({
-  webClientId:
-    '553674684367-g30th1q22jbqjs30jgad63i95vdntcmu.apps.googleusercontent.com',
-  androidClientId:
-    '553674684367-emj97ff7kjitq1qbn03ok9hebps9ijsg.apps.googleusercontent.com',
-  iosClientId:
-    '553674684367-sr2m1jems5sai07qgq710dvhdoqm6npv.apps.googleusercontent.com',
-  scopes: ['profile', 'email'],
+NaverLogin.initialize({
+  appName,
+  consumerKey,
+  consumerSecret,
+  serviceUrlSchemeIOS: serviceUrlScheme,
 });
 
-const Gap = () => <View style={{marginTop: 24 * height_ratio}} />;
-const ResponseJsonText = ({json = {}, name}) => (
-  <View style={styles.responseContainer}>
-    <Text style={styles.responseTitle}>{name}</Text>
-    <Text style={styles.responseText}>{JSON.stringify(json, null, 4)}</Text>
-  </View>
-);
+// Google 로그인 함수
+async function loginWithGoogle() {
+  try {
+    const response = await GoogleSignin.signIn();
+    const { user } = response;
+    if (user) {
+      return { providerId: user.id.toString() };
+    }
+  } catch (error) {
+    console.error('Google login error:', error);
+  }
+}
 
-const ifExistUser = async (providerId, provider) => {
-  const apiPayload = {
-    providerId,
-    provider,
-  };
+// Naver 로그인 함수
+async function loginWithNaver() {
+  try {
+    const { successResponse, failureResponse } = await NaverLogin.login();
+    if (successResponse) {
+      const accessToken = successResponse.accessToken;
+      const profileResult = await NaverLogin.getProfile(accessToken);
+      if (profileResult && profileResult.response) {
+        return { providerId: profileResult.response.id.toString() };
+      }
+    } else if (failureResponse) {
+      console.error('Naver login failed:', failureResponse);
+    }
+  } catch (error) {
+    console.error('Naver login error:', error);
+  }
+}
 
-  const response = await axios.post(
-    'http://54.79.61.80:3000/login/checkExistingUser/',
-    apiPayload,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-  
-  // 응답 값이 1이면 true, 0이면 false를 반환
-  const result = response.data.exists === 1 ? true : false;
-  console.log(result);
-  return result;
-};
-
-
-const loginExist = async (providerId, provider) => {
-  const apiPayload = {
-    providerId,
-    provider,
-  };
-
-  const response = await axios.post(
-    'http://54.79.61.80:3000/login/',
-    apiPayload,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-  return response.data;
-};
+// Kakao 로그인 함수
+async function loginWithKakao() {
+  try {
+    await kakaoLogin();
+    const userInfo = await getKakaoProfile();
+    if (userInfo && userInfo.id) {
+      return { providerId: userInfo.id.toString() };
+    }
+  } catch (error) {
+    console.error('Kakao login error:', error.message || error);
+  }
+}
 
 const Login2 = () => {
+  const [providerId, setProviderId] = useState('');
+  const [name, setName] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [inputPhase, setInputPhase] = useState('name'); // 'name' 또는 'birthdate'
+  const [showInputBox, setShowInputBox] = useState(false);
+  const [show404Modal, setShow404Modal] = useState(false);
+  const [birthdateError, setBirthdateError] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [provider, setProvider] = useState('');
+  const [accountData, setAccountData] = useState([]);
+  const [modalExpanded, setModalExpanded] = useState(false);
+  const [noAccountMessage, setNoAccountMessage] = useState(false); // New state for "No Account" message
+  const [birthdatePlaceholder, setBirthdatePlaceholder] = useState('');
+
+  const slideAnimation = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+  const backgroundFade = useRef(new Animated.Value(0)).current;
+  const modalHeight = useRef(new Animated.Value(260 * height_ratio)).current;
   const navigation = useNavigation();
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState('');
-  const [success, setSuccessResponse] = useState();
-  const [failure, setFailureResponse] = useState();
-  const [getProfileRes, setGetProfileRes] = useState();
 
   useEffect(() => {
-    NaverLogin.initialize({
-      appName,
-      consumerKey,
-      consumerSecret,
-      serviceUrlSchemeIOS: serviceUrlScheme,
-      disableNaverAppAuthIOS: true,
-    });
-  }, []);
+    const today = new Date();
+    const year = today.getFullYear().toString();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    setBirthdatePlaceholder(`${year}/${month}/${day}`);
 
-  const handlePostLoginNavigation = async () => {
-    const userInfo = await AsyncStorage.getItem('userInfo');
-    if (userInfo) {
-      navigation.replace('BottomNavigation');
-    } else {
-      navigation.replace('GetUserInfo');
-    }
-  };
+    const backAction = () => {
+      if (showInputBox) {
+        handleCloseInputBox();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => backHandler.remove();
+  }, [showInputBox]);
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      const response = await GoogleSignin.signIn();
-      const {user} = response;
-      if (user) {
-        const {id, name} = user; // 구글 사용자 정보 추출'
-        await AsyncStorage.setItem('loginMethod', 'google');
-        await AsyncStorage.setItem('userId', id.toString());
-        await AsyncStorage.setItem('username', name);
-        const provider = 0;
-        const providerId = id;
-        const userExists = await ifExistUser(providerId, provider.toString()); // Check if user exists
-        console.log(userExists);
-        if (userExists === true) {
-          console.log('Existing user found, logging in...');
-          const loginResponse = await loginExist(providerId, provider);
-          console.log('Login successful:', loginResponse); // Print login result to console
-
-          // Extracting the user information from the response
-          const {user} = loginResponse;
-
-          // Storing the healthCheckup data in AsyncStorage
-
-          if (user.healthCheckup) {
-            await AsyncStorage.setItem(
-              'healthscreen_data',
-              JSON.stringify(user.healthCheckup),
-            );
-            // Storing the last update date in YYYY-MM-DD format using Date
-            const today = new Date();
-            const formattedDate = `${today.getFullYear()}-${String(
-              today.getMonth() + 1,
-            ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            await AsyncStorage.setItem(
-              'healthscreen_last_update',
-              formattedDate,
-            );
-          }
-
-          // Formatting the user info for AsyncStorage
-          const formattedUserInfo = {
-            name: user.name,
-            nickname: user.nickname,
-            birthdate: user.birthdate,
-            height: user.height,
-            weight: user.weight,
-            gender: user.gender,
-            kidneyDisease: user.kidneyInfo, // Assuming this is a placeholder value
-          };
-          await AsyncStorage.setItem(
-            'userInfo',
-            JSON.stringify(formattedUserInfo),
-          );
-
-          console.log(
-            'User data and health information stored successfully in AsyncStorage.',
-          );
-          navigation.replace('BottomNavigation');
-        } else {
-          console.log(
-            'No existing user found. Additional registration required.',
-          );
-        }
-        handlePostLoginNavigation(); // 로그인 후 화면 전환
-      }
-      setUser(user);
-    } catch (apiError) {
-      setError(
-        apiError?.response?.data?.error?.message || 'Something went wrong',
-      );
-    } finally {
-      setLoading(false);
+    const result = await loginWithGoogle();
+    if (result) {
+      setProviderId(result.providerId);
+      setProvider('google');
+      handleOpenInputBox();
     }
   };
 
   const handleNaverLogin = async () => {
-    try {
-      const {failureResponse, successResponse} = await NaverLogin.login();
-      if (successResponse) {
-        // Get the access token
-        const accessToken = successResponse.accessToken;
-
-        // Fetch user profile
-        const profileResult = await NaverLogin.getProfile(accessToken);
-        if (profileResult) {
-          const {id, name} = profileResult.response;
-          await AsyncStorage.setItem('loginMethod', 'naver');
-          await AsyncStorage.setItem('userId', id.toString());
-          await AsyncStorage.setItem('username', name);
-          const provider = 1;
-          const providerId = id;
-          const userExists = await ifExistUser(providerId, provider.toString()); // Check if user exists
-
-          if (userExists === true) {
-            console.log('Existing user found, logging in...');
-            const loginResponse = await loginExist(providerId, provider);
-            console.log('Login successful:', loginResponse); // Print login result to console
-
-            // Extracting the user information from the response
-            const {user} = loginResponse;
-
-            // Storing the healthCheckup data in AsyncStorage
-
-            if (user.healthCheckup) {
-              await AsyncStorage.setItem(
-                'healthscreen_data',
-                JSON.stringify(user.healthCheckup),
-              );
-              // Storing the last update date in YYYY-MM-DD format using Date
-              const today = new Date();
-              const formattedDate = `${today.getFullYear()}-${String(
-                today.getMonth() + 1,
-              ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-              await AsyncStorage.setItem(
-                'healthscreen_last_update',
-                formattedDate,
-              );
-            }
-
-            // Formatting the user info for AsyncStorage
-            const formattedUserInfo = {
-              name: user.name,
-              nickname: user.nickname,
-              birthdate: user.birthdate,
-              height: user.height,
-              weight: user.weight,
-              gender: user.gender,
-              kidneyDisease: user.kidneyInfo, // Assuming this is a placeholder value
-            };
-            await AsyncStorage.setItem(
-              'userInfo',
-              JSON.stringify(formattedUserInfo),
-            );
-
-            console.log(
-              'User data and health information stored successfully in AsyncStorage.',
-            );
-            navigation.replace('BottomNavigation');
-          } else {
-            console.log(
-              'No existing user found. Additional registration required.',
-            );
-          }
-          handlePostLoginNavigation();
-        } else {
-          console.error('Failed to fetch user profile.');
-        }
-      } else if (failureResponse) {
-        console.error('Naver login failed:', failureResponse);
-      }
-    } catch (error) {
-      console.error('Naver login error:', error);
+    const result = await loginWithNaver();
+    if (result) {
+      setProviderId(result.providerId);
+      setProvider('naver');
+      handleOpenInputBox();
     }
   };
 
   const handleKakaoLogin = async () => {
-    try {
-      console.log('Starting Kakao login...');
-      await kakaoLogin();
-      console.log('Kakao login successful. Fetching user information...');
+    const result = await loginWithKakao();
+    if (result) {
+      setProviderId(result.providerId);
+      setProvider('kakao');
+      handleOpenInputBox();
+    }
+  };
 
-      const userInfo = await me();
-      console.log('User information fetched:', userInfo);
+  const handleOpenInputBox = () => {
+    setName('');
+    setBirthdate('');
+    setInputPhase('name');
+    setShowInputBox(true);
+    setNameError(false); 
+    Animated.parallel([
+      Animated.timing(slideAnimation, {
+        toValue: 0,
+        duration: 900,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backgroundFade, {
+        toValue: 0.5,
+        duration: 900,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
-      if (userInfo && userInfo.id) {
-        const providerId = userInfo.id.toString(); // Convert to string
-        const provider = 2; // Kakao provider identifier
+  const handleCloseInputBox = () => {
+    Animated.parallel([
+      Animated.timing(slideAnimation, {
+        toValue: Dimensions.get('window').height,
+        duration: 900,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backgroundFade, {
+        toValue: 0,
+        duration: 900,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setShowInputBox(false);
+      setBirthdateError(false);
+      setNoAccountMessage(false); // Hide message when closed
+    });
+    Keyboard.dismiss();
+  };
 
-        await AsyncStorage.setItem('userId', providerId);
-        await AsyncStorage.setItem('loginMethod', 'kakao');
-        const userExists = await ifExistUser(providerId, provider.toString()); // Check if user exists
+  const handleBirthdateChange = (text) => {
+    const cleaned = text.replace(/[^0-9]/g, '');
+    let formatted = cleaned;
+    if (cleaned.length > 4) {
+      formatted = cleaned.slice(0, 4) + '/' + cleaned.slice(4);
+    }
+    if (cleaned.length > 6) {
+      formatted = formatted.slice(0, 7) + '/' + cleaned.slice(6);
+    }
+    setBirthdate(formatted);
+  };
 
-        if (userExists === true) {
-          console.log('Existing user found, logging in...');
-          const loginResponse = await loginExist(providerId, provider);
-          console.log('Login successful:', loginResponse); // Print login result to console
-
-          // Extracting the user information from the response
-          const {user} = loginResponse;
-
-          // Storing the healthCheckup data in AsyncStorage
-
-          if (user.healthCheckup) {
-            await AsyncStorage.setItem(
-              'healthscreen_data',
-              JSON.stringify(user.healthCheckup),
-            );
-            // Storing the last update date in YYYY-MM-DD format using Date
-            const today = new Date();
-            const formattedDate = `${today.getFullYear()}-${String(
-              today.getMonth() + 1,
-            ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            await AsyncStorage.setItem(
-              'healthscreen_last_update',
-              formattedDate,
-            );
-          }
-
-          // Formatting the user info for AsyncStorage
-          const formattedUserInfo = {
-            name: user.name,
-            nickname: user.nickname,
-            birthdate: user.birthdate,
-            height: user.height,
-            weight: user.weight,
-            gender: user.gender,
-            kidneyDisease: user.kidneyInfo, // Assuming this is a placeholder value
-          };
-          await AsyncStorage.setItem(
-            'userInfo',
-            JSON.stringify(formattedUserInfo),
-          );
-
-          console.log(
-            'User data and health information stored successfully in AsyncStorage.',
-          );
-        } else {
-          console.log(
-            'No existing user found. Additional registration required.',
-          );
-        }
-
-        handlePostLoginNavigation(); // Proceed with navigation after login or check
+  const handleInputSubmit = async () => {
+    if (inputPhase === 'name') {
+      if (name.trim() === '') {
+        setNameError(true);
       } else {
-        throw new Error('User information is missing.');
+        setNameError(false);
+        setInputPhase('birthdate'); // Move to the birthdate input phase
       }
+    } else if (inputPhase === 'birthdate') {
+      // Only check for errors on submission, not while typing
+      if (birthdate.length !== 10) {
+        setBirthdateError(true);
+      } else {
+        setBirthdateError(false);
+        try {
+          const response = await axios.post(
+            'http://54.79.61.80:5000/login/login',
+            {
+              name,
+              provider,
+              provider_id: providerId,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          await AsyncStorage.setItem('loginData', JSON.stringify(response.data));
+          navigation.navigate('BottomNavigation');
+        } catch (error) {
+          handle404();
+        }
+        handleCloseInputBox();
+      }
+    }
+  };
+
+  const handle404 = () => {
+    setShow404Modal(true);
+  };
+  const close404Modal = () => {
+    setShow404Modal(false);
+    setModalExpanded(false);
+    modalHeight.setValue(200 * height_ratio);
+  };
+
+  const navigateToGetUserInfo = () => {
+    setShow404Modal(false);
+    navigation.navigate('GetUserInfo', {
+      name,
+      birthdate,
+      provider,
+      providerId,
+    });
+  };
+
+  const findOtherAccounts = async () => {
+    try {
+      const response = await axios.post(
+        'http://54.79.61.80:5000/login/find_other_account',
+        { name, birthdate },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.length === 0) {
+        setNoAccountMessage(true); // Show message if no accounts found
+        setAccountData([]); // Clear any previous account data
+      } else {
+        setAccountData(response.data);
+        setNoAccountMessage(false); // Hide message if accounts are found
+        setModalExpanded(true);
+        Animated.timing(modalHeight, {
+          toValue: 400 * height_ratio, // Expanded height
+          duration: 500,
+          useNativeDriver: false,
+        }).start();
+      }
+
     } catch (error) {
-      console.error('Kakao login error:', error.message || error);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await NaverLogin.logout();
-      setSuccessResponse(undefined);
-      setFailureResponse(undefined);
-      setGetProfileRes(undefined);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const getProfile = async () => {
-    try {
-      const profileResult = await NaverLogin.getProfile(success.accessToken);
-      setGetProfileRes(profileResult);
-    } catch (e) {
-      setGetProfileRes(undefined);
+      console.error('Error finding accounts:', error);
     }
   };
 
   return (
-    <LinearGradient
-      colors={['#7596FF', '#ffffff']}
-      style={styles.linearGradient}>
+    <LinearGradient colors={['#7596FF', '#ffffff']} style={styles.linearGradient}>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollViewContent}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.header}>
             <Image source={splashImage} style={styles.splashImage} />
             <Text style={styles.welcomeText1}>환영합니다!</Text>
@@ -389,56 +308,122 @@ const Login2 = () => {
           </View>
           <View style={styles.content}>
             <TouchableOpacity
-              style={[
-                styles.loginButton,
-                {
-                  backgroundColor: '#FFFDF8',
-                },
-              ]}
+              style={[styles.loginButton, { backgroundColor: '#FFFDF8' }]}
               onPress={handleGoogleLogin}>
               <Image source={googleIcon} style={styles.icon} />
-              <Text style={[styles.buttonText, {color: '#222322'}]}>
-                구글로 로그인
-              </Text>
+              <Text style={[styles.buttonText, { color: '#222322' }]}>구글로 로그인</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.loginButton, {backgroundColor: '#03C75A'}]}
+              style={[styles.loginButton, { backgroundColor: '#03C75A' }]}
               onPress={handleNaverLogin}>
               <Image source={naverIcon} style={styles.icon} />
-              <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>
-                네이버로 로그인
-              </Text>
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>네이버로 로그인</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
-              style={[styles.loginButton, {backgroundColor: '#FEE500'}]}
+              style={[styles.loginButton, { backgroundColor: '#FEE500' }]}
               onPress={handleKakaoLogin}>
               <Image source={kakaoIcon} style={styles.icon} />
-              <Text style={[styles.buttonText, {color: '#2A1C11'}]}>
-                카카오로 로그인
-              </Text>
+              <Text style={[styles.buttonText, { color: '#2A1C11' }]}>카카오로 로그인</Text>
             </TouchableOpacity>
-            <Gap />
-            <Gap />
-            {success && (
-              <>
-                <Button title="Get Profile" onPress={getProfile} />
-                <Gap />
-                <View>
-                  <Button title="Delete Token" onPress={() => deleteToken()} />
-                  <Gap />
-                  <ResponseJsonText name={'Success'} json={success} />
-                </View>
-              </>
-            )}
-            <Gap />
-            {failure && <ResponseJsonText name={'Failure'} json={failure} />}
-            <Gap />
-            {getProfileRes && (
-              <ResponseJsonText name={'GetProfile'} json={getProfileRes} />
-            )}
           </View>
         </ScrollView>
+  
+        {showInputBox && (
+          <>
+            <TouchableWithoutFeedback onPress={handleCloseInputBox}>
+              <Animated.View style={[styles.overlay, { opacity: backgroundFade }]} />
+            </TouchableWithoutFeedback>
+            <Animated.View style={[styles.inputContainer, { transform: [{ translateY: slideAnimation }] }]}>
+              {inputPhase === 'name' ? (
+                <>
+                  <Text style={[styles.promptText, { color: nameError ? 'red' : '#333' }]}>
+                    이름을 입력해주세요.
+                  </Text>
+                  <TextInput
+                    style={[styles.input, nameError && { borderColor: 'red' }]}
+                    placeholder="홍길동"
+                    placeholderTextColor="#999"
+                    value={name}
+                    onChangeText={(text) => {
+                      setName(text);
+                      setNameError(false);
+                    }}
+                    onSubmitEditing={handleInputSubmit}
+                  />
+                  <TouchableOpacity style={styles.submitButton} onPress={handleInputSubmit}>
+                    <Text style={styles.submitButtonText}>입력</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Text style={[styles.promptText, { color: birthdateError ? 'red' : '#333' }]}>
+                    {birthdateError ? '8자리 생년월일을 정확히 입력해주세요' : '생년월일을 입력하세요:'}
+                  </Text>
+                  <TextInput
+                    style={[styles.input, birthdateError && { borderColor: 'red' }]}
+                    placeholder={birthdatePlaceholder}
+                    placeholderTextColor="#999"
+                    value={birthdate}
+                    onChangeText={handleBirthdateChange}
+                    onSubmitEditing={handleInputSubmit}
+                    keyboardType="numeric"
+                    maxLength={10} 
+                  />
+                  <TouchableOpacity style={styles.submitButton} onPress={handleInputSubmit}>
+                    <Text style={styles.submitButtonText}>입력</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </Animated.View>
+          </>
+        )}
+  
+        {show404Modal && (
+          <>
+            <TouchableWithoutFeedback onPress={close404Modal}>
+              <View style={styles.overlay} />
+            </TouchableWithoutFeedback>
+            <Animated.View style={[styles.modalContainer, { height: modalHeight }]}>
+              <Text style={styles.modalSmallText}>이번이 처음이신가요?</Text>
+              <TouchableOpacity style={[styles.modalButton, styles.signupButton]} onPress={navigateToGetUserInfo}>
+                <Text style={styles.buttonText}>회원가입하기</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalSmallText}>벌써 계정이 있으신가요?</Text>
+              <TouchableOpacity style={[styles.modalButton, styles.findAccountButton]} onPress={findOtherAccounts}>
+                <Text style={styles.buttonText}>내 계정 찾아보기</Text>
+              </TouchableOpacity>
+              
+              {noAccountMessage && (
+                <Text style={styles.noAccountText}>계정 정보가 없습니다</Text>
+              )}
+
+              {modalExpanded && (
+                <ScrollView style={styles.accountList}>
+                  <Text style={styles.modalSmallText}>이 중에 회원님의 계정이 있다면,</Text>
+                  <Text style={styles.modalSmallText}>다시 로그인을 시도해주세요.</Text>
+                  {accountData.map((account) => (
+                    <View key={account._id} style={styles.accountCard}>
+                    <Image
+                      source={
+                        account.profile_image
+                          ? { uri: `data:image/png;base64,${account.profile_image}` }
+                          : defaultUserImage
+                      }
+                      style={styles.accountImage}
+                    />
+                    <View style={styles.accountInfo}>
+                      <Text style={styles.accountText}>이름: {account.name}</Text>
+                      <Text style={styles.accountText}>계정: {account.provider}</Text>
+                      <Text style={styles.accountText}>닉네임: {account.nickname}</Text>
+                      <Text style={styles.accountText}>생성 날짜: {account.createdAt}</Text>
+                    </View>
+                  </View>
+                  ))}
+                </ScrollView>
+              )}
+            </Animated.View>
+          </>
+        )}
       </SafeAreaView>
     </LinearGradient>
   );
@@ -456,9 +441,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-  },
-  container: {
-    flex: 1,
   },
   header: {
     alignItems: 'flex-start',
@@ -512,22 +494,140 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 2 * height_ratio,
   },
-  responseContainer: {
-    padding: 12 * width_ratio,
-    borderRadius: 16 * width_ratio,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  inputContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    paddingVertical: 20 * height_ratio,
+    paddingHorizontal: 16 * width_ratio,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    alignItems: 'center',
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  promptText: {
+    fontSize: 16 * width_ratio,
+    marginBottom: 10 * height_ratio,
+    ...theme.fonts.Regular,
+  },
+  input: {
+    width: '90%',
+    padding: 10 * width_ratio,
     borderWidth: 1,
-    backgroundColor: '#242c3d',
+    borderColor: '#ddd',
+    borderRadius: 8,
+    fontSize: 16 * width_ratio,
+    marginBottom: 10 * height_ratio,
+    textAlign: 'center',
+    color: '#000',
   },
-  responseTitle: {
-    ...theme.fonts.Medium,
-    fontSize: 20 * width_ratio,
-    fontWeight: 'bold',
-    color: 'white',
+  submitButton: {
+    backgroundColor: '#7596FF',
+    borderRadius: 8,
+    paddingVertical: 10 * height_ratio,
+    paddingHorizontal: 20 * width_ratio,
   },
-  responseText: {
+  submitButtonText: {
     color: 'white',
-    fontSize: 13 * width_ratio,
-    lineHeight: 20 * height_ratio,
+    fontSize: 16 * width_ratio,
+    ...theme.fonts.Regular,
+  },
+  modalContainer: {
+    position: 'absolute',
+    bottom: '30%',
+    left: '10%',
+    right: '10%',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    paddingVertical: 20 * height_ratio,
+    paddingHorizontal: 20 * width_ratio,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalSmallText: {
+    fontSize: 14 * width_ratio,
+    ...theme.fonts.Regular,
+    color: '#333',
+    marginBottom: 8 * height_ratio,
+    textAlign: 'left', // Aligns text to the left
+    alignSelf: 'flex-start', // Ensures alignment is left within the modal
+  },
+  modalButton: {
+    width: '80%',
+    height: 40 * height_ratio,
+    borderRadius: 30 * width_ratio,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12 * height_ratio,
+  },
+  signupButton: {
+    backgroundColor: '#7596FF', // Blue color for "회원가입"
+  },
+  findAccountButton: {
+    backgroundColor: '#AAAAAA', // Gray color for "내 계정 찾기"
+  },
+  noAccountText: {
+    color: 'red',
+    fontSize: 14 * width_ratio,
+    textAlign: 'center',
+    ...theme.fonts.Regular,
+  },
+  accountList: {
+    width: '100%',
+    marginTop: 20 * height_ratio, // Space between button and account list
+  },
+  accountCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12 * height_ratio,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12, // Rounded corners for each card
+    marginBottom: 12 * height_ratio,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    width: '95%', // Slightly smaller width for spacing within modal
+    alignSelf: 'center', // Center align within modal
+  },
+  accountImage: {
+    width: 50 * width_ratio,
+    height: 50 * height_ratio,
+    borderRadius: 25 * width_ratio,
+    marginRight: 15 * width_ratio,
+  },
+  accountInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  accountText: {
+    fontSize: 14 * width_ratio,
+    color: '#333',
+    marginBottom: 2 * height_ratio,
+    ...theme.fonts.Regular,
   },
 });
 

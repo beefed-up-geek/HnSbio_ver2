@@ -1,87 +1,48 @@
 // src/screens/login/index.js
-import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  interpolate,
-  Extrapolate,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import theme from '../../theme';
 
 const Login1 = () => {
   const navigation = useNavigation();
-  const logoOpacity = useSharedValue(0); // 로고의 투명도
-  const textOpacity = useSharedValue(0);
-  const textColor = useSharedValue(0);
+  const logoOpacity = useSharedValue(0);
 
   useEffect(() => {
-    const checkLoginMethod = async () => {
-      const loginMethod = await AsyncStorage.getItem('loginMethod');
-      const userInfo = await AsyncStorage.getItem('userInfo');
+    logoOpacity.value = withTiming(1, { duration: 2000 }); // 로고 페이드인 애니메이션
 
-      if (loginMethod) {
+    const checkUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('user');
         setTimeout(() => {
-          if (userInfo) {
+          if (user) {
             navigation.replace('BottomNavigation');
           } else {
-            navigation.replace('GetUserInfo');
+            navigation.replace('Login2');
           }
         }, 3000);
-      } else {
-        setTimeout(() => {
-          navigation.replace('Login2');
-        }, 3000);
+      } catch (error) {
+        console.error('Error checking user in AsyncStorage:', error);
       }
     };
 
-    checkLoginMethod();
+    checkUser();
+  }, [navigation, logoOpacity]);
 
-    // 로고 및 텍스트의 투명도 및 색상 애니메이션
-    logoOpacity.value = withTiming(1, {duration: 2000});
-    textOpacity.value = withTiming(1, {duration: 2000});
-    textColor.value = withTiming(1, {duration: 1000});
-  }, [navigation, logoOpacity, textOpacity, textColor]);
-
-  const logoAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: logoOpacity.value, // 로고의 투명도만 애니메이션으로 적용
-    };
-  });
-
-  const textAnimatedStyle = useAnimatedStyle(() => {
-    const color = interpolate(
-      textColor.value,
-      [0, 1],
-      ['#FFFFFF', '#000000'], // 흰색에서 검은색으로 점점 진해지는 색상
-      Extrapolate.CLAMP,
-    );
-
-    return {
-      opacity: textOpacity.value,
-      color: color,
-    };
-  });
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+  }));
 
   return (
     <View style={styles.container}>
       <Animated.Image
         source={require('../../images/login/splash1.png')}
-        style={[styles.image, logoAnimatedStyle]} // 로고 투명도 애니메이션 적용
+        style={[styles.logo, logoAnimatedStyle]}
       />
-      <Animated.Text style={[styles.descriptionText, textAnimatedStyle]}>
-        빠르고 간편한
-      </Animated.Text>
-      <Animated.Text style={[styles.descriptionText, textAnimatedStyle]}>
-        신장기능 조기 진단 검사지
-      </Animated.Text>
-      <ActivityIndicator
-        size="large"
-        color="#1677FF"
-        style={styles.loadingIndicator}
-      />
+      <Text style={styles.titleText}>간편한 신장기능 관리 어플</Text>
+      <ActivityIndicator size="large" color="#1677FF" style={styles.loadingIndicator} />
       <Text style={styles.footerText}>HNSBio.lab</Text>
     </View>
   );
@@ -94,18 +55,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  image: {
+  logo: {
     width: 150,
     height: 150,
     resizeMode: 'contain',
+    marginBottom: 20,
   },
-  descriptionText: {
-    fontSize: 16,
+  titleText: {
+    color: '#767B80',
+    fontSize: 15,
+    ...theme.fonts.SemiBold,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   loadingIndicator: {
-    marginTop: 50,
+    marginTop: 20,
   },
   footerText: {
     position: 'absolute',
