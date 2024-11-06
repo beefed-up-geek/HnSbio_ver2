@@ -12,11 +12,10 @@ import {
 } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useNavigation, StackActions } from '@react-navigation/native';
 
 import styles from './navigation_with_tabs_styles';
 
-// 필요한 스크린 컴포넌트들 import
+// Import your screen components
 import Health_checkup_specifics_screen from '../screens/health_checkup/health_checkup_specifics';
 import Health_checkup_screen from '../screens/health_checkup';
 import Daily_check_screen from '../screens/home/daily_check';
@@ -60,31 +59,32 @@ const selectedIconSources = {
 const CustomHeader = ({ title, leftIcon, onLeftPress, isHomeScreen }) => {
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity
-        onPress={onLeftPress}
-        style={styles.leftButtonContainer}
-        disabled={isHomeScreen}
-      >
-        <Image
-          source={leftIcon}
-          style={[
-            styles.homeLeftButton,
-          ]}
-        />
-      </TouchableOpacity>
+      {isHomeScreen && (
+        <TouchableOpacity
+          onPress={onLeftPress}
+          style={styles.leftButtonContainer}
+        >
+          <Image source={leftIcon} style={styles.homeLeftButton} />
+        </TouchableOpacity>
+      )}
       <Text style={styles.headerTitle}>{title}</Text>
     </View>
   );
 };
 
 const stackScreenOptions = ({ route, navigation }) => {
+  const isHomeScreen = route.name === 'Home';
+  const leftIcon = require('../images/hns.png');
+
   return {
     header: (props) => {
       const title = props.options.title || route.name;
       return (
         <CustomHeader
           title={title}
-          leftIcon={require('../images/hns.png')}
+          leftIcon={leftIcon}
+          onLeftPress={() => {}}
+          isHomeScreen={isHomeScreen}
         />
       );
     },
