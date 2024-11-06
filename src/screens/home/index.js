@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 
-import styles from './index_styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 const { width } = Dimensions.get('screen');
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
@@ -37,7 +37,10 @@ const HomeScreen = () => {
 
       <View style={styles.infoBox}>
         <View style={styles.infoTitleContainer}>
-          <TouchableOpacity style={styles.setPushAlarmButton}>
+          <TouchableOpacity 
+            style={styles.setPushAlarmButton}
+            onPress={() => navigation.navigate('NoTabs', { screen: 'set_push_alarm' })}
+          >
             <Image
               source={require('../../images/home/gearIcon.png')}
               style={styles.setPushAlarmIcon}
@@ -69,7 +72,6 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* 하단 두 모서리가 둥근 버튼 상자 */}
       <TouchableOpacity 
         style={styles.roundedButtonBox}
         onPress={() => navigation.navigate('NoTabs', { screen: 'kidney_info' })}>
