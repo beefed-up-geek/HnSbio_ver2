@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import styles from './index_styles.js'; // 스타일 분리
+import styles from './styles.js'; // 스타일 분리
 import theme from '../../theme'; // 폰트 적용
 
 const { width } = Dimensions.get('screen');
