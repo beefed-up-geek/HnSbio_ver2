@@ -1,5 +1,4 @@
-// src/screens/login/get_kidney_info.js
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,16 +7,30 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // axios to handle HTTP requests
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import theme from '../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
 
 const GetKidneyInfo = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const route = useRoute();
   const navigation = useNavigation();
+
+  // Destructure initial values from route.params
+  const {
+    name,
+    nickname,
+    birthdate,
+    height,
+    weight,
+    gender,
+    provider,
+    providerId,
+  } = route.params || {};
+
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const options = [
     '해당사항 없음',
@@ -31,99 +44,28 @@ const GetKidneyInfo = () => {
     setSelectedOption(optionIndex);
   };
 
-  const printAllAsyncStorageData = async () => {
-    try {
-      const keys = await AsyncStorage.getAllKeys();
-      if (keys.length === 0) {
-        console.log('AsyncStorage에 저장된 데이터가 없습니다.');
-        return;
-      }
-
-      const result = await AsyncStorage.multiGet(keys);
-      result.forEach(([key, value]) => {
-        console.log(`Key: ${key}, Value: ${value}`);
-      });
-
-      return result;
-    } catch (error) {
-      console.error(
-        'AsyncStorage 데이터를 불러오는 중 에러가 발생했습니다:',
-        error,
-      );
-    }
-  };
-
   const handleNext = async () => {
-    console.log(selectedOption);
-    // if (selectedOption === null) {
-    //   Alert.alert('선택 오류', '하나의 옵션을 선택해주세요.');
-    //   return;
-    // }
+    if (selectedOption === null) {
+      Alert.alert('선택 오류', '하나의 옵션을 선택해주세요.');
+      return;
+    }
 
     try {
-      const storedUserInfo = await AsyncStorage.getItem('userInfo');
-      const loginMethod = await AsyncStorage.getItem('loginMethod');
-      const providerID = await AsyncStorage.getItem('userId');
-      if (storedUserInfo !== null) {
-        const userInfo = JSON.parse(storedUserInfo);
-        userInfo.kidneyDisease = selectedOption;
-        await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        // Alert.alert(
-        //   '정보 저장 완료',
-        //   '사용자 정보가 성공적으로 저장되었습니다.',
-        // );
-        console.log('<<< GetKidneyInfo화면 사용자 정보 저장됨 >>>');
-
-        const asyncData = await printAllAsyncStorageData();
-
-        let provider = -1;
-        if (loginMethod === 'kakao') {
-          provider = 2;
-        } else if (loginMethod === 'naver') {
-          provider = 1;
-        } else if (loginMethod === 'google') {
-          provider = 0;
-        }
-
-        if (provider === -1) {
-          //Alert.alert('로그인 오류', '유효하지 않은 로그인 방법입니다.');
-          return;
-        }
-
-        const apiPayload = {
-          providerId: providerID,
-          provider,
-          name: userInfo.name,
-          nickname: userInfo.nickname,
-          birthdate: userInfo.birthdate.replace(/\//g, ''),
-          gender: userInfo.gender === 'male' ? 1 : 0, 
-          height: parseInt(userInfo.height, 10),
-          weight: parseInt(userInfo.weight, 10),
-          kidneyInfo: userInfo.kidneyDisease,
-        };
-
-        const response = await axios.post(
-          'http://54.79.61.80:3000/login/register/',
-          apiPayload,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        console.log('API 응답 성공:', response.data);
-        navigation.navigate('BottomNavigation');
-      }
+      const chronic_kidney_disease = options[selectedOption];
+      navigation.navigate('GetUnderlyingDiseaseInfo', {
+        name,
+        gender,
+        height,
+        weight,
+        birthdate,
+        nickname,
+        provider,
+        providerId,
+        chronic_kidney_disease,
+      });
     } catch (error) {
-      if (error.response) {
-        console.error('API 응답 에러:', error.response.data);
-      } else if (error.request) {
-        console.error('요청 실패:', error.request);
-      } else {
-        console.error('에러 메시지:', error.message);
-      }
-      //Alert.alert('API 오류', '서버와의 통신 중 오류가 발생했습니다.');
+      console.error('Navigation error:', error.message);
+      Alert.alert('오류', '화면 이동 중 오류가 발생했습니다.');
     }
   };
 
@@ -149,8 +91,22 @@ const GetKidneyInfo = () => {
         </TouchableOpacity>
       ))}
 
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>다음</Text>
+      <TouchableOpacity
+        style={[
+          styles.nextButton,
+          selectedOption === null && styles.nextButtonDisabled,
+        ]}
+        onPress={handleNext}
+        disabled={selectedOption === null}
+      >
+        <Text
+          style={[
+            styles.nextButtonText,
+            selectedOption === null && styles.nextButtonTextDisabled,
+          ]}
+        >
+          다음
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -161,13 +117,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16 * width_ratio,
     backgroundColor: '#FFFFFF',
-    padding: 24 * width_ratio,
   },
   title: {
     fontSize: 20 * width_ratio,
     marginLeft: 2 * width_ratio,
     marginTop: 80 * height_ratio,
     marginBottom: 47 * height_ratio,
+    ...theme.fonts.Bold,
     color: '#49494F',
   },
   optionButton: {
@@ -184,9 +140,11 @@ const styles = StyleSheet.create({
     fontSize: 16 * width_ratio,
     color: '#646464',
     textAlign: 'center',
+    ...theme.fonts.Regular,
   },
   selectedText: {
     color: '#7596FF',
+    ...theme.fonts.Regular,
   },
   nextButton: {
     marginTop: 24 * height_ratio,
@@ -195,10 +153,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20 * width_ratio,
     borderRadius: 24 * width_ratio,
   },
+  nextButtonDisabled: {
+    backgroundColor: '#828287',
+  },
   nextButtonText: {
     fontSize: 14 * width_ratio,
     color: '#4A61ED',
     textAlign: 'center',
+    ...theme.fonts.Regular,
+  },
+  nextButtonTextDisabled: {
+    color: '#FFFFFF',
   },
 });
 

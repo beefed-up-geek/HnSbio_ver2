@@ -1,5 +1,6 @@
 // src/screens/login/get_usr_info.js
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   Dimensions,
   View,
@@ -12,35 +13,43 @@ import {
   Platform,
   ScrollView,
   KeyboardAvoidingView,
-  Keyboard, // 추가된 부분
+  Keyboard,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import theme from '../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
 
 const Get_User_Info = () => {
-  const [name, setName] = useState('');
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  // Destructure initial values from route.params
+  const {
+    name: initialName = '',
+    birthdate: initialBirthdate = '',
+    provider,
+    providerId,
+  } = route.params || {};
+
+  // State variables initialized with received values
+  const [name, setName] = useState(initialName);
   const [nickname, setNickname] = useState('');
-  const [birthdate, setBirthdate] = useState('');
+  const [birthdate, setBirthdate] = useState(initialBirthdate);
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [nameError, setNameError] = useState('');
   const [nicknameError, setNicknameError] = useState('');
-  const [nameTextAlign, setNameTextAlign] = useState('center');
+  const [nameTextAlign, setNameTextAlign] = useState(initialName ? 'left' : 'center');
   const [nicknameTextAlign, setNicknameTextAlign] = useState('center');
-  const [birthdateTextAlign, setBirthdateTextAlign] = useState('center');
+  const [birthdateTextAlign, setBirthdateTextAlign] = useState(initialBirthdate ? 'left' : 'center');
   const [heightTextAlign, setHeightTextAlign] = useState('center');
   const [weightTextAlign, setWeightTextAlign] = useState('center');
 
-  const navigation = useNavigation();
-
-  // 추가된 부분: 각 TextInput에 대한 참조 생성
+  // References for scrolling to each input
   const nameInputRef = useRef(null);
   const nicknameInputRef = useRef(null);
   const birthdateInputRef = useRef(null);
@@ -49,32 +58,10 @@ const Get_User_Info = () => {
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const storedUserInfo = await AsyncStorage.getItem('userInfo');
-        if (storedUserInfo !== null) {
-          const userInfo = JSON.parse(storedUserInfo);
-          setName(userInfo.name || '');
-          setNickname(userInfo.nickname || '');
-        } else {
-          const userId = await AsyncStorage.getItem('userId');
-          const username = await AsyncStorage.getItem('username');
-          if (username !== null) {
-            setName(username);
-            setNickname(userId);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load user info', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
+    // Form 유효성 검사
     validateForm();
-  }, [name, nickname, birthdate, height, weight, gender]);
+  }, [name, nickname, birthdate, height, weight, gender, initialBirthdate]);
+  
 
   const validateForm = () => {
     const currentYear = new Date().getFullYear();
@@ -100,12 +87,9 @@ const Get_User_Info = () => {
     }
   };
 
-  const handleSave = async () => {
-    const currentYear = new Date().getFullYear();
-    const [year, month, day] = birthdate.split('/').map(Number);
+  const handleSave = () => {
     let errorMessage = '';
 
-    // 이름과 닉네임의 앞뒤 공백 및 줄바꿈 제거
     const trimmedName = name.trim();
     const trimmedNickname = nickname.trim();
 
@@ -126,32 +110,24 @@ const Get_User_Info = () => {
     }
     if (!/^\d{4}\/\d{2}\/\d{2}$/.test(birthdate)) {
       errorMessage += '생년월일 형식이 잘못되었습니다.\n';
-    } else {
-      if (year < currentYear - 150 || year > currentYear) {
-        errorMessage += `생년월일의 연도는 ${currentYear - 150}년에서 ${currentYear}년 사이여야 합니다.\n`;
-      }
-      if (month < 1 || month > 12) {
-        errorMessage += '생년월일의 월은 01에서 12 사이여야 합니다.\n';
-      }
-      if (day < 1 || day > 31) {
-        errorMessage += '생년월일의 일은 01에서 31 사이여야 합니다.\n';
-      }
     }
 
     if (errorMessage) {
-      //Alert.alert('입력 오류', errorMessage);
+      Alert.alert('입력 오류', errorMessage);
       return;
     }
 
-    const userInfo = { name: trimmedName, nickname: trimmedNickname, birthdate, height, weight, gender };
-    try {
-      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-      console.log('<<< Get_User_Info화면 사용자 정보 저장됨 >>>');
-      console.log(await AsyncStorage.getItem('userInfo'));
-      navigation.navigate('GetKidneyInfo'); // Navigate to GetKidneyInfo screen
-    } catch (error) {
-      //Alert.alert('사용자 정보 저장 실패');
-    }
+    // Navigate to the next screen with all parameters
+    navigation.navigate('GetKidneyInfo', {
+      name: trimmedName,
+      nickname: trimmedNickname,
+      birthdate,
+      height,
+      weight,
+      gender,
+      provider,
+      providerId,
+    });
   };
 
   const handleHeightChange = value => {
@@ -190,7 +166,7 @@ const Get_User_Info = () => {
   const handleNameChange = text => {
     if (text.length > 6) {
       setNameError('6자리 이내로 입력하세요');
-      setName(text.slice(0, 6)); // 6자까지만 입력
+      setName(text.slice(0, 6));
     } else {
       setNameError('');
       setName(text);
@@ -200,7 +176,7 @@ const Get_User_Info = () => {
   const handleNicknameChange = text => {
     if (text.length > 6) {
       setNicknameError('6자리 이내로 입력하세요');
-      setNickname(text.slice(0, 6)); // 6자까지만 입력
+      setNickname(text.slice(0, 6));
     } else {
       setNicknameError('');
       setNickname(text);
@@ -248,50 +224,50 @@ const Get_User_Info = () => {
           </Text>
 
           <View style={styles.genderWrapper}>
-  <Text style={styles.label}>성별</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      onPress={() => setGender('female')}
-      style={styles.genderButton}>
-      <Image
-        source={require('../../images/login/female.png')}
-        style={[
-          styles.genderImageFemale,
-          gender !== 'female' && styles.desaturated,
-        ]}
-      />
-    </TouchableOpacity>
-    <TouchableOpacity
-      onPress={() => setGender('male')}
-      style={styles.genderButton}>
-      <Image
-        source={require('../../images/login/male.png')}
-        style={[
-          styles.genderImageMale,
-          gender !== 'male' && styles.desaturated,
-        ]}
-      />
-    </TouchableOpacity>
-  </View>
-</View>
+            <Text style={styles.label}>성별</Text>
+            <View style={styles.genderContainer}>
+              <TouchableOpacity
+                onPress={() => setGender('female')}
+                style={styles.genderButton}>
+                <Image
+                  source={require('../../images/login/female.png')}
+                  style={[
+                    styles.genderImageFemale,
+                    gender !== 'female' && styles.desaturated,
+                  ]}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setGender('male')}
+                style={styles.genderButton}>
+                <Image
+                  source={require('../../images/login/male.png')}
+                  style={[
+                    styles.genderImageMale,
+                    gender !== 'male' && styles.desaturated,
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View style={styles.row}>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이름</Text>
               <TextInput
-                ref={nameInputRef} // 추가된 부분
+                ref={nameInputRef}
                 style={styles.input}
                 backgroundColor="#F1F1F1"
                 placeholder="홍길동"
                 placeholderTextColor="#828287"
                 value={name}
-                onChangeText={setName}
-                textAlign={name ? 'left' : nameTextAlign} // Placeholder centered, text left
+                onChangeText={handleNameChange}
+                textAlign={name ? 'left' : nameTextAlign}
                 onFocus={() => setNameTextAlign('left')}
                 onBlur={() => !name && setNameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => nicknameInputRef.current && nicknameInputRef.current.focus()} // 추가된 부분
-                returnKeyType="next" // 추가된 부분
+                onSubmitEditing={() => nicknameInputRef.current && nicknameInputRef.current.focus()}
+                returnKeyType="next"
               />
               {nameError ? (
                 <Text style={styles.errorText}>{nameError}</Text>
@@ -300,19 +276,19 @@ const Get_User_Info = () => {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>닉네임</Text>
               <TextInput
-                ref={nicknameInputRef} // 추가된 부분
-                style={styles.nickname_input}
+                ref={nicknameInputRef}
+                style={styles.input}
                 backgroundColor="#F1F1F1"
-                placeholder="6자리 이내로 입력"
+                placeholder="6자리 이내"
                 placeholderTextColor="#828287"
                 value={nickname}
-                onChangeText={setNickname}
-                textAlign={nickname ? 'left' : nicknameTextAlign} // Placeholder centered, text left
+                onChangeText={handleNicknameChange}
+                textAlign={nickname ? 'left' : nicknameTextAlign}
                 onFocus={() => setNicknameTextAlign('left')}
                 onBlur={() => !nickname && setNicknameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => birthdateInputRef.current && birthdateInputRef.current.focus()} // 추가된 부분
-                returnKeyType="next" // 추가된 부분
+                onSubmitEditing={() => birthdateInputRef.current && birthdateInputRef.current.focus()}
+                returnKeyType="next"
               />
               {nicknameError ? (
                 <Text style={styles.errorText}>{nicknameError}</Text>
@@ -323,7 +299,7 @@ const Get_User_Info = () => {
           <View style={styles.inputGroupFullWidth}>
             <Text style={styles.label}>생년월일</Text>
             <TextInput
-              ref={birthdateInputRef} // 추가된 부분
+              ref={birthdateInputRef}
               style={styles.input}
               backgroundColor="#F1F1F1"
               placeholder="YYYY/MM/DD"
@@ -332,12 +308,12 @@ const Get_User_Info = () => {
               onChangeText={handleBirthdateChange}
               keyboardType="numeric"
               maxLength={10}
-              textAlign={birthdate ? 'left' : birthdateTextAlign} // Placeholder centered, text left
+              textAlign={birthdate ? 'left' : birthdateTextAlign}
               onFocus={() => setBirthdateTextAlign('left')}
               onBlur={() => !birthdate && setBirthdateTextAlign('center')}
               blurOnSubmit={false}
-              onSubmitEditing={() => heightInputRef.current && heightInputRef.current.focus()} // 추가된 부분
-              returnKeyType="next" // 추가된 부분
+              onSubmitEditing={() => heightInputRef.current && heightInputRef.current.focus()}
+              returnKeyType="next"
             />
           </View>
 
@@ -346,7 +322,7 @@ const Get_User_Info = () => {
               <Text style={styles.label}>키</Text>
               <View style={styles.inputWithUnit}>
                 <TextInput
-                  ref={heightInputRef} // 추가된 부분
+                  ref={heightInputRef}
                   style={styles.input}
                   backgroundColor="#F1F1F1"
                   placeholder="0"
@@ -355,12 +331,12 @@ const Get_User_Info = () => {
                   onChangeText={handleHeightChange}
                   keyboardType="numeric"
                   maxLength={3}
-                  textAlign={height ? 'left' : heightTextAlign} // Placeholder centered, text left
+                  textAlign={height ? 'left' : heightTextAlign}
                   onFocus={() => setHeightTextAlign('left')}
                   onBlur={() => !height && setHeightTextAlign('center')}
                   blurOnSubmit={false}
-                  onSubmitEditing={() => weightInputRef.current && weightInputRef.current.focus()} // 추가된 부분
-                  returnKeyType="next" // 추가된 부분
+                  onSubmitEditing={() => weightInputRef.current && weightInputRef.current.focus()}
+                  returnKeyType="next"
                 />
                 <Text style={styles.unit}>cm</Text>
               </View>
@@ -369,7 +345,7 @@ const Get_User_Info = () => {
               <Text style={styles.label}>체중</Text>
               <View style={styles.inputWithUnit}>
                 <TextInput
-                  ref={weightInputRef} // 추가된 부분
+                  ref={weightInputRef}
                   style={styles.input}
                   backgroundColor="#F1F1F1"
                   placeholder="00.0"
@@ -378,11 +354,11 @@ const Get_User_Info = () => {
                   onChangeText={handleWeightChange}
                   keyboardType="numeric"
                   maxLength={5}
-                  textAlign={weight ? 'left' : weightTextAlign} // Placeholder centered, text left
+                  textAlign={weight ? 'left' : weightTextAlign}
                   onFocus={() => setWeightTextAlign('left')}
                   onBlur={() => !weight && setWeightTextAlign('center')}
-                  onSubmitEditing={() => Keyboard.dismiss()} // 추가된 부분
-                  returnKeyType="done" // 추가된 부분
+                  onSubmitEditing={() => Keyboard.dismiss()}
+                  returnKeyType="done"
                 />
                 <Text style={styles.unit}>kg</Text>
               </View>
@@ -396,9 +372,9 @@ const Get_User_Info = () => {
                 ? handleSave
                 : () =>
                     Alert.alert(
-                       '입력 오류',
-                       '모든 필드를 형식에 맞게 입력해주세요.',
-                     )
+                      '입력 오류',
+                      '모든 필드를 형식에 맞게 입력해주세요.',
+                    )
             }
             style={[
               styles.button,
@@ -467,7 +443,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16 * width_ratio,
-    ...theme.fonts.Regular,
+    ...theme.fonts.Bold,
     marginBottom: 12 * height_ratio,
     color: 'black',
   },

@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+// src/screens/home/index.js
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,59 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
-import theme from '../../theme'; // 개발 규칙: 폰트 적용
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import styles from './index_styles.js'; // 스타일 분리
+import theme from '../../theme'; // 폰트 적용
 
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 const { width } = Dimensions.get('screen');
-const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
-const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+const width_ratio = Dimensions.get('screen').width / 390;
+const height_ratio = Dimensions.get('screen').height / 844;
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  // 사용자 정보를 저장할 상태 변수들
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [chronicKidneyDisease, setChronicKidneyDisease] = useState('');
+  const [underlyingDisease, setUnderlyingDisease] = useState({
+    hypertension: 0,
+    diabetes: 0,
+    hyperlipidemia: 0,
+    retinal_complication: 0,
+  });
+
+  // AsyncStorage에서 사용자 정보를 불러오는 함수
+  const loadUserData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setName(parsedData.name);
+        setGender(parsedData.gender);
+        setHeight(parsedData.height);
+        setWeight(parsedData.weight);
+        setBirthdate(parsedData.birthdate);
+        setNickname(parsedData.nickname);
+        setChronicKidneyDisease(parsedData.chronic_kidney_disease);
+        setUnderlyingDisease(parsedData.underlying_disease);
+      }
+    } catch (error) {
+      console.error('Error loading user data from AsyncStorage:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUserData(); // 컴포넌트가 마운트될 때 사용자 데이터 로드
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* 기존 코드 */}
       <View style={styles.profileContainer}>
         <TouchableOpacity 
             style={styles.profileButton}
@@ -38,7 +79,7 @@ const HomeScreen = () => {
       <View style={styles.infoBox}>
         <View style={styles.infoTitleContainer}>
           <TouchableOpacity 
-            style={styles.setPushAlarmButton}
+            style={styles.setPushAlarmButton} 
             onPress={() => navigation.navigate('NoTabs', { screen: 'set_push_alarm' })}
           >
             <Image
@@ -47,12 +88,13 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
         </View>
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.kitButton}>
-          </TouchableOpacity>
+          <TouchableOpacity style={styles.kitButton} />
           <TouchableOpacity 
             style={styles.testButton} 
-            onPress = {() => {Linking.openURL('https://hnsbiolab.com/device')}}>
+            onPress={() => Linking.openURL('https://hnsbiolab.com/device')}
+          >
             <Text style={styles.buttonText}>키트 구매하기</Text>
             <Image
               source={require('../../images/home/go.png')}
@@ -62,7 +104,7 @@ const HomeScreen = () => {
           <TouchableOpacity 
             style={styles.testButton} 
             onPress={() => navigation.navigate('KitStack')}
-            >
+          >
             <Text style={styles.buttonText}>검사하러 가기</Text>
             <Image
               source={require('../../images/home/go.png')}
@@ -74,14 +116,16 @@ const HomeScreen = () => {
 
       <TouchableOpacity 
         style={styles.roundedButtonBox}
-        onPress={() => navigation.navigate('NoTabs', { screen: 'kidney_info' })}>
+        onPress={() => navigation.navigate('NoTabs', { screen: 'kidney_info' })}
+      >
         <Text style={styles.boxText}>만성콩팥병 위험도</Text>
         <Text style={styles.boxStatus}>정상</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.roundedButtonBox}
-        onPress={() => navigation.navigate('NoTabs', { screen: 'daily_check' })}>
+        onPress={() => navigation.navigate('NoTabs', { screen: 'daily_check' })}
+      >
         <Text style={styles.boxText}>오늘의 콩팥 상태 체크하기</Text>
       </TouchableOpacity>
 

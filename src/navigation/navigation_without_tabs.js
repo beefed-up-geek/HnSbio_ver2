@@ -1,3 +1,4 @@
+// src/navigation/navigation_without_tabs.js
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, BackHandler } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
