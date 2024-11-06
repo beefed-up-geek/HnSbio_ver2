@@ -50,6 +50,11 @@ const styles = StyleSheet.create({
     height: 303 * height_ratio,
     resizeMode: 'contain', 
   },
+  lineWrapper: {
+    gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   nextCheckupText1: {
     marginTop: 30,
     marginLeft: 24,
@@ -62,6 +67,13 @@ const styles = StyleSheet.create({
     ...theme.fonts.SemiBold,
     fontSize: 24 * width_ratio,
     color: '#4D495A',
+  },
+  setPushAlarmButton: {
+  },
+  setPushAlarmIcon: {
+    width: 26 * width_ratio,
+    height: 26 * width_ratio,
+    resizeMode: 'contain',
   },
   // infoBox: {
   //   backgroundColor: '#EBEFFE',
@@ -76,14 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20 * height_ratio,
   },
-  setPushAlarmButton: {
-    padding: 4 * width_ratio,
-  },
-  setPushAlarmIcon: {
-    width: 24 * width_ratio,
-    height: 24 * height_ratio,
-    resizeMode: 'contain',
-  },
+
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',

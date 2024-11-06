@@ -40,11 +40,15 @@ const CustomHeader = ({ title }) => {
     <View style={styles.headerContainer}>
       <TouchableOpacity onPress={handleBackPress} style={styles.leftButtonContainer}>
         <Image
-          source={require('../images/chevronArrowLeft.png')}
+          source={require('../images/back.png')}
           style={styles.leftButton}
         />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>{title}</Text>
+      <Image
+        source={require('../images/back.png')}
+        style={styles.leftButtonFake}
+      />
     </View>
   );
 };

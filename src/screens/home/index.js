@@ -128,9 +128,20 @@ const HomeScreen = () => {
         <Text style={styles.nextCheckupText1}>
           다음 키트 검사일까지 
         </Text>
-        <Text style={styles.nextCheckupText2}>
-          13일 남았어요 
-        </Text>
+        <View style={styles.lineWrapper}>
+          <Text style={styles.nextCheckupText2}>
+            13일 남았어요
+          </Text>
+          <TouchableOpacity 
+            style={styles.setPushAlarmButton} 
+            onPress={() => navigation.navigate('NoTabs', { screen: 'set_push_alarm' })}
+          >
+            <Image
+              source={require('../../images/home/gearIcon.png')}
+              style={styles.setPushAlarmIcon}
+            />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.infoBox}>
           {/* <View style={styles.infoTitleContainer}>
