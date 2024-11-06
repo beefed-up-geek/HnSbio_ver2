@@ -9,19 +9,13 @@ const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: �
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        backgroundColor: 'white',
-        paddingHorizontal: 16 * width_ratio,
-        paddingTop: 16 * height_ratio,
+        backgroundColor: '#f2f4ff', // Light blue background
       },
-      profileContainer: {
+      profileButton: {
+        paddingRight: 24,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
-        marginBottom: 16 * height_ratio,
-      },
-      profileButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
         height: 24 * height_ratio,
       },
       profileText: {
@@ -35,13 +29,26 @@ const styles = StyleSheet.create({
         height: 24 * height_ratio,
         resizeMode: 'contain',
       },
-      infoBox: {
-        backgroundColor: '#EBEFFE',
-        borderRadius: 8 * width_ratio,
-        padding: 24 * width_ratio,
-        marginBottom: 24 * height_ratio,
-        width: width - 32 * width_ratio,
+      character: {
       },
+      characterImage: {
+        width: '100%', // 화면 너비에 꽉 차게 설정
+        height: 303 * height_ratio,
+        resizeMode: 'contain', 
+      },
+      nextCheckupText: {
+        marginLeft: 24,
+        ...theme.fonts.SemiBold,
+        fontSize: 24 * width_ratio,
+        color: '#4D495A',
+      },
+      // infoBox: {
+      //   backgroundColor: '#EBEFFE',
+      //   borderRadius: 8 * width_ratio,
+      //   padding: 24 * width_ratio,
+      //   marginBottom: 24 * height_ratio,
+      //   width: width - 32 * width_ratio,
+      // },
       infoTitleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -92,6 +99,50 @@ const styles = StyleSheet.create({
         marginLeft: 11 * width_ratio,
         resizeMode: 'contain',
       },
+
+      resultsContainer: {
+        padding: 10,
+      },
+      pastResultGo: {
+        marginTop: 24 * height_ratio,
+        marginLeft: 28 * width_ratio,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 11 * height_ratio,
+      },
+      sectionTitle: {
+        ...theme.fonts.Medium,
+        fontSize: 16,
+        color: '#A2A1AD',
+      },
+      resultGoIcon: {
+        width: 16 * width_ratio,
+        height: 16 * width_ratio,
+      },
+      resultBoxContainer: {
+        paddingRight: 48,
+        marginLeft: 24 * width_ratio,
+        gap: 6,
+      },
+      resultBox: {
+        alignItems: 'center',
+        gap: 12 * height_ratio,
+        paddingHorizontal: 18 * width_ratio,
+        paddingVertical: 24 * height_ratio,
+        backgroundColor: 'white',
+        borderRadius: 18,
+      },
+      dateText: {
+        ...theme.fonts.Medium,
+        fontSize: 15 * width_ratio,
+        color: '#4A4A4F',
+      },
+      kitStatusImage: {
+        width: 68 * width_ratio,
+        height: 28 * width_ratio,
+      },
+
+
       roundedButtonBox: {
         backgroundColor: '#F5F7FB',
         borderRadius: 12 * width_ratio,

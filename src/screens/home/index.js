@@ -63,21 +63,30 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.profileContainer}>
-        <TouchableOpacity 
-            style={styles.profileButton}
-            onPress={() => navigation.navigate('NoTabs', { screen: 'my_profile' })}
-        >
-          <Text style={styles.profileText}>내 프로필</Text>
-          <Image
-            source={require('../../images/home/user.png')}
-            style={styles.profileIcon}
-          />
-        </TouchableOpacity>
+      <TouchableOpacity 
+          style={styles.profileButton}
+          onPress={() => navigation.navigate('NoTabs', { screen: 'my_profile' })}
+      >
+        <Text style={styles.profileText}>내 프로필</Text>
+        <Image
+          source={require('../../images/home/user.png')}
+          style={styles.profileIcon}
+        />
+      </TouchableOpacity>
+
+      <View style={styles.character}>
+        <Image
+          source={require('../../images/home/sampleimage.png')}
+          style={styles.characterImage}
+        />  
       </View>
 
+      <Text style={styles.nextCheckupText}>
+        다음 검사까지 13일 남았어요
+      </Text>
+
       <View style={styles.infoBox}>
-        <View style={styles.infoTitleContainer}>
+        {/* <View style={styles.infoTitleContainer}>
           <TouchableOpacity 
             style={styles.setPushAlarmButton} 
             onPress={() => navigation.navigate('NoTabs', { screen: 'set_push_alarm' })}
@@ -111,7 +120,62 @@ const HomeScreen = () => {
               style={styles.goIcon}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
+      </View>
+
+      <View style={styles.resultsContainer}>
+        <TouchableOpacity 
+              style={styles.pastResultGo} 
+              onPress={() => navigation.navigate('KitStack')}
+        >
+          <Text style={styles.sectionTitle}>지난 결과</Text>    
+          <Image
+            source={require('../../images/home/resultGo.png')}
+            style={styles.resultGoIcon}
+          />  
+        </TouchableOpacity>
+
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={styles.resultBoxContainer}
+        >
+          <View style={styles.resultBox}>
+            <Text style={styles.dateText}>10월 22일</Text>
+            <Image
+              source={require('../../images/home/abnormal.png')}
+              style={styles.kitStatusImage}
+            />  
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.dateText}>9월 24일</Text>
+            <Image
+              source={require('../../images/home/normal.png')}
+              style={styles.kitStatusImage}
+            /> 
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.dateText}>8월 27일</Text>
+            <Image
+              source={require('../../images/home/normal.png')}
+              style={styles.kitStatusImage}
+            /> 
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.dateText}>8월 27일</Text>
+            <Image
+              source={require('../../images/home/normal.png')}
+              style={styles.kitStatusImage}
+            /> 
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.dateText}>8월 27일</Text>
+            <Image
+              source={require('../../images/home/normal.png')}
+              style={styles.kitStatusImage}
+            /> 
+          </View>
+        </ScrollView>
       </View>
 
       <TouchableOpacity 
