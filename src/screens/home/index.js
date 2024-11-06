@@ -1,5 +1,5 @@
 // src/screens/home/index.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  Animated,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,6 +38,8 @@ const HomeScreen = () => {
     hyperlipidemia: 0,
     retinal_complication: 0,
   });
+
+  const characterOpacity = useState(new Animated.Value(1))[0];
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
@@ -69,6 +72,12 @@ const HomeScreen = () => {
       end={{ x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}
     >
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../images/home/logo.png')}
+          style={styles.logoImage}
+        />
+      </View>
       <ScrollView 
         contentContainerStyle={styles.container}
         scrollEventThrottle={16} 
@@ -77,9 +86,16 @@ const HomeScreen = () => {
           {
             useNativeDriver: false,
             listener: (event) => {
-              // 스크롤 위치에 따라 characterOpacity 변경
               const offsetY = event.nativeEvent.contentOffset.y;
-              characterOpacity.setValue(1 - Math.min(offsetY / 100, 1)); // 스크롤에 따라 투명도 변경
+              
+              // 처음에는 천천히 투명해지고, 스크롤이 더 많이 내려가면 빠르게 투명해지도록 조정
+              if (offsetY < 100) {
+                characterOpacity.setValue(1 - offsetY / 200); // 0 ~ 100까지 천천히 감소
+              } else if (offsetY >= 100 && offsetY < 300) {
+                characterOpacity.setValue(0.5 - (offsetY - 100) / 400); // 100 이후부터 더 빠르게 감소
+              } else {
+                characterOpacity.setValue(0); // 더 내려가면 완전히 투명
+              }
             }
           }
         )}
@@ -95,12 +111,12 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
 
-        <View style={styles.character}>
+        {/* <View style={styles.character}>
           <Image
             source={require('../../images/home/sampleimage.png')}
             style={styles.characterImage}
           />  
-        </View>
+        </View> */}
 
         <Animated.View style={[styles.character, { opacity: characterOpacity }]}>
           <Image
@@ -109,8 +125,11 @@ const HomeScreen = () => {
           />  
         </Animated.View>
 
-        <Text style={styles.nextCheckupText}>
-          다음 검사까지 13일 남았어요
+        <Text style={styles.nextCheckupText1}>
+          다음 키트 검사일까지 
+        </Text>
+        <Text style={styles.nextCheckupText2}>
+          13일 남았어요 
         </Text>
 
         <View style={styles.infoBox}>
@@ -190,14 +209,14 @@ const HomeScreen = () => {
               /> 
             </View>
             <View style={styles.resultBox}>
-              <Text style={styles.dateText}>8월 27일</Text>
+              <Text style={styles.dateText}>7월 30일</Text>
               <Image
                 source={require('../../images/home/normal.png')}
                 style={styles.kitStatusImage}
               /> 
             </View>
             <View style={styles.resultBox}>
-              <Text style={styles.dateText}>8월 27일</Text>
+              <Text style={styles.dateText}>7월 2일</Text>
               <Image
                 source={require('../../images/home/normal.png')}
                 style={styles.kitStatusImage}

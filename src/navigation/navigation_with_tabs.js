@@ -79,6 +79,7 @@ const CustomHeader = ({ title, leftIcon, onLeftPress, isHomeScreen }) => {
 
 const stackScreenOptions = ({ route, navigation }) => {
   return {
+    headerShown: false, // 기본 헤더를 숨깁니다.
     header: (props) => {
       const title = props.options.title || route.name;
       return (

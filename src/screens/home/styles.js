@@ -9,7 +9,18 @@ const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: �
 
 const styles = StyleSheet.create({
   gradient: {
-    flex: 1, // 화면 전체를 채우도록 설정
+    flex: 1,
+  },
+  logoContainer: {
+    height: 68 * height_ratio,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoImage: {
+    marginLeft: 24 * width_ratio,
+    width: 60 * width_ratio,
+    height: 30 * width_ratio,
+    resizeMode: 'contain',
   },
   container: {
     flexGrow: 1,
@@ -39,7 +50,14 @@ const styles = StyleSheet.create({
     height: 303 * height_ratio,
     resizeMode: 'contain', 
   },
-  nextCheckupText: {
+  nextCheckupText1: {
+    marginTop: 30,
+    marginLeft: 24,
+    ...theme.fonts.Regular,
+    fontSize: 24 * width_ratio,
+    color: '#4D495A',
+  },
+  nextCheckupText2: {
     marginLeft: 24,
     ...theme.fonts.SemiBold,
     fontSize: 24 * width_ratio,
@@ -97,10 +115,8 @@ const styles = StyleSheet.create({
     ...theme.fonts.Bold,
   },
 
-
   resultsContainer: {
-    padding: 10,
-    marginBottom: 28 * height_ratio,
+    marginBottom: 36 * height_ratio,
   },
   pastResultGo: {
     marginTop: 24 * height_ratio,
