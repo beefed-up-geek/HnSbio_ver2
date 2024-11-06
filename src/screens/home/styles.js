@@ -1,179 +1,216 @@
 // src/screens/home/index_styles.js
 
 import { StyleSheet, Dimensions } from 'react-native';
+
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
-const { width } = Dimensions.get('screen');
+
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        backgroundColor: '#f2f4ff', // Light blue background
-      },
-      profileButton: {
-        paddingRight: 24,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        height: 24 * height_ratio,
-      },
-      profileText: {
-        ...theme.fonts.Regular,
-        marginRight: 8 * width_ratio,
-        fontSize: 14 * width_ratio,
-        color: '#72777A',
-      },
-      profileIcon: {
-        width: 24 * width_ratio,
-        height: 24 * height_ratio,
-        resizeMode: 'contain',
-      },
-      character: {
-      },
-      characterImage: {
-        width: '100%', // 화면 너비에 꽉 차게 설정
-        height: 303 * height_ratio,
-        resizeMode: 'contain', 
-      },
-      nextCheckupText: {
-        marginLeft: 24,
-        ...theme.fonts.SemiBold,
-        fontSize: 24 * width_ratio,
-        color: '#4D495A',
-      },
-      // infoBox: {
-      //   backgroundColor: '#EBEFFE',
-      //   borderRadius: 8 * width_ratio,
-      //   padding: 24 * width_ratio,
-      //   marginBottom: 24 * height_ratio,
-      //   width: width - 32 * width_ratio,
-      // },
-      infoTitleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 20 * height_ratio,
-      },
-      setPushAlarmButton: {
-        padding: 4 * width_ratio,
-      },
-      setPushAlarmIcon: {
-        width: 24 * width_ratio,
-        height: 24 * height_ratio,
-        resizeMode: 'contain',
-      },
-      buttonContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      },
-      kitButton: {
-        backgroundColor: 'transparent',
-        borderRadius: 50 * width_ratio,
-        width: 50 * width_ratio,
-        height: 50 * width_ratio,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      testButton: {
-        backgroundColor: 'white',
-        borderColor: '#7596FF',
-        borderWidth: 1,
-        paddingVertical: 12 * height_ratio,
-        paddingLeft: 22 * width_ratio,
-        paddingRight: 20 * width_ratio,
-        borderRadius: 30 * width_ratio,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      buttonText: {
-        color: '#7596FF',
-        fontSize: 14 * width_ratio,
-        ...theme.fonts.Bold,
-      },
-      goIcon: {
-        width: 16 * width_ratio,
-        height: 16 * height_ratio,
-        marginLeft: 11 * width_ratio,
-        resizeMode: 'contain',
-      },
-
-      resultsContainer: {
-        padding: 10,
-      },
-      pastResultGo: {
-        marginTop: 24 * height_ratio,
-        marginLeft: 28 * width_ratio,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 11 * height_ratio,
-      },
-      sectionTitle: {
-        ...theme.fonts.Medium,
-        fontSize: 16,
-        color: '#A2A1AD',
-      },
-      resultGoIcon: {
-        width: 16 * width_ratio,
-        height: 16 * width_ratio,
-      },
-      resultBoxContainer: {
-        paddingRight: 48,
-        marginLeft: 24 * width_ratio,
-        gap: 6,
-      },
-      resultBox: {
-        alignItems: 'center',
-        gap: 12 * height_ratio,
-        paddingHorizontal: 18 * width_ratio,
-        paddingVertical: 24 * height_ratio,
-        backgroundColor: 'white',
-        borderRadius: 18,
-      },
-      dateText: {
-        ...theme.fonts.Medium,
-        fontSize: 15 * width_ratio,
-        color: '#4A4A4F',
-      },
-      kitStatusImage: {
-        width: 68 * width_ratio,
-        height: 28 * width_ratio,
-      },
+  gradient: {
+    flex: 1, // 화면 전체를 채우도록 설정
+  },
+  container: {
+    flexGrow: 1,
+  },
+  profileButton: {
+    paddingRight: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 24 * height_ratio,
+  },
+  profileText: {
+    ...theme.fonts.Regular,
+    marginRight: 8 * width_ratio,
+    fontSize: 14 * width_ratio,
+    color: '#72777A',
+  },
+  profileIcon: {
+    width: 24 * width_ratio,
+    height: 24 * height_ratio,
+    resizeMode: 'contain',
+  },
+  character: {
+  },
+  characterImage: {
+    width: '100%', // 화면 너비에 꽉 차게 설정
+    height: 303 * height_ratio,
+    resizeMode: 'contain', 
+  },
+  nextCheckupText: {
+    marginLeft: 24,
+    ...theme.fonts.SemiBold,
+    fontSize: 24 * width_ratio,
+    color: '#4D495A',
+  },
+  // infoBox: {
+  //   backgroundColor: '#EBEFFE',
+  //   borderRadius: 8 * width_ratio,
+  //   padding: 24 * width_ratio,
+  //   marginBottom: 24 * height_ratio,
+  //   width: width - 32 * width_ratio,
+  // },
+  infoTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20 * height_ratio,
+  },
+  setPushAlarmButton: {
+    padding: 4 * width_ratio,
+  },
+  setPushAlarmIcon: {
+    width: 24 * width_ratio,
+    height: 24 * height_ratio,
+    resizeMode: 'contain',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  kitButton: {
+    backgroundColor: 'transparent',
+    borderRadius: 50 * width_ratio,
+    width: 50 * width_ratio,
+    height: 50 * width_ratio,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testButton: {
+    backgroundColor: 'white',
+    borderColor: '#7596FF',
+    borderWidth: 1,
+    paddingVertical: 12 * height_ratio,
+    paddingLeft: 22 * width_ratio,
+    paddingRight: 20 * width_ratio,
+    borderRadius: 30 * width_ratio,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#7596FF',
+    fontSize: 14 * width_ratio,
+    ...theme.fonts.Bold,
+  },
 
 
-      roundedButtonBox: {
-        backgroundColor: '#F5F7FB',
-        borderRadius: 12 * width_ratio,
-        paddingVertical: 16 * height_ratio,
-        paddingHorizontal: 20 * width_ratio,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 16 * height_ratio,
-      },
-      boxText: {
-        fontSize: 16 * width_ratio,
-        ...theme.fonts.Bold,
-        color: '#333',
-      },
-      boxStatus: {
-        fontSize: 14 * width_ratio,
-        ...theme.fonts.SemiBold,
-        color: '#66CDAA',
-        backgroundColor: '#E6F9F2',
-        paddingVertical: 4 * height_ratio,
-        paddingHorizontal: 10 * width_ratio,
-        borderRadius: 12 * width_ratio,
-      },
-      boxSubText: {
-        fontSize: 14 * width_ratio,
-        color: '#888',
-      },
-      bottomSpacer: {
-        height: 100 * height_ratio,
-      },
+  resultsContainer: {
+    padding: 10,
+    marginBottom: 28 * height_ratio,
+  },
+  pastResultGo: {
+    marginTop: 24 * height_ratio,
+    marginLeft: 28 * width_ratio,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 11 * height_ratio,
+  },
+  sectionTitle: {
+    ...theme.fonts.Medium,
+    fontSize: 16,
+    color: '#A2A1AD',
+  },
+  resultGoIcon: {
+    width: 16 * width_ratio,
+    height: 16 * width_ratio,
+  },
+  resultBoxContainer: {
+    paddingRight: 48,
+    marginLeft: 24 * width_ratio,
+    gap: 6,
+  },
+  resultBox: {
+    alignItems: 'center',
+    gap: 12 * height_ratio,
+    paddingHorizontal: 18 * width_ratio,
+    paddingVertical: 24 * height_ratio,
+    backgroundColor: 'white',
+    borderRadius: 18,
+  },
+  dateText: {
+    ...theme.fonts.Medium,
+    fontSize: 15 * width_ratio,
+    color: '#4A4A4F',
+  },
+  kitStatusImage: {
+    width: 68 * width_ratio,
+    height: 28 * width_ratio,
+  },
+
+
+  roundedButtonBox: {
+    backgroundColor: 'white',
+    borderRadius: 24 * width_ratio,
+    marginHorizontal: 24 * width_ratio,
+    height: 99 * height_ratio,
+    paddingHorizontal: 24 * width_ratio,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8 * height_ratio,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12 * width_ratio,
+  },
+  bodyImage: {
+    width: 32 * width_ratio,
+    aspectRatio: 1,
+  },
+  boxText: {
+    fontSize: 16 * width_ratio,
+    ...theme.fonts.SemiBold,
+    color: '#4A4A4F',
+  },
+  CKDstage1Image: {
+    width: 49,
+    height: 28,
+    resizeMode: 'contain',
+  },
+  CKDstage2Image: {
+    width: 61,
+    height: 28,
+    resizeMode: 'contain',
+  },
+  CKDstage3Image: {
+    width: 49,
+    height: 28,
+    resizeMode: 'contain',
+  },
+  CKDstage4Image: {
+    width: 76,
+    height: 28,
+    resizeMode: 'contain',
+  },
+  goIcon: {
+    width: 26.93 * width_ratio,
+    height: 23 * height_ratio,
+    marginLeft: 0 * width_ratio,
+    resizeMode: 'contain',
+  },
+  checkImage: {
+    width: 36 * width_ratio,
+    aspectRatio: 1,
+    resizeMode: 'contain',
+  },
+  titleLines: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 4 * height_ratio,
+  },
+  boxSubText: {
+    fontSize: 12 * width_ratio,
+    ...theme.fonts.Light,
+    color: '#4A4A4F',
+  },
+  bottomSpacer: {
+    height: 100 * height_ratio,
+  },
 });
   
 export default styles;
