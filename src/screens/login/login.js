@@ -141,6 +141,7 @@ const Login2 = () => {
       setProviderId(result.providerId);
       setProvider('google');
       handleOpenInputBox();
+      console.log('google login pushed: ', providerId);
     }
   };
 
@@ -150,6 +151,7 @@ const Login2 = () => {
       setProviderId(result.providerId);
       setProvider('naver');
       handleOpenInputBox();
+      console.log('naver login pushed: ', providerId);
     }
   };
 
@@ -159,6 +161,7 @@ const Login2 = () => {
       setProviderId(result.providerId);
       setProvider('kakao');
       handleOpenInputBox();
+      console.log('kakao login pushed: ', providerId);
     }
   };
 

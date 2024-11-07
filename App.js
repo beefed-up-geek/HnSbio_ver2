@@ -1,8 +1,8 @@
 // /App.js
 import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import BottomNavigation from './src/navigation/navigation_with_tabs';
 import NavigationWithoutTabs from './src/navigation/navigation_without_tabs';
 import Login1 from './src/screens/login/index';
@@ -10,9 +10,10 @@ import Login2 from './src/screens/login/login';
 import GetKidneyInfo from './src/screens/login/get_kidney_info';
 import GetUserInfo from './src/screens/login/get_usr_info';
 import GetUnderlyingDiseaseInfo from './src/screens/login/get_underlying_disease_info';
-import {initializeKakaoSDK} from '@react-native-kakao/core';
-import {LogBox} from 'react-native';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
+import { LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,23 @@ const App = () => {
   useEffect(() => {
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
     LogBox.ignoreAllLogs();
+
+    const displayStoredUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          console.log('async-storage에 저장된 사용자 정보 가져옴!');
+          console.log('user: ',parsedData);
+         } else {
+          console.log('async-storage에 사용자 정보 없음...');
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    displayStoredUserData();
   }, []);
 
   return (
