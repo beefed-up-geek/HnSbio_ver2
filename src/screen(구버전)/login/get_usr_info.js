@@ -129,7 +129,9 @@ const Get_User_Info = () => {
       errorMessage += '생년월일 형식이 잘못되었습니다.\n';
     } else {
       if (year < currentYear - 150 || year > currentYear) {
-        errorMessage += `생년월일의 연도는 ${currentYear - 150}년에서 ${currentYear}년 사이여야 합니다.\n`;
+        errorMessage += `생년월일의 연도는 ${
+          currentYear - 150
+        }년에서 ${currentYear}년 사이여야 합니다.\n`;
       }
       if (month < 1 || month > 12) {
         errorMessage += '생년월일의 월은 01에서 12 사이여야 합니다.\n';
@@ -144,7 +146,14 @@ const Get_User_Info = () => {
       return;
     }
 
-    const userInfo = { name: trimmedName, nickname: trimmedNickname, birthdate, height, weight, gender };
+    const userInfo = {
+      name: trimmedName,
+      nickname: trimmedNickname,
+      birthdate,
+      height,
+      weight,
+      gender,
+    };
     try {
       await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
       console.log('<<< Get_User_Info화면 사용자 정보 저장됨 >>>');
@@ -231,16 +240,16 @@ const Get_User_Info = () => {
     }
 
     if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: yOffset, animated: true });
+      scrollViewRef.current.scrollTo({y: yOffset, animated: true});
     }
   };
-  
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView
-        ref = {scrollViewRef}
+        ref={scrollViewRef}
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
@@ -249,32 +258,32 @@ const Get_User_Info = () => {
           </Text>
 
           <View style={styles.genderWrapper}>
-  <Text style={styles.label}>성별</Text>
-  <View style={styles.genderContainer}>
-    <TouchableOpacity
-      onPress={() => setGender('female')}
-      style={styles.genderButton}>
-      <Image
-        source={require('../../images/login/female.png')}
-        style={[
-          styles.genderImageFemale,
-          gender !== 'female' && styles.desaturated,
-        ]}
-      />
-    </TouchableOpacity>
-    <TouchableOpacity
-      onPress={() => setGender('male')}
-      style={styles.genderButton}>
-      <Image
-        source={require('../../images/login/male.png')}
-        style={[
-          styles.genderImageMale,
-          gender !== 'male' && styles.desaturated,
-        ]}
-      />
-    </TouchableOpacity>
-  </View>
-</View>
+            <Text style={styles.label}>성별</Text>
+            <View style={styles.genderContainer}>
+              <TouchableOpacity
+                onPress={() => setGender('female')}
+                style={styles.genderButton}>
+                <Image
+                  source={require('../../images/login/female.png')}
+                  style={[
+                    styles.genderImageFemale,
+                    gender !== 'female' && styles.desaturated,
+                  ]}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setGender('male')}
+                style={styles.genderButton}>
+                <Image
+                  source={require('../../images/login/male.png')}
+                  style={[
+                    styles.genderImageMale,
+                    gender !== 'male' && styles.desaturated,
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
           <View style={styles.row}>
             <View style={styles.inputGroup}>
@@ -291,7 +300,9 @@ const Get_User_Info = () => {
                 onFocus={() => setNameTextAlign('left')}
                 onBlur={() => !name && setNameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => nicknameInputRef.current && nicknameInputRef.current.focus()} // 추가된 부분
+                onSubmitEditing={() =>
+                  nicknameInputRef.current && nicknameInputRef.current.focus()
+                } // 추가된 부분
                 returnKeyType="next" // 추가된 부분
               />
               {nameError ? (
@@ -312,7 +323,9 @@ const Get_User_Info = () => {
                 onFocus={() => setNicknameTextAlign('left')}
                 onBlur={() => !nickname && setNicknameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => birthdateInputRef.current && birthdateInputRef.current.focus()} // 추가된 부분
+                onSubmitEditing={() =>
+                  birthdateInputRef.current && birthdateInputRef.current.focus()
+                } // 추가된 부분
                 returnKeyType="next" // 추가된 부분
               />
               {nicknameError ? (
@@ -337,7 +350,9 @@ const Get_User_Info = () => {
               onFocus={() => setBirthdateTextAlign('left')}
               onBlur={() => !birthdate && setBirthdateTextAlign('center')}
               blurOnSubmit={false}
-              onSubmitEditing={() => heightInputRef.current && heightInputRef.current.focus()} // 추가된 부분
+              onSubmitEditing={() =>
+                heightInputRef.current && heightInputRef.current.focus()
+              } // 추가된 부분
               returnKeyType="next" // 추가된 부분
             />
           </View>
@@ -360,7 +375,9 @@ const Get_User_Info = () => {
                   onFocus={() => setHeightTextAlign('left')}
                   onBlur={() => !height && setHeightTextAlign('center')}
                   blurOnSubmit={false}
-                  onSubmitEditing={() => weightInputRef.current && weightInputRef.current.focus()} // 추가된 부분
+                  onSubmitEditing={() =>
+                    weightInputRef.current && weightInputRef.current.focus()
+                  } // 추가된 부분
                   returnKeyType="next" // 추가된 부분
                 />
                 <Text style={styles.unit}>cm</Text>
