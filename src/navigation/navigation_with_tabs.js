@@ -77,6 +77,7 @@ const stackScreenOptions = ({ route, navigation }) => {
   const leftIcon = require('../images/hns.png');
 
   return {
+    headerShown: false, // 기본 헤더를 숨깁니다.
     header: (props) => {
       const title = props.options.title || route.name;
       return (
