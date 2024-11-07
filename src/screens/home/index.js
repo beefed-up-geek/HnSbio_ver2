@@ -72,6 +72,7 @@ const HomeScreen = () => {
       end={{ x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}
     >
+      {/*홈 화면의 자체 헤더 주석처리한 부분*/}
       {/* <View style={styles.logoContainer}>
         <Image
           source={require('../../images/home/logo.png')}
