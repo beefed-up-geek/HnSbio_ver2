@@ -7,23 +7,23 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import styles from './navigation_without_tabs_styles';
 
 // Import your screen components
-import Health_checkup_specifics_screen from '../screens/health_checkup/health_checkup_specifics';
-import Health_checkup_screen from '../screens/health_checkup';
-import Daily_check_screen from '../screens/home/daily_check';
-import Home_screen from '../screens/home';
-import Kidney_info_screen from '../screens/home/kidney_info';
-import My_profile_screen from '../screens/home/my_profile';
-import Set_push_alarm_screen from '../screens/home/set_push_alarm';
-import Hospital_screen from '../screens/hospital';
-import Kit_screen from '../screens/kit';
-import Kit_guide_1_screen from '../screens/kit/kit_guide_1';
-import Kit_guide_2_screen from '../screens/kit/kit_guide_2';
-import Kit_test_screen from '../screens/kit/kit_test';
-import Medicine_screen from '../screens/medicine';
-import Medicine_specifics_screen from '../screens/medicine/medicine_specifics';
-import Authentication_1_screen from '../screens/health_checkup/authentication_1';
-import Authentication_2_screen from '../screens/health_checkup/authentication_2';
-import Authentication_3_screen from '../screens/health_checkup/authentication_3';
+import Health_checkup_specifics_screen from '../screens/health_checkup/health_checkup_specifics/index';
+import Health_checkup_screen from '../screens/health_checkup/index';
+import Daily_check_screen from '../screens/home/daily_check/index';
+import Home_screen from '../screens/home/index';
+import Kidney_info_screen from '../screens/home/kidney_info/index';
+import My_profile_screen from '../screens/home/my_profile/index';
+import Set_push_alarm_screen from '../screens/home/set_push_alarm/index';
+import Hospital_screen from '../screens/hospital/index';
+import Kit_screen from '../screens/kit/index';
+import Kit_guide_1_screen from '../screens/kit/kit_suide_1/index';
+import Kit_guide_2_screen from '../screens/kit/kit_guide_2/index';
+import Kit_test_screen from '../screens/kit/kit_test/index';
+import Medicine_screen from '../screens/medicine/index';
+import Medicine_specifics_screen from '../screens/medicine/medicine_specifics/index';
+import Authentication_1_screen from '../screens/health_checkup/authentication_1/index';
+import Authentication_2_screen from '../screens/health_checkup/authentication_2/index';
+import Authentication_3_screen from '../screens/health_checkup/authentication_3/index';
 
 const CustomHeader = ({ title }) => {
   const navigation = useNavigation();

@@ -72,12 +72,12 @@ const HomeScreen = () => {
       end={{ x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}
     >
-      <View style={styles.logoContainer}>
+      {/* <View style={styles.logoContainer}>
         <Image
           source={require('../../images/home/logo.png')}
           style={styles.logoImage}
         />
-      </View>
+      </View> */}
       <ScrollView 
         contentContainerStyle={styles.container}
         scrollEventThrottle={16} 
