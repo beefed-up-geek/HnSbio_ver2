@@ -82,7 +82,7 @@ const stackScreenOptions = ({ route, navigation }) => {
   const leftIcon = require('../images/hns.png');
 
   return {
-    //headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
+    headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
     header: (props) => {
       const title = props.options.title || route.name;
       return (
