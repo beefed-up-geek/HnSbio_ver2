@@ -239,7 +239,10 @@ const HomeScreen = () => {
               source={require('../../images/home/body.png')}
               style={styles.bodyImage}
             />
-            <Text style={styles.boxText}>만성콩팥병 위험도</Text>
+            <View style={styles.titleLines}>
+              <Text style={styles.boxText}>만성콩팥병 위험도</Text>
+              <Text style={styles.boxSubText}>2024.10.17 건강검진 결과 기준</Text>
+            </View>
           </View>
           <Image
             source={require('../../images/home/낮음.png')}

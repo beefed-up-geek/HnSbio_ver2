@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   boxSubText: {
     fontSize: 12 * width_ratio,
     ...theme.fonts.Light,
-    color: '#4A4A4F',
+    color: '#7F7F7F',
   },
   checkStatusImage: {
     width: 68 * width_ratio,
