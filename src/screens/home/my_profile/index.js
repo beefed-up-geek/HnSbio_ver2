@@ -111,7 +111,9 @@ const My_profile_screen = () => {
         />
       </View>
 
-      <TouchableOpacity style={styles.accountManagementContainer}>
+      <TouchableOpacity
+        style={styles.accountManagementContainer}
+        onPress={() => navigation.navigate('manage_account')}>
         <Image
           source={require('../../../images/home/gearIcon.png')}
           style={styles.settingsIcon}
@@ -250,7 +252,6 @@ const ModalComponent = ({
     </View>
   </Modal>
 );
-
 
 // 선택형 모달
 const SelectionModalComponent = ({

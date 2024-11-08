@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailLabel: {
+    ...theme.fonts.Regular,
     marginLeft: 24 * width_ratio,
     fontSize: 16,
     color: 'black',
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginTop: 10 * height_ratio,
+    marginVertical: 10 * height_ratio,
     marginHorizontal: 36 * width_ratio,
   },
   settingsIcon: {
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     alignItems: 'center',
-    marginTop: 32 * height_ratio,
+    marginTop: 22 * height_ratio,
   },
   saveButton: {
     width: '60%',
