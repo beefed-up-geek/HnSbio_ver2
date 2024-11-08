@@ -75,7 +75,7 @@ const My_profile_screen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Profile Details */}
+      {/* 각 행의 정보 */}
       <View style={styles.detailsContainer}>
         <DetailRow
           label="닉네임"
@@ -125,7 +125,7 @@ const My_profile_screen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Modals for each detail */}
+      {/* 각 행의 수정 모달 */}
       <ModalComponent
         visible={modalVisible.nickname}
         title="닉네임 변경"
@@ -209,6 +209,7 @@ const DetailRow = ({label, value, onPress, last}) => (
   </View>
 );
 
+// 사용자 입력형 모달
 const ModalComponent = ({
   visible,
   title,
@@ -250,6 +251,8 @@ const ModalComponent = ({
   </Modal>
 );
 
+
+// 선택형 모달
 const SelectionModalComponent = ({
   visible,
   title,
