@@ -39,8 +39,8 @@ const My_profile_screen = () => {
   });
 
   const handleChooseProfilePicture = async () => {
-    const options = { mediaType: 'photo', includeBase64: false };
-    ImagePicker.launchImageLibrary(options, (response) => {
+    const options = {mediaType: 'photo', includeBase64: false};
+    ImagePicker.launchImageLibrary(options, response => {
       if (response.assets && response.assets.length > 0) {
         const uri = response.assets[0].uri;
         setProfileImage(uri);
@@ -48,8 +48,8 @@ const My_profile_screen = () => {
     });
   };
 
-  const toggleModal = (field) => {
-    setModalVisible({ ...modalVisible, [field]: !modalVisible[field] });
+  const toggleModal = field => {
+    setModalVisible({...modalVisible, [field]: !modalVisible[field]});
   };
 
   return (
@@ -82,10 +82,7 @@ const My_profile_screen = () => {
           value={nickname}
           onPress={() => toggleModal('nickname')}
         />
-        <DetailRow
-          label="성별"
-          value="남자"
-        />
+        <DetailRow label="성별" value="남자" />
         <DetailRow
           label="생년월일"
           value={birthdate}
@@ -110,6 +107,7 @@ const My_profile_screen = () => {
           label="기저질환 정보"
           value={underlyingCondition}
           onPress={() => toggleModal('underlyingCondition')}
+          last
         />
       </View>
 
@@ -165,30 +163,41 @@ const My_profile_screen = () => {
         onClose={() => toggleModal('weight')}
         placeholder="몸무게를 입력하세요"
       />
-      <ModalComponent
+      <SelectionModalComponent
         visible={modalVisible.kidneyStatus}
-        title="콩팥병 상태 변경"
-        label="콩팥병 상태"
-        value={kidneyStatus}
-        setValue={setKidneyStatus}
+        title="만성콩팥병 진단을 받으셨나요?"
+        options={[
+          '해당사항 없음',
+          '만성콩팥병 (투석 전)',
+          '혈액투석 중',
+          '복막투석 중',
+          '신장 이식 받음',
+        ]}
+        selectedValue={kidneyStatus}
+        onSelect={value => {
+          setKidneyStatus(value);
+          toggleModal('kidneyStatus');
+        }}
         onClose={() => toggleModal('kidneyStatus')}
-        placeholder="콩팥병 상태를 입력하세요"
       />
-      <ModalComponent
+      <SelectionModalComponent
         visible={modalVisible.underlyingCondition}
-        title="기저질환 정보 변경"
-        label="기저질환 정보"
-        value={underlyingCondition}
-        setValue={setUnderlyingCondition}
+        title="어떤 기저질환이 있으신가요?"
+        options={['해당사항 없음', '고혈압', '당뇨', '고지혈증', '망막합병증']}
+        selectedValue={underlyingCondition}
+        onSelect={value => {
+          setUnderlyingCondition(value);
+          toggleModal('underlyingCondition');
+        }}
         onClose={() => toggleModal('underlyingCondition')}
-        placeholder="기저질환 정보를 입력하세요"
       />
     </View>
   );
 };
 
-const DetailRow = ({ label, value, onPress }) => (
-  <View style={styles.detailRow}>
+// 마지막 row는 last prop 사용하여 개별 스타일 적용할 수 있도록 함
+const DetailRow = ({label, value, onPress, last}) => (
+  <View style={last ? styles.detailLastRow : styles.detailRow}>
     <Text style={styles.detailLabel}>{label}</Text>
     <TouchableOpacity style={styles.textButtonWrapper} onPress={onPress}>
       <Text style={styles.detailValue}>{value}</Text>
@@ -214,13 +223,11 @@ const ModalComponent = ({
     animationType="slide"
     transparent={true}
     visible={visible}
-    onRequestClose={onClose}
-  >
+    onRequestClose={onClose}>
     <TouchableOpacity
       style={styles.modalVisibleBackground}
       activeOpacity={1}
-      onPress={onClose}
-    ></TouchableOpacity>
+      onPress={onClose}></TouchableOpacity>
     <View style={styles.modalContainer}>
       <Text style={styles.modalTitle}>{title}</Text>
       <View style={styles.inputContainer}>
@@ -233,6 +240,53 @@ const ModalComponent = ({
           value={value}
           onChangeText={setValue}
         />
+      </View>
+      <View style={styles.saveButtonContainer}>
+        <TouchableOpacity style={styles.saveButton} onPress={onClose}>
+          <Text style={styles.saveButtonText}>완료</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+);
+
+const SelectionModalComponent = ({
+  visible,
+  title,
+  options,
+  selectedValue,
+  onSelect,
+  onClose,
+}) => (
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={visible}
+    onRequestClose={onClose}>
+    <TouchableOpacity
+      style={styles.modalVisibleBackground}
+      activeOpacity={1}
+      onPress={onClose}></TouchableOpacity>
+    <View style={styles.modalContainer}>
+      <Text style={styles.modalTitle}>{title}</Text>
+      <View style={styles.optionContainer}>
+        {options.map(option => (
+          <TouchableOpacity
+            key={option}
+            style={[
+              styles.optionButton,
+              selectedValue === option && styles.selectedOptionButton,
+            ]}
+            onPress={() => onSelect(option)}>
+            <Text
+              style={[
+                styles.optionText,
+                selectedValue === option && styles.selectedOptionText,
+              ]}>
+              {option}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
       <View style={styles.saveButtonContainer}>
         <TouchableOpacity style={styles.saveButton} onPress={onClose}>

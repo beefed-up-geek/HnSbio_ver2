@@ -166,6 +166,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 5 * height_ratio,
   },
+  optionContainer: {
+    marginVertical: 20 * height_ratio,
+    gap: 8,
+  },
+  optionButton: {
+    height: 52 * height_ratio,
+    backgroundColor: '#F1F1F1',
+    borderRadius: 18,
+    paddingVertical: 15 * width_ratio,
+    alignItems: 'center',
+  },
+  selectedOptionButton: {
+    backgroundColor: '#EBEFFE',
+  },
+  optionText: {
+    ...theme.fonts.Regular,
+    fontSize: 15,
+    color: '#49494F',
+  },
+  selectedOptionText: {
+    color: '#7596FF',
+  },
 });
   
 export default styles;
