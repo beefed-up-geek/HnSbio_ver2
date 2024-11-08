@@ -1,4 +1,4 @@
-// src/screens/home/kidney_info.js
+// src/screens/home/kidney_info/index.js
  
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text } from 'react-native';

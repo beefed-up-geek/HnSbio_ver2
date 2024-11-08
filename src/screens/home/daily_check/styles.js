@@ -1,4 +1,4 @@
-// src/screens/home/daily_check_styles.js
+// src/screens/home/daily_check/styles.js
 
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
