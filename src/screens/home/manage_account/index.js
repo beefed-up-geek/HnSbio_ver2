@@ -1,10 +1,29 @@
 // src/screens/home/manage_account/index.js
 
 import React from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import styles from './styles';
 
 const ManageAccountScreen = () => {
+  const navigation = useNavigation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate('my_profile'); // Explicitly navigate back to my_profile
+        return true; // Prevent the default back action
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [navigation]),
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.detailsContainer}>

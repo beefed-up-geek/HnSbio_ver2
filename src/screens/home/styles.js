@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     height: 24 * height_ratio,
   },
   profileText: {
-    ...theme.fonts.Regular,
+    ...theme.fonts.Medium,
     marginRight: 8 * width_ratio,
     fontSize: 14 * width_ratio,
     color: '#72777A',
@@ -75,49 +75,18 @@ const styles = StyleSheet.create({
     height: 26 * width_ratio,
     resizeMode: 'contain',
   },
-  // infoBox: {
-  //   backgroundColor: '#EBEFFE',
-  //   borderRadius: 8 * width_ratio,
-  //   padding: 24 * width_ratio,
-  //   marginBottom: 24 * height_ratio,
-  //   width: width - 32 * width_ratio,
-  // },
-  infoTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20 * height_ratio,
-  },
-
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    alignSelf: 'center',
+    marginTop: 32 * height_ratio,
+    marginBottom: 32 * height_ratio,
+    gap: 4 * width_ratio, 
   },
-  kitButton: {
-    backgroundColor: 'transparent',
-    borderRadius: 50 * width_ratio,
-    width: 50 * width_ratio,
-    height: 50 * width_ratio,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  testButton: {
-    backgroundColor: 'white',
-    borderColor: '#7596FF',
-    borderWidth: 1,
-    paddingVertical: 12 * height_ratio,
-    paddingLeft: 22 * width_ratio,
-    paddingRight: 20 * width_ratio,
-    borderRadius: 30 * width_ratio,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#7596FF',
-    fontSize: 14 * width_ratio,
-    ...theme.fonts.Bold,
+  button: {
+    height: 54 * height_ratio,
+    width: 166 * height_ratio,
+    resizeMode: 'contain',
   },
 
   resultsContainer: {
@@ -162,13 +131,12 @@ const styles = StyleSheet.create({
     height: 28 * width_ratio,
   },
 
-
   roundedButtonBox: {
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
     marginHorizontal: 24 * width_ratio,
     height: 99 * height_ratio,
-    paddingHorizontal: 24 * width_ratio,
+    paddingHorizontal: 22 * width_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -228,6 +196,11 @@ const styles = StyleSheet.create({
     fontSize: 12 * width_ratio,
     ...theme.fonts.Light,
     color: '#4A4A4F',
+  },
+  checkStatusImage: {
+    width: 68 * width_ratio,
+    height: 28 * height_ratio,
+    resizeMode: 'contain',
   },
   bottomSpacer: {
     height: 100 * height_ratio,
