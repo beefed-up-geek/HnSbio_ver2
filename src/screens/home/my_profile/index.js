@@ -22,24 +22,34 @@ const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: �
 const My_profile_screen = () => {
   const navigation = useNavigation();
   const [profileImage, setProfileImage] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [nickname, setNickname] = useState('김콩팥');
+  const [birthdate, setBirthdate] = useState('1978.09.23');
+  const [height, setHeight] = useState('169');
+  const [weight, setWeight] = useState('62');
+  const [kidneyStatus, setKidneyStatus] = useState('해당사항 없음');
+  const [underlyingCondition, setUnderlyingCondition] = useState('당뇨');
+
+  const [modalVisible, setModalVisible] = useState({
+    nickname: false,
+    birthdate: false,
+    height: false,
+    weight: false,
+    kidneyStatus: false,
+    underlyingCondition: false,
+  });
 
   const handleChooseProfilePicture = async () => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-    ImagePicker.launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.assets && response.assets.length > 0) {
+    const options = { mediaType: 'photo', includeBase64: false };
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.assets && response.assets.length > 0) {
         const uri = response.assets[0].uri;
         setProfileImage(uri);
       }
     });
+  };
+
+  const toggleModal = (field) => {
+    setModalVisible({ ...modalVisible, [field]: !modalVisible[field] });
   };
 
   return (
@@ -51,7 +61,7 @@ const My_profile_screen = () => {
             style={styles.profileImage}></Image>
         ) : (
           <Image
-            source={require('../../images/home/my_profile/sampleProfile.png')}
+            source={require('../../../images/home/my_profile/sampleProfile.png')}
             style={styles.profileImage}
           />
         )}
@@ -59,7 +69,7 @@ const My_profile_screen = () => {
           style={styles.cameraIconContainer}
           onPress={handleChooseProfilePicture}>
           <Image
-            source={require('../../images/home/my_profile/camera.png')}
+            source={require('../../../images/home/my_profile/camera.png')}
             style={styles.cameraIcon}
           />
         </TouchableOpacity>
@@ -67,83 +77,45 @@ const My_profile_screen = () => {
 
       {/* Profile Details */}
       <View style={styles.detailsContainer}>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>닉네임</Text>
-          <TouchableOpacity
-            style={styles.textButtonWrapper}
-            onPress={() => setModalVisible(true)}>
-            <Text style={styles.detailValue}>김콩팥</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>성별</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>남성</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>생년월일</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>1978.09.23</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>키</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>169 cm</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>몸무게</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>62 kg</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>콩팥병 상태</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>해당사항 없음</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.detailLastRow}>
-          <Text style={styles.detailLabel}>기저질환 정보</Text>
-          <TouchableOpacity style={styles.textButtonWrapper}>
-            <Text style={styles.detailValue}>당뇨</Text>
-            <Image
-              source={require('../../images/home/my_profile/go.png')}
-              style={styles.goIcon}
-            />
-          </TouchableOpacity>
-        </View>
+        <DetailRow
+          label="닉네임"
+          value={nickname}
+          onPress={() => toggleModal('nickname')}
+        />
+        <DetailRow
+          label="성별"
+          value="남자"
+        />
+        <DetailRow
+          label="생년월일"
+          value={birthdate}
+          onPress={() => toggleModal('birthdate')}
+        />
+        <DetailRow
+          label="키"
+          value={`${height} cm`}
+          onPress={() => toggleModal('height')}
+        />
+        <DetailRow
+          label="몸무게"
+          value={`${weight} kg`}
+          onPress={() => toggleModal('weight')}
+        />
+        <DetailRow
+          label="콩팥병 상태"
+          value={kidneyStatus}
+          onPress={() => toggleModal('kidneyStatus')}
+        />
+        <DetailRow
+          label="기저질환 정보"
+          value={underlyingCondition}
+          onPress={() => toggleModal('underlyingCondition')}
+        />
       </View>
 
       <TouchableOpacity style={styles.accountManagementContainer}>
         <Image
-          source={require('../../images/home/gearIcon.png')}
+          source={require('../../../images/home/gearIcon.png')}
           style={styles.settingsIcon}
         />
         <Text style={styles.accountManagementText}>내 계정 관리</Text>
@@ -155,47 +127,120 @@ const My_profile_screen = () => {
         </TouchableOpacity>
       </View>
 
-      {modalVisible ? (
-        <View style={styles.modalOverlay}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}>
-            <TouchableOpacity
-              style={styles.modalVisibleBackground}
-              activeOpacity={1}
-              onPress={() => setModalVisible(false)} // Close modal on overlay tap
-            ></TouchableOpacity>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>닉네임 변경</Text>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>닉네임</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="6자리 이내로 입력"
-                  placeholderTextColor="#828287"
-                  maxLength={8}
-                  value={nickname}
-                  onChangeText={setNickname}
-                />
-                <Text style={styles.charCount}>{nickname.length}/8</Text>
-              </View>
-              <View style={styles.saveButtonContainer}>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={() => setModalVisible(false)}>
-                  <Text style={styles.saveButtonText}>완료</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </View>
-      ) : (
-        <View></View>
-      )}
+      {/* Modals for each detail */}
+      <ModalComponent
+        visible={modalVisible.nickname}
+        title="닉네임 변경"
+        label="닉네임"
+        value={nickname}
+        setValue={setNickname}
+        onClose={() => toggleModal('nickname')}
+        placeholder="6자리 이내로 입력"
+        maxLength={8}
+      />
+      <ModalComponent
+        visible={modalVisible.birthdate}
+        title="생년월일 변경"
+        label="생년월일"
+        value={birthdate}
+        setValue={setBirthdate}
+        onClose={() => toggleModal('birthdate')}
+        placeholder="YYYY/MM/DD"
+      />
+      <ModalComponent
+        visible={modalVisible.height}
+        title="키 변경"
+        label="키"
+        value={height}
+        setValue={setHeight}
+        onClose={() => toggleModal('height')}
+        placeholder="키를 입력하세요"
+      />
+      <ModalComponent
+        visible={modalVisible.weight}
+        title="몸무게 변경"
+        label="몸무게"
+        value={weight}
+        setValue={setWeight}
+        onClose={() => toggleModal('weight')}
+        placeholder="몸무게를 입력하세요"
+      />
+      <ModalComponent
+        visible={modalVisible.kidneyStatus}
+        title="콩팥병 상태 변경"
+        label="콩팥병 상태"
+        value={kidneyStatus}
+        setValue={setKidneyStatus}
+        onClose={() => toggleModal('kidneyStatus')}
+        placeholder="콩팥병 상태를 입력하세요"
+      />
+      <ModalComponent
+        visible={modalVisible.underlyingCondition}
+        title="기저질환 정보 변경"
+        label="기저질환 정보"
+        value={underlyingCondition}
+        setValue={setUnderlyingCondition}
+        onClose={() => toggleModal('underlyingCondition')}
+        placeholder="기저질환 정보를 입력하세요"
+      />
     </View>
   );
 };
+
+const DetailRow = ({ label, value, onPress }) => (
+  <View style={styles.detailRow}>
+    <Text style={styles.detailLabel}>{label}</Text>
+    <TouchableOpacity style={styles.textButtonWrapper} onPress={onPress}>
+      <Text style={styles.detailValue}>{value}</Text>
+      <Image
+        source={require('../../../images/home/my_profile/go.png')}
+        style={styles.goIcon}
+      />
+    </TouchableOpacity>
+  </View>
+);
+
+const ModalComponent = ({
+  visible,
+  title,
+  label,
+  value,
+  setValue,
+  onClose,
+  placeholder,
+  maxLength,
+}) => (
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={visible}
+    onRequestClose={onClose}
+  >
+    <TouchableOpacity
+      style={styles.modalVisibleBackground}
+      activeOpacity={1}
+      onPress={onClose}
+    ></TouchableOpacity>
+    <View style={styles.modalContainer}>
+      <Text style={styles.modalTitle}>{title}</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>{label}</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder={placeholder}
+          placeholderTextColor="#828287"
+          maxLength={maxLength}
+          value={value}
+          onChangeText={setValue}
+        />
+      </View>
+      <View style={styles.saveButtonContainer}>
+        <TouchableOpacity style={styles.saveButton} onPress={onClose}>
+          <Text style={styles.saveButtonText}>완료</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+);
 
 export default My_profile_screen;
