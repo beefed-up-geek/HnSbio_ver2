@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.8,
     borderBottomColor: '#E9E9E9',
   },
   leftButton: {
