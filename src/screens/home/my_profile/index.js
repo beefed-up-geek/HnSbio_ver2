@@ -1,4 +1,4 @@
-// src/screens/home/my_profile.js
+// src/screens/home/my_profile/index.js
 
 import {useState} from 'react';
 import {

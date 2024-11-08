@@ -1,4 +1,4 @@
-// src/screens/home/index_styles.js
+// src/screens/home/styles.js
 
 import { StyleSheet, Dimensions } from 'react-native';
 

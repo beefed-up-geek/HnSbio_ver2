@@ -1,4 +1,4 @@
-// src/screens/home/daily_check.js
+// src/screens/home/daily_check/index.js
 
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text } from 'react-native';
