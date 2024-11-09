@@ -1,5 +1,4 @@
 // src/navigation/navigation_with_tabs.js
-
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -25,7 +24,7 @@ import My_profile_screen from '../screens/home/my_profile/index';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm/index';
 import Hospital_screen from '../screens/hospital/index';
 import Kit_screen from '../screens/kit/index';
-import Kit_guide_1_screen from '../screens/kit/kit_suide_1/index';
+import Kit_guide_1_screen from '../screens/kit/kit_guide_1/index';
 import Kit_guide_2_screen from '../screens/kit/kit_guide_2/index';
 import Kit_test_screen from '../screens/kit/kit_test/index';
 import Medicine_screen from '../screens/medicine/index';

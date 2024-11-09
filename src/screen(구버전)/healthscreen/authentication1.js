@@ -1,6 +1,4 @@
 // src/screen(구버전)/healthscreen/authentication1.js
-// src/screen/healthscreen/authentication1.js
-// /src/screen/healthscreen/authentication1.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { useNavigation, useRoute  } from '@react-navigation/native';

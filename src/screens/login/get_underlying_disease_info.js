@@ -80,6 +80,14 @@ const GetUnderlyingDiseaseInfo = () => {
 
   const allAgreed = agreements.every(Boolean); // Check if all agreements are checked
 
+  const getFormattedDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  };
+
   const handleAgreeAndProceed = async () => {
     const hypertension = selectedOptions.includes('고혈압') ? 1 : 0;
     const diabetes = selectedOptions.includes('당뇨') ? 1 : 0;
@@ -96,12 +104,14 @@ const GetUnderlyingDiseaseInfo = () => {
       provider,
       providerId,
       chronic_kidney_disease,
+      createdAt: getFormattedDate(),
       underlying_disease: {
         hypertension,
         diabetes,
         hyperlipidemia,
         retinal_complication,
       },
+      profile_image: "default",
     };
 
     try {

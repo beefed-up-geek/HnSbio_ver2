@@ -27,25 +27,23 @@ const Get_User_Info = () => {
 
   // Destructure initial values from route.params
   const {
-    name: initialName = '',
-    birthdate: initialBirthdate = '',
     provider,
     providerId,
   } = route.params || {};
 
   // State variables initialized with received values
-  const [name, setName] = useState(initialName);
+  const [name, setName] = useState('');
   const [nickname, setNickname] = useState('');
-  const [birthdate, setBirthdate] = useState(initialBirthdate);
+  const [birthdate, setBirthdate] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [nameError, setNameError] = useState('');
   const [nicknameError, setNicknameError] = useState('');
-  const [nameTextAlign, setNameTextAlign] = useState(initialName ? 'left' : 'center');
+  const [nameTextAlign, setNameTextAlign] = useState('center');
   const [nicknameTextAlign, setNicknameTextAlign] = useState('center');
-  const [birthdateTextAlign, setBirthdateTextAlign] = useState(initialBirthdate ? 'left' : 'center');
+  const [birthdateTextAlign, setBirthdateTextAlign] = useState('center');
   const [heightTextAlign, setHeightTextAlign] = useState('center');
   const [weightTextAlign, setWeightTextAlign] = useState('center');
 
@@ -60,7 +58,7 @@ const Get_User_Info = () => {
   useEffect(() => {
     // Form 유효성 검사
     validateForm();
-  }, [name, nickname, birthdate, height, weight, gender, initialBirthdate]);
+  }, [name, nickname, birthdate, height, weight, gender, birthdate]);
   
 
   const validateForm = () => {
