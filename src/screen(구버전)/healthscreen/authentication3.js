@@ -1,5 +1,4 @@
 // src/screen(구버전)/healthscreen/authentication3.js
-// src/screen/healthscreen/authentication3.js
 import React, { useState, useEffect } from 'react';
 import {
   View,

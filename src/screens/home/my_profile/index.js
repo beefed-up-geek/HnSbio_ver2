@@ -1,6 +1,6 @@
 // src/screens/home/my_profile/index.js
 
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,26 +12,28 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
-import theme from '../../../theme'; // 개발 규칙: 폰트 적용
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import theme from '../../../theme'; // Custom theme settings
+import styles from './styles.js'; // Stylesheet
 
-const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
-const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+const width_ratio = Dimensions.get('screen').width / 390;
+const height_ratio = Dimensions.get('screen').height / 844;
 
 const My_profile_screen = () => {
   const navigation = useNavigation();
+  const [name, setName] = useState('');
+  const [providerId, setProviderId] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [nickname, setNickname] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
+  const [genderAsync, setGenderAsync] = useState('');
   const [kidneyStatus, setKidneyStatus] = useState('해당사항 없음');
   const [underlyingCondition, setUnderlyingCondition] = useState([]);
 
@@ -44,28 +46,18 @@ const My_profile_screen = () => {
     underlyingCondition: false,
   });
 
-  const [selectedDate, setSelectedDate] = useState(new Date()); // State to hold the selected date
-
   useEffect(() => {
     const loadUserData = async () => {
       try {
         const userData = await AsyncStorage.getItem('user');
         if (userData != null) {
           const user = JSON.parse(userData);
-
+          setProviderId(user.providerId || '');
+          setName(user.name || '');
+          setGenderAsync(user.gender || '');
           setNickname(user.nickname || '');
           if (user.birthdate) {
-            const formattedBirthdate = user.birthdate.replace(/\//g, '.');
-            setBirthdate(formattedBirthdate);
-
-            // Parse birthdate and set selectedDate
-            const dateParts = formattedBirthdate.split('.');
-            if (dateParts.length === 3) {
-              const year = parseInt(dateParts[0], 10);
-              const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
-              const day = parseInt(dateParts[2], 10);
-              setSelectedDate(new Date(year, month, day));
-            }
+            setBirthdate(user.birthdate); // Keep the format 'YYYY/MM/DD'
           }
 
           setHeight(user.height || '');
@@ -76,7 +68,7 @@ const My_profile_screen = () => {
             setProfileImage(user.profileImage);
           }
 
-          // 기저질환 처리
+          // Handle underlying diseases
           const underlyingDiseases = [];
           if (user.underlying_disease) {
             const diseaseMap = {
@@ -85,7 +77,7 @@ const My_profile_screen = () => {
               hyperlipidemia: '고지혈증',
               retinal_complication: '망막합병증',
             };
-            Object.keys(user.underlying_disease).forEach(disease => {
+            Object.keys(user.underlying_disease).forEach((disease) => {
               if (user.underlying_disease[disease]) {
                 underlyingDiseases.push(diseaseMap[disease]);
               }
@@ -102,8 +94,8 @@ const My_profile_screen = () => {
   }, []);
 
   const handleChooseProfilePicture = async () => {
-    const options = {mediaType: 'photo', includeBase64: false};
-    ImagePicker.launchImageLibrary(options, response => {
+    const options = { mediaType: 'photo', includeBase64: false };
+    ImagePicker.launchImageLibrary(options, (response) => {
       if (response.assets && response.assets.length > 0) {
         const uri = response.assets[0].uri;
         setProfileImage(uri);
@@ -111,17 +103,22 @@ const My_profile_screen = () => {
     });
   };
 
-  const toggleModal = field => {
-    setModalVisible({...modalVisible, [field]: !modalVisible[field]});
-    // 생년월일 모달을 열 때 selectedDate를 사용자의 생일로 설정할 필요 없음 (이미 설정됨)
+  const toggleModal = (field) => {
+    setModalVisible((prevState) => ({ ...prevState, [field]: !prevState[field] }));
+  };
+
+  const closeModal = (field) => {
+    setModalVisible((prevState) => ({ ...prevState, [field]: false }));
   };
 
   const saveUserData = async () => {
     try {
       const userData = {
-        providerId: 'your_provider_id', // 적절히 providerId를 설정해주세요
+        providerId,
+        name,
+        gender: genderAsync,
         nickname,
-        birthdate: birthdate.replace(/\./g, '/'), // 'YYYY/MM/DD' 형식으로 변환
+        birthdate, // Already in 'YYYY/MM/DD' format
         height,
         weight,
         chronic_kidney_disease: kidneyStatus,
@@ -134,7 +131,7 @@ const My_profile_screen = () => {
         },
       };
 
-      // 사용자 정보 업데이트 API 호출
+      // Update user information via API call
       await axios.put('http://54.79.61.80:5000/user_info/updateUser', userData, {
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +151,7 @@ const My_profile_screen = () => {
       <View style={styles.profileImageContainer}>
         {profileImage ? (
           <Image
-            source={{uri: profileImage}}
+            source={{ uri: profileImage }}
             style={styles.profileImage}></Image>
         ) : (
           <Image
@@ -172,7 +169,7 @@ const My_profile_screen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 각 행의 정보 */}
+      {/* User details */}
       <View style={styles.detailsContainer}>
         <DetailRow
           label="닉네임"
@@ -182,7 +179,7 @@ const My_profile_screen = () => {
         <DetailRow label="성별" value={gender} />
         <DetailRow
           label="생년월일"
-          value={birthdate}
+          value={birthdate.replace(/\//g, '.')}
           onPress={() => toggleModal('birthdate')}
         />
         <DetailRow
@@ -228,35 +225,34 @@ const My_profile_screen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 각 행의 수정 모달 */}
+      {/* Modals for editing details */}
       <ModalComponent
         visible={modalVisible.nickname}
         title="닉네임 변경"
         label="닉네임"
         value={nickname}
         setValue={setNickname}
-        onClose={() => toggleModal('nickname')}
+        onClose={() => closeModal('nickname')}
         placeholder="6자리 이내로 입력"
         maxLength={8}
       />
-      {/* 생년월일 모달 */}
-      <DatePickerModal
+
+      {/* Updated Modal for Birthdate Input */}
+      <BirthdateModal
         visible={modalVisible.birthdate}
         title="생년월일 변경"
-        date={selectedDate}
-        setDate={setSelectedDate}
-        setBirthdate={setBirthdate}
-        onClose={() => {
-          toggleModal('birthdate');
-        }}
+        value={birthdate}
+        setValue={setBirthdate}
+        onClose={() => closeModal('birthdate')}
       />
+
       <ModalComponent
         visible={modalVisible.height}
         title="키 변경"
         label="키"
         value={height}
         setValue={setHeight}
-        onClose={() => toggleModal('height')}
+        onClose={() => closeModal('height')}
         placeholder="키를 입력하세요"
       />
       <ModalComponent
@@ -265,7 +261,7 @@ const My_profile_screen = () => {
         label="몸무게"
         value={weight}
         setValue={setWeight}
-        onClose={() => toggleModal('weight')}
+        onClose={() => closeModal('weight')}
         placeholder="몸무게를 입력하세요"
       />
       <SelectionModalComponent
@@ -279,28 +275,27 @@ const My_profile_screen = () => {
           '신장 이식 받음',
         ]}
         selectedValue={kidneyStatus}
-        onSelect={value => {
+        onSelect={(value) => {
           setKidneyStatus(value);
         }}
-        onClose={() => toggleModal('kidneyStatus')}
+        onClose={() => closeModal('kidneyStatus')}
       />
       <SelectionModalComponent
         visible={modalVisible.underlyingCondition}
         title="어떤 기저질환이 있으신가요?"
         options={['해당사항 없음', '고혈압', '당뇨', '고지혈증', '망막합병증']}
         selectedValue={underlyingCondition}
-        onSelect={value => {
+        onSelect={(value) => {
           setUnderlyingCondition(value);
         }}
-        onClose={() => toggleModal('underlyingCondition')}
-        multiple={true} // 다중 선택 가능하도록 설정
+        onClose={() => closeModal('underlyingCondition')}
+        multiple={true}
       />
     </View>
   );
 };
 
-// 마지막 row는 last prop 사용하여 개별 스타일 적용할 수 있도록 함
-const DetailRow = ({label, value, onPress, last}) => (
+const DetailRow = ({ label, value, onPress, last }) => (
   <View style={last ? styles.detailLastRow : styles.detailRow}>
     <Text style={styles.detailLabel}>{label}</Text>
     <TouchableOpacity style={styles.textButtonWrapper} onPress={onPress}>
@@ -315,7 +310,6 @@ const DetailRow = ({label, value, onPress, last}) => (
   </View>
 );
 
-// 사용자 입력형 모달
 const ModalComponent = ({
   visible,
   title,
@@ -346,7 +340,9 @@ const ModalComponent = ({
           maxLength={maxLength}
           value={value}
           onChangeText={setValue}
-          keyboardType={label === '키' || label === '몸무게' ? 'numeric' : 'default'}
+          keyboardType={
+            label === '키' || label === '몸무게' ? 'numeric' : 'default'
+          }
         />
       </View>
       <View style={styles.modalSaveButtonContainer}>
@@ -358,44 +354,27 @@ const ModalComponent = ({
   </Modal>
 );
 
-// 생년월일 선택 모달 컴포넌트
-const DatePickerModal = ({
-  visible,
-  title,
-  date,
-  setDate,
-  setBirthdate,
-  onClose,
-}) => {
-  const [tempDate, setTempDate] = useState(date);
+const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
+  // Split the birthdate into year, month, and day
+  const [year, setYear] = useState('');
+  const [month, setMonth] = useState('');
+  const [day, setDay] = useState('');
 
   useEffect(() => {
-    if (visible) {
-      setTempDate(date);
+    if (visible && value) {
+      const parts = value.split('/');
+      setYear(parts[0] || '');
+      setMonth(parts[1] || '');
+      setDay(parts[2] || '');
     }
-  }, [visible, date]);
+  }, [visible, value]);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || tempDate;
-    setTempDate(currentDate);
-    if (Platform.OS === 'android') {
-      const formattedDate = `${currentDate.getFullYear()}.${(
-        '0' +
-        (currentDate.getMonth() + 1)
-      ).slice(-2)}.${('0' + currentDate.getDate()).slice(-2)}`;
-      setBirthdate(formattedDate);
-      setDate(currentDate);
-      onClose();
-    }
-  };
-
-  const handleConfirm = () => {
-    const formattedDate = `${tempDate.getFullYear()}.${(
-      '0' +
-      (tempDate.getMonth() + 1)
-    ).slice(-2)}.${('0' + tempDate.getDate()).slice(-2)}`;
-    setBirthdate(formattedDate);
-    setDate(tempDate);
+  const handleComplete = () => {
+    const formattedYear = year.padStart(4, '0');
+    const formattedMonth = month.padStart(2, '0');
+    const formattedDay = day.padStart(2, '0');
+    const newBirthdate = `${formattedYear}/${formattedMonth}/${formattedDay}`;
+    setValue(newBirthdate);
     onClose();
   };
 
@@ -411,28 +390,49 @@ const DatePickerModal = ({
         onPress={onClose}></TouchableOpacity>
       <View style={styles.modalContainer}>
         <Text style={styles.modalTitle}>{title}</Text>
-        <DateTimePicker
-          value={tempDate}
-          mode="date"
-          display="spinner"
-          onChange={onChange}
-          maximumDate={new Date()}
-          style={{width: '100%'}}
-        />
-        {/* iOS의 경우 완료 버튼 제공 */}
-        {Platform.OS === 'ios' && (
-          <View style={styles.modalSaveButtonContainer}>
-            <TouchableOpacity style={styles.saveButton} onPress={handleConfirm}>
-              <Text style={styles.saveButtonText}>완료</Text>
-            </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <View style={styles.birthdateInputRow}>
+            <TextInput
+              style={styles.birthdateInput}
+              placeholder="년(4자리)"
+              placeholderTextColor="#828287"
+              maxLength={4}
+              value={year}
+              onChangeText={setYear}
+              keyboardType="numeric"
+            />
+            <Text style={styles.birthdateSeparator}>/</Text>
+            <TextInput
+              style={styles.birthdateInput}
+              placeholder="월(2자리)"
+              placeholderTextColor="#828287"
+              maxLength={2}
+              value={month}
+              onChangeText={setMonth}
+              keyboardType="numeric"
+            />
+            <Text style={styles.birthdateSeparator}>/</Text>
+            <TextInput
+              style={styles.birthdateInput}
+              placeholder="일(2자리)"
+              placeholderTextColor="#828287"
+              maxLength={2}
+              value={day}
+              onChangeText={setDay}
+              keyboardType="numeric"
+            />
           </View>
-        )}
+        </View>
+        <View style={styles.modalSaveButtonContainer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleComplete}>
+            <Text style={styles.saveButtonText}>완료</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
 };
 
-// 선택형 모달
 const SelectionModalComponent = ({
   visible,
   title,
@@ -452,18 +452,18 @@ const SelectionModalComponent = ({
     }
   }, [visible, selectedValue]);
 
-  const handleOptionPress = option => {
+  const handleOptionPress = (option) => {
     if (multiple) {
       if (option === '해당사항 없음') {
         setTempSelectedValue(['해당사항 없음']);
       } else {
         let newSelection = [...tempSelectedValue];
 
-        // '해당사항 없음' 제거
-        newSelection = newSelection.filter(item => item !== '해당사항 없음');
+        // Remove '해당사항 없음'
+        newSelection = newSelection.filter((item) => item !== '해당사항 없음');
 
         if (newSelection.includes(option)) {
-          newSelection = newSelection.filter(item => item !== option);
+          newSelection = newSelection.filter((item) => item !== option);
         } else {
           newSelection.push(option);
         }
@@ -492,7 +492,7 @@ const SelectionModalComponent = ({
       <View style={styles.modalContainer}>
         <Text style={styles.modalTitle}>{title}</Text>
         <View style={styles.optionContainer}>
-          {options.map(option => (
+          {options.map((option) => (
             <TouchableOpacity
               key={option}
               style={[

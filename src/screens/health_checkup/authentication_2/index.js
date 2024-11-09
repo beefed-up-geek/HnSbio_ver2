@@ -5,22 +5,15 @@ import {
   View,
   Image,
   Text,
-  StyleSheet,
   TextInput,
   ScrollView,
   TouchableOpacity,
   Modal,
-  Dimensions,
-  Alert,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
-import theme from '../../../theme';
+import styles from './styles.js'; // 스타일 불러오기
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const width_ratio = Dimensions.get('screen').width / 390;
-const height_ratio = Dimensions.get('screen').height / 844;
 
 const telecomOptions = [
   'SKT',
@@ -35,7 +28,7 @@ const Authentication_2_screen = () => {
   const [name, setName] = useState(''); // 이름
   const [birthdate, setBirthdate] = useState(''); // 생년월일
   const [phoneNumber, setPhoneNumber] = useState(''); // 전화번호
-  const [selectedTelecom, setSelectedTelecom] = useState(''); // Selected Telecom을 빈 문자열로 초기화
+  const [selectedTelecom, setSelectedTelecom] = useState('');
   const [nameFocused, setNameFocused] = useState(false);
   const [birthdateFocused, setBirthdateFocused] = useState(false);
   const [phoneNumberFocused, setPhoneNumberFocused] = useState(false);
@@ -45,27 +38,50 @@ const Authentication_2_screen = () => {
   const [telecomModalVisible, setTelecomModalVisible] = useState(false);
 
   const route = useRoute();
-  const { selectedValue, selectedLabel, selectedImage, fetchData } = route.params; // fetchData 받음
+  const { selectedValue, selectedLabel, selectedImage, fetchData } = route.params;
   const navigation = useNavigation();
 
-  const [userId, setUserId] = useState(null);
-  
+  const [providerId, setProviderId] = useState(null);
+
   useEffect(() => {
-    const getUserId = async () => {
+    const getProviderData = async () => {
       try {
-        const storedUserId = await AsyncStorage.getItem('userId');
-        if (storedUserId) {
-          console.log('userId를 성공적으로 가져옴:', storedUserId);
-          setUserId(storedUserId);
+        const userDataString = await AsyncStorage.getItem('user');
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          const { providerId, birthdate, name } = userData;
+
+          if (providerId) {
+            console.log('providerId를 성공적으로 가져옴:', providerId);
+            setProviderId(providerId);
+          } else {
+            console.log('providerId가 존재하지 않음');
+          }
+
+          if (birthdate) {
+            console.log('birthdate를 성공적으로 가져옴:', birthdate);
+            // 생년월일을 'YYYYMMDD' 형식으로 변환
+            const processedBirthdate = birthdate.replace(/[^0-9]/g, '').slice(0, 8);
+            setBirthdate(processedBirthdate);
+          } else {
+            console.log('birthdate가 존재하지 않음');
+          }
+
+          if (name) {
+            console.log('name을 성공적으로 가져옴:', name);
+            setName(name.slice(0, 8));
+          } else {
+            console.log('name이 존재하지 않음');
+          }
         } else {
-          console.log('userId가 존재하지 않음');
+          console.log('user 데이터가 존재하지 않음');
         }
       } catch (error) {
-        console.error('userId를 가져오는 중 오류 발생:', error);
+        console.error('데이터를 가져오는 중 오류 발생:', error);
       }
     };
 
-    getUserId();
+    getProviderData();
   }, []);
 
   const isValidBirthdate = (birthdate) => {
@@ -90,19 +106,19 @@ const Authentication_2_screen = () => {
 
   useEffect(() => {
     if (
-      name.length > 0 && // 이름이 입력되었는지 확인
-      isValidBirthdate(birthdate) && // 유효한 생년월일인지 확인
-      isValidPhoneNumber(phoneNumber) && // 유효한 휴대폰 번호인지 확인
+      name.length > 0 &&
+      isValidBirthdate(birthdate) &&
+      isValidPhoneNumber(phoneNumber) &&
       !birthdateError &&
       !phoneNumberError &&
-      selectedTelecom.length > 0 // 통신사가 선택되었는지 확인
+      selectedTelecom.length > 0
     ) {
       setFormValid(true);
     } else {
       setFormValid(false);
     }
   }, [
-    userId,
+    providerId,
     name,
     birthdate,
     phoneNumber,
@@ -116,8 +132,8 @@ const Authentication_2_screen = () => {
 
     if (!formValid) {
       console.log('폼이 유효하지 않음.');
+      return;
     }
-    if (!formValid) return;
 
     let telecom = '';
     if (selectedTelecom === 'KT' || selectedTelecom === '알뜰폰 (KT)') {
@@ -136,12 +152,12 @@ const Authentication_2_screen = () => {
 
     try {
       const request_data = {
-        providerId: userId,
+        providerId: providerId,
         userName: name,
         identity: birthdate,
         phoneNo: phoneNumber,
         telecom: telecom,
-        loginTypeLevel: selectedValue.toString(), // loginTypeLevel을 문자열로 변환
+        loginTypeLevel: selectedValue.toString(),
       };
       console.log(request_data);
       const response = await axios.post(
@@ -151,9 +167,8 @@ const Authentication_2_screen = () => {
       console.log(response.data);
       const { result, data } = response.data;
       if (result.code === 'CF-03002') {
-        
         navigation.navigate('authentication_3', {
-          providerId: userId,
+          providerId: providerId,
           jti: data.jti,
           twoWayTimestamp: data.twoWayTimestamp,
           name: name,
@@ -163,7 +178,7 @@ const Authentication_2_screen = () => {
           loginTypeLevel: selectedValue.toString(),
           selectedLabel: selectedLabel,
           selectedImage: selectedImage,
-          fetchData
+          fetchData,
         });
       } else {
         setBirthdateError(true);
@@ -171,9 +186,8 @@ const Authentication_2_screen = () => {
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        //Alert.alert('API 호출 에러', '더미 데이터로 대체합니다.');
         navigation.navigate('authentication_3', {
-          providerId: userId,
+          providerId: providerId,
           jti: 'dummyJti',
           twoWayTimestamp: Date.now().toString(),
           name: name,
@@ -183,7 +197,7 @@ const Authentication_2_screen = () => {
           loginTypeLevel: selectedValue.toString(),
           selectedLabel: selectedLabel,
           selectedImage: selectedImage,
-          fetchData
+          fetchData,
         });
       } else {
         console.error(error);
@@ -198,14 +212,6 @@ const Authentication_2_screen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}>
-        <Image
-          source={require('../../../images/chevronArrowLeft.png')}
-          style={styles.backButtonImage}
-        />
-      </TouchableOpacity> */}
       <Text style={styles.title}>개인정보 입력</Text>
       <Text style={styles.subtitle}>
         본인인증을 진행하기 위해 개인정보를 입력해주세요.
@@ -224,7 +230,7 @@ const Authentication_2_screen = () => {
             onChangeText={(text) => setName(text.slice(0, 8))}
             placeholder={!nameFocused ? '이름 입력' : ''}
             placeholderTextColor="#777"
-            maxLength={8} // Set max length to 8
+            maxLength={8}
             onFocus={() => setNameFocused(true)}
             onBlur={() => setNameFocused(false)}
           />
@@ -247,7 +253,7 @@ const Authentication_2_screen = () => {
             placeholder={!birthdateFocused ? '생년월일' : ''}
             keyboardType="numeric"
             placeholderTextColor="#777"
-            maxLength={8} // Set max length to 8
+            maxLength={8}
             onFocus={() => {
               setBirthdateFocused(true);
               setBirthdateError(false);
@@ -289,11 +295,11 @@ const Authentication_2_screen = () => {
               onChangeText={(text) => {
                 setPhoneNumber(text.slice(0, 11));
                 setPhoneNumberError(false);
-              }} // Set max length to 11
+              }}
               placeholder={!phoneNumberFocused ? '휴대폰번호 입력' : ''}
               keyboardType="phone-pad"
               placeholderTextColor="#777"
-              maxLength={11} // Set max length to 11
+              maxLength={11}
               onFocus={() => {
                 setPhoneNumberFocused(true);
                 setPhoneNumberError(false);
@@ -371,6 +377,5 @@ const Authentication_2_screen = () => {
     </ScrollView>
   );
 };
-
 
 export default Authentication_2_screen;

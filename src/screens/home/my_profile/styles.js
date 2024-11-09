@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   saveButtonContainer: {
     alignItems: 'center',
     marginTop: 22 * height_ratio,
+    alignItems: 'center',
   },
   saveButton: {
     width: '60%',
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
     ...theme.fonts.Medium,
     fontSize: 15,
     color: '#7596FF',
+    alignItems: 'center',
   },
   modalOverlay: {
     // flex: 1,
@@ -142,6 +144,11 @@ const styles = StyleSheet.create({
     ...theme.fonts.SemiBold,
     textAlign: 'center',
     marginBottom: 32 * height_ratio,
+  },
+  modalSaveButtonContainer: {
+    alignItems: 'center', // 중앙 정렬
+    justifyContent: 'center', // 수직 중앙 정렬
+    marginTop: 20 * height_ratio, // 여백 추가 (필요에 따라 조정)
   },
   inputContainer: {
     marginBottom: 18 * height_ratio,
@@ -188,6 +195,26 @@ const styles = StyleSheet.create({
   },
   selectedOptionText: {
     color: '#7596FF',
+  },
+  birthdateInputRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  birthdateInput: {
+    borderBottomWidth: 1,
+    borderColor: '#828287',
+    width: 90 * width_ratio,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#000', // 텍스트 색상 검은색 설정
+    marginHorizontal: 5,
+  },
+  birthdateSeparator: {
+    fontSize: 16,
+    color: '#000',
+    marginHorizontal: 2,
   },
 });
   

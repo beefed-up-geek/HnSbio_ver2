@@ -7,7 +7,6 @@ import theme from '../../../theme.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
-const buttonWidth = (Dimensions.get('screen').width - 65 * width_ratio) / 3; // Adjusted for 3 buttons per row with equal margins
 
 const Authentication_1_screen = () => {
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);

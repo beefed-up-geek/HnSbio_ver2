@@ -110,8 +110,7 @@ const GetUnderlyingDiseaseInfo = () => {
         diabetes,
         hyperlipidemia,
         retinal_complication,
-      },
-      profile_image: "default",
+      }
     };
 
     try {
