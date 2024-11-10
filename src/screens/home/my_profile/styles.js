@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    ...theme.fonts.Medium,
+    ...theme.fonts.SemiBold,
     fontSize: 15,
     color: '#7596FF',
   },
