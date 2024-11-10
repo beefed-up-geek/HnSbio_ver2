@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   profileButton: {
+    marginBottom: 12 * height_ratio,
     paddingRight: 24,
     flexDirection: 'row',
     alignItems: 'center',
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextCheckupText1: {
-    marginTop: 30,
+    marginTop: 12,
     marginLeft: 24,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,
