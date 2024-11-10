@@ -1,5 +1,4 @@
 // src/screen(구버전)/login/get_usr_info.js
-// src/screen/login/get_usr_info.js
 import React, {useState, useEffect, useRef} from 'react';
 import {
   Dimensions,

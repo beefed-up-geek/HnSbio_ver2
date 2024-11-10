@@ -1,3 +1,4 @@
+// src/screens/home/manage_account/index.js
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, BackHandler, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';

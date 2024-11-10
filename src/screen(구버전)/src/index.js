@@ -1,5 +1,4 @@
 // src/screen(구버전)/src/index.js
-// src/screen/src/index.js
 import {NativeModules, Platform} from 'react-native';
 
 const {RNNaverLogin} = NativeModules;

@@ -1,5 +1,4 @@
 // src/screen(구버전)/hospital/index.js
-// src/screen/hospital/index.js
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,

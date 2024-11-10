@@ -1,5 +1,4 @@
 // src/screen(구버전)/Kit_checkup/index.js
-// src/screen/Kit_checkup/index.js
 /**
  * Codia React Native App
  * https://codia.ai

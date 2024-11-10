@@ -1,5 +1,4 @@
 // src/screen(구버전)/medicine/searchResult.js
-// src/screen/medicine/searchResult.js
 import React, {useState, useEffect} from 'react';
 import {
   View,

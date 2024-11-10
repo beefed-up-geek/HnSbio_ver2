@@ -1,4 +1,4 @@
-// src/screens/health_checkup/health_checkup_specifics.js
+// src/screens/health_checkup/health_checkup_specifics/index.js
 
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text } from 'react-native';

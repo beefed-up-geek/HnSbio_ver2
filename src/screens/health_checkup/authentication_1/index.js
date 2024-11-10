@@ -1,4 +1,4 @@
-// src/screens/health_checkup/authentication_1.js
+// src/screens/health_checkup/authentication_1/index.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { useNavigation, useRoute  } from '@react-navigation/native';

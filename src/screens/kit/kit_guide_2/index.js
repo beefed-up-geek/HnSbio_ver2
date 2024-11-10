@@ -1,4 +1,4 @@
-// src/screens/kit/kit_guide_2.js
+// src/screens/kit/kit_guide_2/index.js
 
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TouchableOpacity, } from 'react-native';

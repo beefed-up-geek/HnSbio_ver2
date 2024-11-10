@@ -1,5 +1,4 @@
 // src/screen(구버전)/login/firebaseConfig.js
-// src/screen/login/firebaseConfig.js
 const firebaseConfig = {
   apiKey: 'AIzaSyC3nEdRkRTRMHyQjtWmdPIbb8wNaenUcXw',
   authDomain: 'hsbiolab-d958c.firebaseapp.com',

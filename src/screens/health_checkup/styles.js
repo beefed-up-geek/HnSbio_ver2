@@ -1,4 +1,4 @@
-// src/screens/health_checkup/index_styles.js
+// src/screens/health_checkup/styles.js
 
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용

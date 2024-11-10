@@ -1,6 +1,4 @@
 // src/screen(구버전)/healthscreen/tabs/data.js
-// src/screen/healthscreen/tabs/data.js
-// /src/screen/healthscreen/tabs/data.js
 
 /*
 건강검진 수치들에 대한 데이터입니다. resUrinaryProtein의 경우 음성과 양성으로 구분되므로 metrics_info에서 단위, 상한, 하한 을 제공하지 않습니다. 

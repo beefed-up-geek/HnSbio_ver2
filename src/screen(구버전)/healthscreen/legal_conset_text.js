@@ -1,5 +1,4 @@
 // src/screen(구버전)/healthscreen/legal_conset_text.js
-// src/screen/healthscreen/legal_conset_text.js
 export const privacy_usage_agreement = `H&S biolab (이하 '회사')에서는 간편인증서비스 제공을 위하여 개인정보를 이용하고자 합니다. 
 
 1. 개인정보 수집·이용 목적

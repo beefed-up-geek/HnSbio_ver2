@@ -1,5 +1,4 @@
-// src/screens/health_checkup/authentication_2.js
-
+// src/screens/health_checkup/authentication_2/index.js
 import React, { useState, useEffect } from 'react';
 import {
   View,

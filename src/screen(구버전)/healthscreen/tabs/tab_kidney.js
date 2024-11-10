@@ -1,5 +1,4 @@
 // src/screen(구버전)/healthscreen/tabs/tab_kidney.js
-// src/screen/healthscreen/tabs/tab_kidney.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Bar } from 'react-native-progress';

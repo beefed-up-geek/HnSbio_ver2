@@ -1,5 +1,4 @@
 // src/screen(구버전)/login/login.js
-// src/screen/login/login.js
 import React, {useEffect, useState} from 'react';
 import {
   View,

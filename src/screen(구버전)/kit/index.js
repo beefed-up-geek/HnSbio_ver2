@@ -1,5 +1,4 @@
 // src/screen(구버전)/kit/index.js
-// src/screen/kit/index.js
 /**
  * Codia React Native App
  * https://codia.ai

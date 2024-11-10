@@ -1,5 +1,4 @@
 // src/screen(구버전)/Kit_checkup/Camera.js
-// src/screen/Kit_checkup/Camera.js
 import React, {useState} from 'react';
 import {
   View,

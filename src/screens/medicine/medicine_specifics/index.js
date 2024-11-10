@@ -1,4 +1,4 @@
-// src/screens/medicine/medicine_specifics.js
+// src/screens/medicine/medicine_specifics/index.js
 
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text } from 'react-native';

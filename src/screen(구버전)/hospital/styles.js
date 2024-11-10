@@ -1,5 +1,4 @@
 // src/screen(구버전)/hospital/styles.js
-// src/screen/hospital/styles.js
 import {StyleSheet, Dimensions} from 'react-native';
 import theme from '../../theme';
 

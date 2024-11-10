@@ -1,6 +1,4 @@
-// src/screen(구버전)/healthscreen/tabs/data.js
-// src/screen/healthscreen/tabs/data.js
-// /src/screen/healthscreen/tabs/data.js
+// src/screens/health_checkup/data.js
 
 /*
 건강검진 수치들에 대한 데이터입니다. resUrinaryProtein의 경우 음성과 양성으로 구분되므로 metrics_info에서 단위, 상한, 하한 을 제공하지 않습니다. 
@@ -20,7 +18,110 @@ export const metrics_info = {
     "resAST": {"unit": "U/L", "normal_range_upper_limit": 40},
     "resALT": {"unit": "U/L", "normal_range_upper_limit": 35},
     "resyGPT": {"unit": "U/L", "normal_range_upper_limit": {"male":77, "female": 45}, "normal_range_lower_limit":{"male":64, "female": 36}},
-}
+};
+
+export const dev_data = [
+    {
+        "resCheckupYear": "2018",
+        "resCheckupDate": "0415",
+        "resHeight":"165.0",
+        "resWeight":"7.0",
+        "resWaist":"79.0",
+        "resBMI":"26.1",
+        "resSerumCreatinine": "0.8",
+        "resGFR": "83",
+        "resUrinaryProtein": "음성",
+        "resBloodPressure": "122/79",
+        "resFastingBloodSuger": "90",
+        "resTotalCholesterol": "",
+        "resHDLCholesterol": "",
+        "resLDLCholesterol": "",
+        "resHemoglobin": "13.2",
+        "resAST": "",
+        "resALT":"",
+        "resyGPT":""
+    },
+    {
+        "resCheckupYear": "2020",
+        "resCheckupDate": "0115",
+        "resHeight":"165.0",
+        "resWeight":"7.0",
+        "resWaist":"79.0",
+        "resBMI":"26.1",
+        "resSerumCreatinine": "0.8",
+        "resGFR": "82",
+        "resUrinaryProtein": "음성",
+        "resBloodPressure": "112/73",
+        "resFastingBloodSuger": "88",
+        "resTotalCholesterol": "227",
+        "resHDLCholesterol": "52",
+        "resLDLCholesterol": "152",
+        "resHemoglobin": "13.5",
+        "resAST": "39",
+        "resALT":"32",
+        "resyGPT":"75"
+    },
+    {
+        "resCheckupYear": "2020",
+        "resCheckupDate": "0112",
+        "resHeight":"165.0",
+        "resWeight":"7.0",
+        "resWaist":"79.0",
+        "resBMI":"26.1",
+        "resSerumCreatinine": "0.8",
+        "resGFR": "82",
+        "resUrinaryProtein": "음성",
+        "resBloodPressure": "122/75",
+        "resFastingBloodSuger": "115",
+        "resTotalCholesterol": "",
+        "resHDLCholesterol": "",
+        "resLDLCholesterol": "",
+        "resHemoglobin": "14.3",
+        "resAST": "41",
+        "resALT":"33",
+        "resyGPT":"78"
+    },
+    {
+        "resCheckupYear": "2022",
+        "resCheckupDate": "0425",
+        "resHeight":"165.0",
+        "resWeight":"7.0",
+        "resWaist":"79.0",
+        "resBMI":"26.1",
+        "resSerumCreatinine": "0.8",
+        "resGFR": "82",
+        "resUrinaryProtein": "음성",
+        "resBloodPressure": "110/70",
+        "resFastingBloodSuger": "103",
+        "resTotalCholesterol": "",
+        "resHDLCholesterol": "",
+        "resLDLCholesterol": "",
+        "resHemoglobin": "14.4",
+        "resAST": "50",
+        "resALT":"33",
+        "resyGPT":"90"
+    },
+    {
+        "resCheckupYear": "2024",
+        "resCheckupDate": "0307",
+        "resHeight":"165.0",
+        "resWeight":"7.0",
+        "resWaist":"79.0",
+        "resBMI":"26.1",
+        "resSerumCreatinine": "0.8",
+        "resGFR": "87",
+        "resUrinaryProtein": "음성",
+        "resBloodPressure": "121/71",
+        "resFastingBloodSuger": "115",
+        "resTotalCholesterol": "213",
+        "resHDLCholesterol": "83",
+        "resLDLCholesterol": "86",
+        "resHemoglobin": "13.8",
+        "resAST": "51",
+        "resALT":"33",
+        "resyGPT":"91"
+    }
+];
 
 /*
 건강검진 수치들에 대하여 간단한 분석을 제공할 때 사용되는 텍스트들입니다.
