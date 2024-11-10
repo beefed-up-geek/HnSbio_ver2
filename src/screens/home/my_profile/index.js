@@ -355,7 +355,6 @@ const ModalComponent = ({
 );
 
 const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
-  // Split the birthdate into year, month, and day
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
   const [day, setDay] = useState('');
@@ -390,38 +389,36 @@ const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
         onPress={onClose}></TouchableOpacity>
       <View style={styles.modalContainer}>
         <Text style={styles.modalTitle}>{title}</Text>
-        <View style={styles.inputContainer}>
-          <View style={styles.birthdateInputRow}>
-            <TextInput
-              style={styles.birthdateInput}
-              placeholder="년(4자리)"
-              placeholderTextColor="#828287"
-              maxLength={4}
-              value={year}
-              onChangeText={setYear}
-              keyboardType="numeric"
-            />
-            <Text style={styles.birthdateSeparator}>/</Text>
-            <TextInput
-              style={styles.birthdateInput}
-              placeholder="월(2자리)"
-              placeholderTextColor="#828287"
-              maxLength={2}
-              value={month}
-              onChangeText={setMonth}
-              keyboardType="numeric"
-            />
-            <Text style={styles.birthdateSeparator}>/</Text>
-            <TextInput
-              style={styles.birthdateInput}
-              placeholder="일(2자리)"
-              placeholderTextColor="#828287"
-              maxLength={2}
-              value={day}
-              onChangeText={setDay}
-              keyboardType="numeric"
-            />
-          </View>
+        <View style={styles.birthdateInputRow}>
+          <TextInput
+            style={styles.birthdateInput}
+            placeholder="년(4자리)"
+            placeholderTextColor="#828287"
+            maxLength={4}
+            value={year}
+            onChangeText={setYear}
+            keyboardType="numeric"
+          />
+          <Text style={styles.birthdateSeparator}>/</Text>
+          <TextInput
+            style={styles.birthdateInput}
+            placeholder="월(2자리)"
+            placeholderTextColor="#828287"
+            maxLength={2}
+            value={month}
+            onChangeText={setMonth}
+            keyboardType="numeric"
+          />
+          <Text style={styles.birthdateSeparator}>/</Text>
+          <TextInput
+            style={styles.birthdateInput}
+            placeholder="일(2자리)"
+            placeholderTextColor="#828287"
+            maxLength={2}
+            value={day}
+            onChangeText={setDay}
+            keyboardType="numeric"
+          />
         </View>
         <View style={styles.modalSaveButtonContainer}>
           <TouchableOpacity style={styles.saveButton} onPress={handleComplete}>
@@ -432,6 +429,7 @@ const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
     </Modal>
   );
 };
+
 
 const SelectionModalComponent = ({
   visible,
