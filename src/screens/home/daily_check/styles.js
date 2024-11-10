@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 24 * height_ratio,
     paddingHorizontal: 16 * width_ratio,
-    marginBottom: 36 * height_ratio,
+    marginBottom: 32 * height_ratio,
     gap: 6 * height_ratio,
   },
   checkBoxImage: {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     alignItems: 'center',
-    marginTop: 22 * height_ratio,
+    marginTop: 0 * height_ratio,
   },
   saveButton: {
     width: '60%',
