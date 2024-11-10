@@ -1,4 +1,3 @@
-// /App.js
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import React, { useEffect } from 'react';
@@ -29,8 +28,23 @@ const App = () => {
         if (userData) {
           const parsedData = JSON.parse(userData);
           console.log('async-storage에 저장된 사용자 정보 가져옴!');
-          console.log('user: ',parsedData);
-         } else {
+          
+          // healthCheckup 배열이 있는 경우 resOriginalData 처리
+          if (parsedData.healthCheckup && Array.isArray(parsedData.healthCheckup)) {
+            const processedData = {
+              ...parsedData,
+              healthCheckup: parsedData.healthCheckup.map(item => ({
+                ...item,
+                resOriGinalData: item.resOriGinalData 
+                  ? `${item.resOriGinalData.substring(0, 5)}...` // 앞 5글자만 표시
+                  : item.resOriGinalData
+              }))
+            };
+            console.log('user: ', processedData);
+          } else {
+            console.log('user: ', parsedData);
+          }
+        } else {
           console.log('async-storage에 사용자 정보 없음...');
         }
       } catch (error) {

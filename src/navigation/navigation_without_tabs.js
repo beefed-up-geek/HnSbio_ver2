@@ -37,7 +37,6 @@ const CustomHeader = ({ title }) => {
 
   const handleBackPress = () => {
     if (route.name === 'authentication_3') {
-      // Authentication_3_screen에서 뒤로가기 버튼을 누르면 3단계 뒤로 이동
       navigation.pop(3);
     } else if (navigation.canGoBack()) {
       navigation.goBack();
@@ -70,7 +69,16 @@ const Stack = createStackNavigator();
 const stackScreenOptions = ({ route, navigation }) => {
   return {
     header: ({ options }) => {
-      const title = options.title || route.name;
+      let title = options.title || route.name;
+      if (route.name === 'HealthCheckupSpecifics' && route.params?.healthCheckupResult) {
+        const { resCheckupYear, resCheckupDate } = route.params.healthCheckupResult;
+        if (resCheckupYear && resCheckupDate) {
+          const year = resCheckupYear;
+          const month = resCheckupDate.substring(0, 2);
+          const day = resCheckupDate.substring(2);
+          title = `${year}년 ${month}월 ${day}일 검진 결과`;
+        }
+      }
       return <CustomHeader title={title} />;
     },
   };
@@ -86,18 +94,16 @@ const NavigationWithoutTabs = () => {
         const currentRoute = routes[routes.length - 1];
 
         if (currentRoute.name === 'authentication_3') {
-          // Authentication_3_screen에서 뒤로가기 버튼을 누르면 3단계 뒤로 이동
           navigation.pop(3);
-          return true; // 기본 동작 방지
+          return true;
         }
 
         if (!navigation.canGoBack()) {
-          // 더 이상 뒤로 갈 수 없을 때 BottomNavigation으로 이동
           navigation.navigate('BottomNavigation');
-          return true; // 기본 동작 방지
+          return true;
         }
 
-        return false; // 기본 뒤로가기 동작 허용
+        return false;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -172,7 +178,7 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="HealthCheckupSpecifics"
         component={Health_checkup_specifics_screen}
-        options={{ title: '건강 검진 결과' }}
+        options={{ title: '' }}
       />
     </Stack.Navigator>
   );

@@ -1,3 +1,4 @@
+// src/screens/health_checkup/index.js
 import React, { useEffect, useState, useRef } from 'react';
 import {
   Image,
@@ -21,6 +22,7 @@ const Health_checkup_screen = () => {
   const navigation = useNavigation();
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
+  const [userGender, setUserGender] = useState('');
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
 
@@ -30,6 +32,7 @@ const Health_checkup_screen = () => {
       if (userData) {
         const parsedData = JSON.parse(userData);
         setProviderId(parsedData.providerId);
+        setUserGender(parsedData.gender);
         if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
           setHealthCheckupData(parsedData.healthCheckup);
           setAddingData(false);
@@ -59,21 +62,16 @@ const Health_checkup_screen = () => {
               parsedUserData.healthCheckup = healthCheckupData;
               await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
               console.log('User information updated successfully in AsyncStorage');
-              console.log(parsedUserData);
               setHealthCheckupData(healthCheckupData);
               setAddingData(false);
-            } else {
-              console.error('User data not found in AsyncStorage');
             }
-          } else {
-            console.error('No health checkup data received from API');
           }
         } catch (error) {
           console.error('Error fetching health checkup data:', error);
         }
       } else {
         try {
-          console.log('Removing health checkup data via /healthCheckupDevRemove API');
+          console.log('Removing health checkup data');
           const response = await axios.post(
             'http://54.79.61.80:5000/health_checkup/healthCheckupDevRemove',
             { providerId },
@@ -85,14 +83,9 @@ const Health_checkup_screen = () => {
               const parsedUserData = JSON.parse(userData);
               delete parsedUserData.healthCheckup;
               await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-              console.log('User healthCheckup data removed successfully from AsyncStorage');
               setHealthCheckupData([]);
               setAddingData(true);
-            } else {
-              console.error('User data not found in AsyncStorage');
             }
-          } else {
-            console.error('No response data received from API');
           }
         } catch (error) {
           console.error('Error removing health checkup data:', error);
@@ -101,7 +94,82 @@ const Health_checkup_screen = () => {
     }
   };
 
+  const getHealthTags = (item) => {
+    const healthTags = [];
+    
+    // 혈압 파싱
+    const [systolic, diastolic] = (item.resBloodPressure || '0/0').split('/').map(Number);
+
+    // 신장질환
+    if (item.resUrinaryProtein === "양성") {
+      healthTags.push("신장질환");
+    }
+    
+    // 만성신장질환
+    if (parseFloat(item.resSerumCreatinine) > 1.6 || parseFloat(item.resGFR) > 83) {
+      healthTags.push("만성신장질환");
+    }
+    
+    // 고혈압
+    if (systolic > 120 || diastolic > 80) {
+      healthTags.push("고혈압");
+    }
+    
+    // 당뇨
+    if (parseInt(item.resFastingBloodSuger) >= 100) {
+      healthTags.push("당뇨");
+    }
+    
+    // 이상지질혈증
+    if (
+      (item.resTotalCholesterol && parseInt(item.resTotalCholesterol) >= 200) ||
+      (item.resHDLCholesterol && parseInt(item.resHDLCholesterol) <= 60) ||
+      (item.resLDLCholesterol && parseInt(item.resLDLCholesterol) >= 130)
+    ) {
+      healthTags.push("이상지질혈증");
+    }
+    
+    // 비만도
+    const bmi = parseFloat(item.resBMI);
+    if (bmi >= 30) {
+      healthTags.push("비만");
+    } else if (bmi >= 23) {
+      healthTags.push("과체중");
+    }
+    
+    // 빈혈
+    const hemoglobin = parseFloat(item.resHemoglobin);
+    if ((userGender === 'male' && hemoglobin <= 13) || 
+        (userGender === 'female' && hemoglobin <= 12)) {
+      healthTags.push("빈혈");
+    }
+    
+    // 간장질환
+    if (
+      (item.resAST && parseInt(item.resAST) >= 40) ||
+      (item.resALT && parseInt(item.resALT) >= 35) ||
+      (item.resyGPT && 
+        ((userGender === 'male' && parseInt(item.resyGPT) >= 77) ||
+         (userGender === 'female' && parseInt(item.resyGPT) >= 45)))
+    ) {
+      healthTags.push("간장질환");
+    }
+
+    return healthTags;
+  };
+
   const renderHealthCheckupCard = ({ item }) => {
+    const healthTags = getHealthTags(item);
+  
+    // 날짜 포맷팅 함수
+    const formatDate = (year, date) => {
+      if (!year || !date) return '';
+      // date가 4자리 문자열이라고 가정 (예: "0415")
+      const month = date.substring(0, 2);
+      const day = date.substring(2);
+      return `${year}/${month}/${day}`;
+    };
+  
     return (
       <TouchableOpacity
         style={styles.card}
@@ -112,20 +180,36 @@ const Health_checkup_screen = () => {
           })
         }
       >
-        <Text style={styles.cardTitle}>
-          검진일자: {item.resCheckupYear}.{item.resCheckupDate}
-        </Text>
-        <Text style={styles.cardText}>BMI: {item.resBMI}</Text>
-        <Text style={styles.cardText}>혈압: {item.resBloodPressure}</Text>
-        <Text style={styles.cardText}>혈당: {item.resFastingBloodSuger}</Text>
+        <View style={styles.cardHeader}>
+          <View style={styles.cardHeaderLeft}>
+            <Text style={styles.cardType}>일반건강검진</Text>
+            <Text style={styles.cardDate}>
+              {formatDate(item.resCheckupYear, item.resCheckupDate)}
+            </Text>
+          </View>
+          <View style={styles.cardHeaderRight}>
+            <Text style={styles.moreText}>더보기</Text>
+            <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
+          </View>
+        </View>
+  
+        <View style={styles.cardContent}>
+          <View style={styles.tagsContainer}>
+            {healthTags.map((tag, index) => (
+              <View key={index} style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </TouchableOpacity>
     );
   };
 
-  const fetchData = (async () => {
-    useEffect();
-  });
-  
+  const fetchData = async () => {
+    await useEffect();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.fixedHeaderContainer}>
@@ -235,25 +319,65 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginHorizontal: 20 * width_ratio,
     marginBottom: 10 * height_ratio,
-    padding: 15 * width_ratio,
-    borderRadius: 10 * width_ratio,
+    padding: 20 * width_ratio,
+    borderRadius: 12 * width_ratio,
+    height: 168 * height_ratio,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
-  cardTitle: {
-    ...theme.fonts.Bold,
-    fontSize: 16 * width_ratio,
-    color: '#333',
-    marginBottom: 5 * height_ratio,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  cardText: {
+  cardHeaderLeft: {
+    flex: 1,
+  },
+  cardType: {
+    ...theme.fonts.Bold,
+    fontSize: 18 * width_ratio,
+    color: '#333',
+    marginBottom: 4 * height_ratio,
+  },
+  cardDate: {
     ...theme.fonts.Regular,
     fontSize: 14 * width_ratio,
-    color: '#333',
-    marginBottom: 3 * height_ratio,
+    color: '#828282',
+  },
+  cardHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  moreText: {
+    ...theme.fonts.Medium,
+    fontSize: 14 * width_ratio,
+    color: '#828282',
+    marginRight: 4 * width_ratio,
+  },
+  cardContent: {
+    flex: 1,
+    marginTop: 16 * height_ratio,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8 * width_ratio,
+  },
+  tag: {
+    backgroundColor: '#FEE7E7',
+    borderRadius: 12 * width_ratio,
+    paddingHorizontal: 12 * width_ratio,
+    paddingVertical: 6 * height_ratio,
+    borderWidth: 1,
+    borderColor: '#FF6B6B',
+  },
+  tagText: {
+    ...theme.fonts.Medium,
+    fontSize: 12 * width_ratio,
+    color: '#FF6B6B',
   },
   noDataContainer: {
     alignItems: 'center',
@@ -277,7 +401,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   footerMargin: {
-    height: 100 * height_ratio,  // 하단바 높이보다 조금 더 큰 값으로 설정
+    height: 100 * height_ratio,
   },
 });
 
