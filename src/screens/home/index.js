@@ -103,7 +103,7 @@ const HomeScreen = () => {
 
         <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
           <Image
-            source={require('../../images/home/sampleimage.png')}
+            source={require('../../images/home/sampleimage2.png')}
             style={styles.characterImage}
           />
         </Animated.View>
