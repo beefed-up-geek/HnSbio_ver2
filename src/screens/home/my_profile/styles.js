@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginVertical: 10 * height_ratio,
+    marginVertical: 9 * height_ratio,
     marginHorizontal: 36 * width_ratio,
   },
   settingsIcon: {
@@ -94,8 +94,7 @@ const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     alignItems: 'center',
-    marginTop: 22 * height_ratio,
-    alignItems: 'center',
+    marginTop: 12 * height_ratio,
   },
   saveButton: {
     width: '60%',
