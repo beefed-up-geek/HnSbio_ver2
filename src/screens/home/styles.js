@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   character: {
   },
   characterImage: {
-    width: '100%', // 화면 너비에 꽉 차게 설정
+    width: '90%', 
     height: 303 * height_ratio,
     resizeMode: 'contain', 
   },
