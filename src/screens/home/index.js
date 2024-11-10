@@ -16,7 +16,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
 import styles from './styles.js'; // 스타일 분리
-import theme from '../../theme'; // 폰트 적용
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -103,7 +102,7 @@ const HomeScreen = () => {
 
         <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
           <Image
-            source={require('../../images/home/sampleimage.png')}
+            source={require('../../images/home/sampleimage2.png')}
             style={styles.characterImage}
           />
         </Animated.View>
@@ -241,7 +240,9 @@ const HomeScreen = () => {
             />
             <View style={styles.titleLines}>
               <Text style={styles.boxText}>만성콩팥병 위험도</Text>
-              <Text style={styles.boxSubText}>2024.10.17 건강검진 결과 기준</Text>
+              <Text style={styles.boxSubText}>
+                2024.10.17 건강검진 결과 기준
+              </Text>
             </View>
           </View>
           <Image
