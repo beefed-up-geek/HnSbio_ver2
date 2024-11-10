@@ -6,6 +6,10 @@
 정상범위의 하한 값만 존재하는 몇몇 값들은 normal_range_upper_limit이 없습니다. 
 */
 export const metrics_info = {
+    "resWaist":{"unit": "cm"},
+    "resHeight": {"unit": "cm"},
+    "resWeight": {"unit": "kg"},
+    "resBMI":{"underWeight": 18.5, "overWeight": 23, "obesity":30},
     "resGFR": {"unit": "mL/min", "normal_range_lower_limit": 60},
     "resSerumCreatinine": {"unit": "mg/dL", "normal_range_upper_limit": 1.6},
     "resBloodPressureSystolic": {"unit": "mmHg", "normal_range_upper_limit": 120},  // 수축기 혈압

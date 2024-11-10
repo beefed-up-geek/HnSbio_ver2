@@ -34,7 +34,7 @@ const Authentication_3_screen = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   const handleCompleteAuth = async () => {
-    setLoading(true); // 로딩 시작
+    setLoading(true); // Start loading
     try {
       const request_data = {
         providerId: providerId,
@@ -46,51 +46,55 @@ const Authentication_3_screen = () => {
         jti: jti,
         twoWayTimestamp: twoWayTimestamp,
       };
+  
       const response = await axios.post(
         'http://54.79.61.80:5000/health_checkup/step2',
         request_data,
       );
-
-      // 응답 데이터 검증
+  
+      // Check if the response contains the necessary data
       if (!response || !response.data) {
         throw new Error('서버 응답이 없습니다. 다시 시도해주세요.');
       }
-
+  
       console.log('API Response:', response.data);
-
-      if (response.data.message && response.data.message.includes('length')) {
-        Alert.alert(
-          '알림',
-          '서버에서 오류가 발생했습니다. 데이터를 찾을 수 없습니다.',
-        );
-        return;
-      }
-
-      const filteredData = response.data.filteredData || []; // 빈 데이터일 경우 빈 배열로 처리
+  
+      const filteredData = response.data.filteredData || []; // Handle empty data
+  
       if (filteredData.length === 0) {
         Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
       } else {
         Alert.alert('성공', '인증이 완료되었습니다.');
+  
+        // Update user data in AsyncStorage
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          const parsedUserData = JSON.parse(userData);
+          parsedUserData.healthCheckup = filteredData; // Update healthCheckup field
+          await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
+          console.log('User healthCheckup data updated in AsyncStorage');
+        } else {
+          console.error('User data not found in AsyncStorage');
+        }
       }
-
+  
       fetchData();
       navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
     } catch (error) {
       console.error('Error response:', error.response);
       if (error.response) {
-        // 서버로부터의 응답이 있는 경우
+        // Log detailed error information if available
         console.log('Error data:', error.response.data);
         console.log('Error status:', error.response.status);
         console.log('Error headers:', error.response.headers);
       } else {
-        // 요청이 전송되지 못한 경우
         console.log('Error message:', error.message);
       }
     } finally {
-      setLoading(false); // 로딩 종료
+      setLoading(false); // Stop loading
     }
   };
-
+  
   return (
     <View style={styles.container}>
       
