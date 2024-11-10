@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextCheckupText1: {
-    marginTop: 0,
+    marginTop: 12,
     marginLeft: 24,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,

@@ -107,7 +107,7 @@ const Daily_check_screen = () => {
                   style={styles.modalButtonImage1}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('BottomNavigation', {screen: 'Kit_screen'})}>
+              <TouchableOpacity onPress={() => navigation.navigate('BottomNavigation', {screen: 'KitStack'})}>
                 <Image
                   source={require('../../../images/home/daily_check/키트.png')}
                   style={styles.modalButtonImage2}
