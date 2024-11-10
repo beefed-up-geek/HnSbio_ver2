@@ -25,12 +25,11 @@ const styles = StyleSheet.create({
   cameraIconContainer: {
     position: 'absolute',
     bottom: 0,
-    right: 133 * width_ratio,
-    width: 28 * width_ratio,
+    right: 140 * width_ratio,
   },
   cameraIcon: {
-    width: 36 * width_ratio,
-    height: 36 * width_ratio,
+    width: 32 * width_ratio,
+    height: 32 * width_ratio,
   },
 
   detailsContainer: {
