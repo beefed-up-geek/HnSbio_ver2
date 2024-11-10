@@ -73,9 +73,9 @@ const Authentication_3_screen = () => {
         console.log('Updated user data in AsyncStorage:', userData);
   
         if (filteredData.length === 0) {
-          Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
+          //Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
         } else {
-          Alert.alert('성공', '인증이 완료되었습니다.');
+          //Alert.alert('성공', '인증이 완료되었습니다.');
           fetchData();
           navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
         }
