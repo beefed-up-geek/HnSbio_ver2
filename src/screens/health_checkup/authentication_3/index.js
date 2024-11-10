@@ -13,6 +13,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import theme from '../../../theme';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // 상단에 추가
 
 const Authentication_3_screen = () => {
   const route = useRoute();
@@ -34,7 +35,7 @@ const Authentication_3_screen = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   const handleCompleteAuth = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const request_data = {
         providerId: providerId,
@@ -52,38 +53,41 @@ const Authentication_3_screen = () => {
         request_data,
       );
   
-      // Check if the response contains the necessary data
       if (!response || !response.data) {
         throw new Error('서버 응답이 없습니다. 다시 시도해주세요.');
       }
   
       console.log('API Response:', response.data);
   
-      const filteredData = response.data.filteredData || []; // Handle empty data
+      const filteredData = response.data.filteredData || [];
   
-      if (filteredData.length === 0) {
-        Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
-      } else {
-        Alert.alert('성공', '인증이 완료되었습니다.');
+      // AsyncStorage에서 현재 user 데이터를 가져옴
+      const userDataString = await AsyncStorage.getItem('user');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        // healthCheckup 필드 업데이트
+        userData.healthCheckup = filteredData;
+        
+        // 업데이트된 데이터를 다시 저장
+        await AsyncStorage.setItem('user', JSON.stringify(userData));
+        console.log('Updated user data in AsyncStorage:', userData);
   
-        // Update user data in AsyncStorage
-        const userData = await AsyncStorage.getItem('user');
-        if (userData) {
-          const parsedUserData = JSON.parse(userData);
-          parsedUserData.healthCheckup = filteredData; // Update healthCheckup field
-          await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-          console.log('User healthCheckup data updated in AsyncStorage');
+        if (filteredData.length === 0) {
+          Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
         } else {
-          console.error('User data not found in AsyncStorage');
+          Alert.alert('성공', '인증이 완료되었습니다.');
+          fetchData();
+          navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
         }
+      } else {
+        console.error('User data not found in AsyncStorage');
+        Alert.alert('오류', '사용자 데이터를 찾을 수 없습니다.');
       }
-  
-      fetchData();
-      navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
     } catch (error) {
-      console.error('Error response:', error.response);
+      console.error('Error in handleCompleteAuth:', error);
+      Alert.alert('오류', '인증 과정에서 문제가 발생했습니다.');
+      
       if (error.response) {
-        // Log detailed error information if available
         console.log('Error data:', error.response.data);
         console.log('Error status:', error.response.status);
         console.log('Error headers:', error.response.headers);
@@ -91,7 +95,7 @@ const Authentication_3_screen = () => {
         console.log('Error message:', error.message);
       }
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
   

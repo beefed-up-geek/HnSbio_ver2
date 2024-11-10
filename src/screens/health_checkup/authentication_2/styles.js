@@ -151,6 +151,18 @@ const styles = StyleSheet.create({
       telecomOptionText: {
         fontSize: 14 * height_ratio,
         color: '#000',
+      }, 
+      loadingContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      loadingText: {
+        marginTop: 16,
+        fontSize: 16,
+        color: '#fff',
+        ...theme.fonts.Medium,
       },
 });
   
