@@ -132,7 +132,7 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('KitStack')}>
+            onPress={() => navigation.navigate('NoTabs', {screen: 'kit_guide_1'})}>
             <Image
               source={require('../../images/home/testButton.png')}
               style={styles.button}

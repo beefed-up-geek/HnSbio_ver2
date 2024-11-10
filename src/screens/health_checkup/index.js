@@ -1,4 +1,3 @@
-// src/screens/health_checkup/index.js
 import React, { useEffect, useState, useRef } from 'react';
 import {
   Image,
@@ -13,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
-import theme from '../../theme.js'; // 개발 규칙: 폰트 적용
+import theme from '../../theme.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -23,7 +22,7 @@ const Health_checkup_screen = () => {
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
   const tapCount = useRef(0);
-  const [addingData, setAddingData] = useState(true); // State to determine if we should add or remove data
+  const [addingData, setAddingData] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -33,7 +32,7 @@ const Health_checkup_screen = () => {
         setProviderId(parsedData.providerId);
         if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
           setHealthCheckupData(parsedData.healthCheckup);
-          setAddingData(false); // If data exists, next tap will remove it
+          setAddingData(false);
         }
       }
     })();
@@ -43,9 +42,8 @@ const Health_checkup_screen = () => {
     tapCount.current += 1;
 
     if (tapCount.current === 7) {
-      tapCount.current = 0; // Reset tap count
+      tapCount.current = 0;
       if (addingData) {
-        // Add data
         try {
           console.log('Fetching health checkup data from /healthCheckupDev API');
           const response = await axios.post(
@@ -55,19 +53,15 @@ const Health_checkup_screen = () => {
 
           if (response.data && response.data.data) {
             const healthCheckupData = response.data.data;
-            // Retrieve existing user data
             const userData = await AsyncStorage.getItem('user');
             if (userData) {
               const parsedUserData = JSON.parse(userData);
-              // Update the healthCheckup field
               parsedUserData.healthCheckup = healthCheckupData;
-              // Save the updated user data back to AsyncStorage
               await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
               console.log('User information updated successfully in AsyncStorage');
               console.log(parsedUserData);
-              // Update the state variable with the new data
               setHealthCheckupData(healthCheckupData);
-              setAddingData(false); // Next time, remove data
+              setAddingData(false);
             } else {
               console.error('User data not found in AsyncStorage');
             }
@@ -78,7 +72,6 @@ const Health_checkup_screen = () => {
           console.error('Error fetching health checkup data:', error);
         }
       } else {
-        // Remove data
         try {
           console.log('Removing health checkup data via /healthCheckupDevRemove API');
           const response = await axios.post(
@@ -87,18 +80,14 @@ const Health_checkup_screen = () => {
           );
 
           if (response.data) {
-            // Remove healthCheckup from AsyncStorage's 'user' variable
             const userData = await AsyncStorage.getItem('user');
             if (userData) {
               const parsedUserData = JSON.parse(userData);
-              // Remove the healthCheckup field
               delete parsedUserData.healthCheckup;
-              // Save the updated user data back to AsyncStorage
               await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
               console.log('User healthCheckup data removed successfully from AsyncStorage');
-              // Update the state variable
               setHealthCheckupData([]);
-              setAddingData(true); // Next time, add data
+              setAddingData(true);
             } else {
               console.error('User data not found in AsyncStorage');
             }
@@ -126,14 +115,14 @@ const Health_checkup_screen = () => {
         <Text style={styles.cardTitle}>
           검진일자: {item.resCheckupYear}.{item.resCheckupDate}
         </Text>
-        {/* Display more health checkup details as needed */}
         <Text style={styles.cardText}>BMI: {item.resBMI}</Text>
         <Text style={styles.cardText}>혈압: {item.resBloodPressure}</Text>
         <Text style={styles.cardText}>혈당: {item.resFastingBloodSuger}</Text>
       </TouchableOpacity>
     );
   };
-  const fetchData = (async ()=> {
+
+  const fetchData = (async () => {
     useEffect();
   });
   
@@ -175,6 +164,7 @@ const Health_checkup_screen = () => {
             data={healthCheckupData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderHealthCheckupCard}
+            ListFooterComponent={<View style={styles.footerMargin} />}
           />
         )}
       </View>
@@ -274,17 +264,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 20 * width_ratio,
   },
   noDataImage: {
-    width: 90 * width_ratio, // 기존 width 유지
-    height: 90 * width_ratio, // 기존 height 유지
+    width: 90 * width_ratio,
+    height: 90 * width_ratio,
     marginBottom: 10 * height_ratio,
-    resizeMode: 'contain', // 이미지를 컨테이너 안에 비율에 맞게 맞춤
-    maxWidth: '100%', // 컨테이너 크기에 따라 확장 가능
-    maxHeight: '100%', // 컨테이너 크기에 따라 확장 가능
+    resizeMode: 'contain',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   noDataText: {
     ...theme.fonts.Medium,
     fontSize: 16 * width_ratio,
     color: '#555',
+  },
+  footerMargin: {
+    height: 100 * height_ratio,  // 하단바 높이보다 조금 더 큰 값으로 설정
   },
 });
 
