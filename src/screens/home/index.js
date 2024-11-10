@@ -16,7 +16,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
 import styles from './styles.js'; // 스타일 분리
-import theme from '../../theme'; // 폰트 적용
 
 const HomeScreen = () => {
   const navigation = useNavigation();
