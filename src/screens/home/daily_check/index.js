@@ -56,7 +56,7 @@ const Daily_check_screen = () => {
       return (
         <>
           <Text style={styles.modalMessage}>
-            7가지 항목 중{' '}
+            6가지 항목 중{' '}
             <Text style={styles.boldText}>{checkedCount}가지</Text>에 해당해요.
             {'\n'}
             지금 바로 키트 검사를 하거나 병원에 방문해보는 것을 권장해요.
