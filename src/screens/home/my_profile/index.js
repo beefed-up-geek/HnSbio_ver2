@@ -26,6 +26,7 @@ const My_profile_screen = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [nickname, setNickname] = useState('');
   const [birthdate, setBirthdate] = useState('');
+  const [createdAt, setCreatedAt] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [gender, setGender] = useState('');
@@ -55,7 +56,7 @@ const My_profile_screen = () => {
           if (user.birthdate) {
             setBirthdate(user.birthdate); // Keep the format 'YYYY/MM/DD'
           }
-
+          setCreatedAt(user.createdAt || '');
           setHeight(user.height || '');
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
@@ -109,12 +110,19 @@ const My_profile_screen = () => {
 
   const saveUserData = async () => {
     try {
-      const userData = {
-        providerId,
-        name,
-        gender: genderAsync,
+      // 먼저 현재 AsyncStorage의 user 데이터를 가져옴
+      const currentUserData = await AsyncStorage.getItem('user');
+      if (!currentUserData) {
+        throw new Error('현재 사용자 데이터를 찾을 수 없습니다.');
+      }
+      
+      const currentUser = JSON.parse(currentUserData);
+  
+      // 현재 화면에서 수정 가능한 필드만 업데이트
+      const updatedUserData = {
+        ...currentUser, // 기존 데이터를 모두 유지
         nickname,
-        birthdate, // Already in 'YYYY/MM/DD' format
+        birthdate,
         height,
         weight,
         chronic_kidney_disease: kidneyStatus,
@@ -126,15 +134,16 @@ const My_profile_screen = () => {
           retinal_complication: underlyingCondition.includes('망막합병증') ? 1 : 0,
         },
       };
-
-      // Update user information via API call
-      await axios.put('http://54.79.61.80:5000/user_info/updateUser', userData, {
+  
+      // API 호출
+      await axios.put('http://54.79.61.80:5000/user_info/updateUser', updatedUserData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
+  
+      // AsyncStorage 업데이트
+      await AsyncStorage.setItem('user', JSON.stringify(updatedUserData));
       Alert.alert('알림', '변경사항이 저장되었습니다.');
     } catch (error) {
       console.log('Error saving user data', error);
