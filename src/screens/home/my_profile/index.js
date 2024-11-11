@@ -54,15 +54,20 @@ const My_profile_screen = () => {
           setGenderAsync(user.gender || '');
           setNickname(user.nickname || '');
           if (user.birthdate) {
-            setBirthdate(user.birthdate); // Keep the format 'YYYY/MM/DD'
+            setBirthdate(user.birthdate);
           }
           setCreatedAt(user.createdAt || '');
           setHeight(user.height || '');
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
           setKidneyStatus(user.chronic_kidney_disease || '');
-          if (user.profileImage) {
-            setProfileImage(user.profileImage);
+          
+          // Set profile image from AsyncStorage if available
+          if (user.profile_image) {
+            setProfileImage(user.profile_image);
+          } else {
+            // If not, you can set a default image if necessary
+            setProfileImage(null);
           }
 
           // Handle underlying diseases
@@ -89,6 +94,7 @@ const My_profile_screen = () => {
 
     loadUserData();
   }, []);
+
 
   const handleChooseProfilePicture = async () => {
     const options = { mediaType: 'photo', includeBase64: false };
@@ -117,6 +123,26 @@ const My_profile_screen = () => {
       }
       
       const currentUser = JSON.parse(currentUserData);
+    
+      // 만약 새로운 프로필 이미지를 선택했다면, uploadProfileImage API를 호출하여 업로드
+      let profileImageUrl = currentUser.profile_image;
+      if (profileImage && profileImage !== currentUser.profile_image) {
+        const formData = new FormData();
+        formData.append('providerId', currentUser.providerId);
+        formData.append('profileImage', {
+          uri: profileImage,
+          type: 'image/jpeg', // or image/png based on the selected image type
+          name: `profile_${currentUser.providerId}.jpg`,
+        });
+  
+        const uploadResponse = await axios.put('http://54.79.61.80:5000/user_info/uploadProfileImage', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        profileImageUrl = uploadResponse.data.profile_image;
+      }
   
       // 현재 화면에서 수정 가능한 필드만 업데이트
       const updatedUserData = {
@@ -126,7 +152,7 @@ const My_profile_screen = () => {
         height,
         weight,
         chronic_kidney_disease: kidneyStatus,
-        profileImage,
+        profile_image: profileImageUrl,
         underlying_disease: {
           hypertension: underlyingCondition.includes('고혈압') ? 1 : 0,
           diabetes: underlyingCondition.includes('당뇨') ? 1 : 0,

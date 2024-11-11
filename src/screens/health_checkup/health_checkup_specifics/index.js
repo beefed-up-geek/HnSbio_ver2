@@ -13,6 +13,7 @@ import {
     Platform,
     ActivityIndicator  // 추가된 부분
 } from 'react-native';
+import RNFetchBlob from 'react-native-blob-util';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
@@ -77,127 +78,111 @@ const Health_checkup_specifics_screen = () => {
         anemia: false,
         liverDisease: false
     });
-    const MetricRow = ({ label, value, unit = "", normalRange = "", isAbnormal = false, customColor }) => {
-        const getProgressWidth = (value) => {
-            // 정상 범위를 기준으로 게이지 너비 계산
-            let maxValue = 200;  // 기본 최대값
-            if (normalRange && normalRange.includes('~')) {
-                const [min, max] = normalRange.split('~').map(num => parseFloat(num));
-                maxValue = max * 1.5;  // 정상 범위 최대값의 1.5배를 전체 너비로 설정
-            }
-            return `${Math.min((parseFloat(value)/maxValue) * 100, 100)}%`;
-        };
     
-        return (
-            <View style={styles.metricRow}>
-                <View style={styles.metricHeader}>
-                    <Text style={styles.metricLabel}>{label}</Text>
-                    <Text style={[
-                        styles.metricValue,
-                        { color: customColor || (isAbnormal ? '#FF5252' : '#333333') }
-                    ]}>
-                        {value}{unit}
-                    </Text>
-                </View>
-                <View style={styles.progressContainer}>
-                    <View style={styles.progressBarBackground}>
-                        {/* 정상 범위 표시 */}
-                        {normalRange && (
-                            <View style={[styles.normalRangeIndicator]}>
-                                <View style={styles.normalRangeBar} />
-                            </View>
-                        )}
-                        {/* 현재 값 표시 */}
-                        <View 
-                            style={[
-                                styles.progressBar,
-                                { 
-                                    width: getProgressWidth(value),
-                                    backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
-                                }
-                            ]}
-                        />
-                        {/* 현재 값 마커 */}
-                        <View style={[
-                            styles.valueMarker,
-                            { 
-                                left: getProgressWidth(value),
-                                backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
-                            }
-                        ]} />
-                    </View>
-                </View>
-                {normalRange && (
-                    <Text style={styles.normalRange}>정상범위: {normalRange}</Text>
-                )}
-            </View>
-        );
-    };
-
-    const MetricCard = ({ title, children }) => (
-        <View style={styles.metricCard}>
-            <Text style={styles.cardTitle}>{title}</Text>
-            {children}
-        </View>
-    );
-
-    // PDF Viewer 컴포넌트
-    const PDFViewer = ({ base64Data }) => {
-        if (!base64Data) {
-            return (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-            );
+    const openPDFInBrowser = async () => {
+        if (!healthData.resOriGinalData) {
+            Alert.alert('오류', 'PDF URL을 가져올 수 없습니다.');
+            return;
         }
-
-        const source = {
-            uri: `data:application/pdf;base64,${base64Data}`,
-            cache: true
-        };
-
-        return (
-            <View style={styles.pdfContainer}>
-                <Pdf
-                    source={source}
-                    onLoadComplete={(numberOfPages, filePath) => {
-                        console.log(`PDF loaded: ${numberOfPages} pages`);
-                    }}
-                    onPageChanged={(page, numberOfPages) => {
-                        console.log(`Current page: ${page}`);
-                    }}
-                    onError={(error) => {
-                        console.log(error);
-                        Alert.alert('오류', 'PDF를 불러오는 중 오류가 발생했습니다.');
-                    }}
-                    style={styles.pdf}
-                />
-            </View>
-        );
+        try {
+            const supported = await Linking.canOpenURL(healthData.resOriGinalData);
+            if (supported) {
+                await Linking.openURL(healthData.resOriGinalData);
+            } else {
+                Alert.alert('오류', '이 링크를 열 수 없습니다.');
+            }
+        } catch (error) {
+            Alert.alert('오류', 'PDF를 여는 중 문제가 발생했습니다.');
+        }
     };
+    
+    // PDF Viewer 컴포넌트
+    // const PDFViewer = ({ pdfUrl }) => {
+    //     if (!pdfUrl) {
+    //         return (
+    //             <View style={styles.loadingContainer}>
+    //                 <ActivityIndicator size="large" color="#0000ff" />
+    //             </View>
+    //         );
+    //     }
+    
+    //     const source = { uri: pdfUrl, cache: true };
+    
+    //     return (
+    //         <View style={styles.pdfContainer}>
+    //             <Pdf
+    //                 source={source}
+    //                 onLoadComplete={(numberOfPages, filePath) => {
+    //                     console.log(`PDF loaded: ${numberOfPages} pages`);
+    //                 }}
+    //                 onPageChanged={(page, numberOfPages) => {
+    //                     console.log(`Current page: ${page}`);
+    //                 }}
+    //                 onError={(error) => {
+    //                     console.log(error);
+    //                     Alert.alert('오류', 'PDF를 불러오는 중 오류가 발생했습니다.');
+    //                 }}
+    //                 style={styles.pdf}
+    //             />
+    //         </View>
+    //     );
+    // };
 
-    // PDF 모달
-    const PDFModal = () => (
-        <Modal
-            animationType="slide"
-            transparent={false}
-            visible={pdfVisible}
-            onRequestClose={() => setPdfVisible(false)}
-        >
-            <SafeAreaView style={styles.modalContainer}>
-                <View style={styles.modalHeader}>
-                    <TouchableOpacity 
-                        onPress={() => setPdfVisible(false)}
-                        style={styles.closeButton}
-                    >
-                        <Text style={styles.closeButtonText}>닫기</Text>
-                    </TouchableOpacity>
-                </View>
-                <PDFViewer base64Data={healthData.resOriGinalData} />
-            </SafeAreaView>
-        </Modal>
-    );
-
+    // // PDF 모달
+    // const PDFModal = () => (
+    //     <Modal
+    //         animationType="slide"
+    //         transparent={false}
+    //         visible={pdfVisible}
+    //         onRequestClose={() => setPdfVisible(false)}
+    //     >
+    //         <SafeAreaView style={styles.modalContainer}>
+    //             <View style={styles.modalHeader}>
+    //                 <TouchableOpacity 
+    //                     onPress={() => setPdfVisible(false)}
+    //                     style={styles.closeButton}
+    //                 >
+    //                     <Text style={styles.closeButtonText}>닫기</Text>
+    //                 </TouchableOpacity>
+    //             </View>
+    //             <PDFViewer pdfUrl={healthData.resOriGinalData} />
+    //         </SafeAreaView>
+    //     </Modal>
+    // );
+    // const fetchResOriginalData = async () => {
+    //     if (!healthData.resOriGinalData) {
+    //         console.error('PDF URL not available');
+    //         Alert.alert('오류', 'PDF URL을 가져올 수 없습니다.');
+    //         return;
+    //     }
+    
+    //     try {
+    //         // Define the local path to save the PDF file
+    //         const pdfPath = `${RNFetchBlob.fs.dirs.DocumentDir}/downloaded_file.pdf`;
+    
+    //         // Step 1: Download the file directly using RNFetchBlob
+    //         await RNFetchBlob.config({
+    //             path: pdfPath,
+    //             trusty: true, // bypass SSL if needed
+    //         })
+    //         .fetch('GET', healthData.resOriGinalData)
+    //         .then((res) => {
+    //             console.log('PDF downloaded to:', res.path());
+    
+    //             // Update state to use the local file path instead of the remote URL
+    //             setHealthData((prevState) => ({
+    //                 ...prevState,
+    //                 resOriGinalData: `file://${res.path()}`,
+    //             }));
+    
+    //             // Show PDF modal
+    //             setPdfVisible(true);
+    //         });
+    //     } catch (error) {
+    //         console.error('Error fetching PDF:', error);
+    //         Alert.alert('오류', 'PDF를 가져오는 중 오류가 발생했습니다.');
+    //     }
+    // };
     // 성별 및 providerId 정보 가져오기
     useEffect(() => {
         const getUserData = async () => {
@@ -286,48 +271,7 @@ const Health_checkup_specifics_screen = () => {
         checkDiseases();
     }, [healthData, gender]);
 
-    // resOriGinalData 가져오기 함수
-    const fetchResOriginalData = async () => {
-        if (!providerId || !healthData.resCheckupYear) {
-            console.error('ProviderId or resCheckupYear not available');
-            Alert.alert('오류', '데이터를 가져올 수 없습니다.');
-            return;
-        }
-
-        try {
-            // const response = await fetch('http://54.79.61.80:5000/health_checkup/getHealthCheckupOriginalData', {  // 실제 API 엔드포인트로 변경해야 합니다.
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         providerId: providerId,
-            //         resCheckupYear: healthData.resCheckupYear,
-            //     }),
-            // });
-
-            // if (response.ok) {
-            //     const data = await response.json();
-            //     setHealthData(prevState => ({
-            //         ...prevState,
-            //         resOriGinalData: data.resOriGinalData,
-            //     }));
-            //     setPdfVisible(true);  // 데이터 로드 후 모달 열기
-            // } else {
-            //     console.error('Failed to fetch resOriGinalData');
-            //     Alert.alert('오류', '원본 데이터를 가져오는데 실패했습니다.');
-            // }
-            setHealthData(prevState => ({
-                         ...prevState,
-                         resOriGinalData: dummy_pdf,
-                     }));
-                     setPdfVisible(true);  // 데이터 로드 후 모달 열기
-            
-        } catch (error) {
-            console.error('Error fetching resOriGinalData:', error);
-            Alert.alert('오류', '원본 데이터를 가져오는데 오류가 발생했습니다.');
-        }
-    };
+    
 
     const DiseaseBox = ({ title, isActive }) => (
         <View style={[styles.diseaseBox, isActive && styles.activeDiseaseBox]}>
@@ -344,7 +288,7 @@ const Health_checkup_specifics_screen = () => {
             <ScrollView>
                 <TouchableOpacity 
                     style={styles.pdfButton} 
-                    onPress={fetchResOriginalData}  // 수정된 부분
+                    onPress={openPDFInBrowser}  // 수정된 부분
                 >
                     <Image
                         source={require('../../../images/health_screen/pdficon.png')}
@@ -428,6 +372,72 @@ const Health_checkup_specifics_screen = () => {
         </SafeAreaView>
     );
 };
+
+const MetricRow = ({ label, value, unit = "", normalRange = "", isAbnormal = false, customColor }) => {
+        const getProgressWidth = (value) => {
+            // 정상 범위를 기준으로 게이지 너비 계산
+            let maxValue = 200;  // 기본 최대값
+            if (normalRange && normalRange.includes('~')) {
+                const [min, max] = normalRange.split('~').map(num => parseFloat(num));
+                maxValue = max * 1.5;  // 정상 범위 최대값의 1.5배를 전체 너비로 설정
+            }
+            return `${Math.min((parseFloat(value)/maxValue) * 100, 100)}%`;
+        };
+    
+        return (
+            <View style={styles.metricRow}>
+                <View style={styles.metricHeader}>
+                    <Text style={styles.metricLabel}>{label}</Text>
+                    <Text style={[
+                        styles.metricValue,
+                        { color: customColor || (isAbnormal ? '#FF5252' : '#333333') }
+                    ]}>
+                        {value}{unit}
+                    </Text>
+                </View>
+                <View style={styles.progressContainer}>
+                    <View style={styles.progressBarBackground}>
+                        {/* 정상 범위 표시 */}
+                        {normalRange && (
+                            <View style={[styles.normalRangeIndicator]}>
+                                <View style={styles.normalRangeBar} />
+                            </View>
+                        )}
+                        {/* 현재 값 표시 */}
+                        <View 
+                            style={[
+                                styles.progressBar,
+                                { 
+                                    width: getProgressWidth(value),
+                                    backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
+                                }
+                            ]}
+                        />
+                        {/* 현재 값 마커 */}
+                        <View style={[
+                            styles.valueMarker,
+                            { 
+                                left: getProgressWidth(value),
+                                backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
+                            }
+                        ]} />
+                    </View>
+                </View>
+                {normalRange && (
+                    <Text style={styles.normalRange}>정상범위: {normalRange}</Text>
+                )}
+            </View>
+        );
+    };
+
+    const MetricCard = ({ title, children }) => (
+        <View style={styles.metricCard}>
+            <Text style={styles.cardTitle}>{title}</Text>
+            {children}
+        </View>
+    );
+    
+
 
 const styles = {
     container: {
