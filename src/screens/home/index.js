@@ -19,10 +19,7 @@ import styles from './styles.js'; // 스타일 분리
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  const [checkCompletedToday, setCheckCompletedToday] = useState(false);
 
   // 사용자 정보를 저장할 상태 변수들
   const [name, setName] = useState('');
@@ -58,6 +55,24 @@ const HomeScreen = () => {
       }
     } catch (error) {
       console.error('Error loading user data from AsyncStorage:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkDailyCompletionStatus();
+  }, []);
+
+  const checkDailyCompletionStatus = async () => {
+    const today = new Date().toDateString(); // today's date as a string
+    try {
+      const savedDate = await AsyncStorage.getItem('dailyCheckComplete');
+      if (savedDate === today) {
+        setCheckCompletedToday(true);
+      } else {
+        setCheckCompletedToday(false); // reset if not completed today
+      }
+    } catch (error) {
+      console.error('Failed to load check completion status:', error);
     }
   };
 
@@ -266,7 +281,11 @@ const HomeScreen = () => {
             </View>
           </View>
           <Image
-            source={require('../../images/home/미완료.png')}
+            source={
+              checkCompletedToday
+                ? require('../../images/home/완료.png')
+                : require('../../images/home/미완료.png')
+            }
             style={styles.checkStatusImage}
           />
         </TouchableOpacity>
