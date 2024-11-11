@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   character: {
+    alignItems: 'center',
   },
   characterImage: {
     width: '90%', 
