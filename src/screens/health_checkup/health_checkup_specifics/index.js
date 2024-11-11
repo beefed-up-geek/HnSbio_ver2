@@ -96,94 +96,6 @@ const Health_checkup_specifics_screen = () => {
         }
     };
     
-    // PDF Viewer 컴포넌트
-    // const PDFViewer = ({ pdfUrl }) => {
-    //     if (!pdfUrl) {
-    //         return (
-    //             <View style={styles.loadingContainer}>
-    //                 <ActivityIndicator size="large" color="#0000ff" />
-    //             </View>
-    //         );
-    //     }
-    
-    //     const source = { uri: pdfUrl, cache: true };
-    
-    //     return (
-    //         <View style={styles.pdfContainer}>
-    //             <Pdf
-    //                 source={source}
-    //                 onLoadComplete={(numberOfPages, filePath) => {
-    //                     console.log(`PDF loaded: ${numberOfPages} pages`);
-    //                 }}
-    //                 onPageChanged={(page, numberOfPages) => {
-    //                     console.log(`Current page: ${page}`);
-    //                 }}
-    //                 onError={(error) => {
-    //                     console.log(error);
-    //                     Alert.alert('오류', 'PDF를 불러오는 중 오류가 발생했습니다.');
-    //                 }}
-    //                 style={styles.pdf}
-    //             />
-    //         </View>
-    //     );
-    // };
-
-    // // PDF 모달
-    // const PDFModal = () => (
-    //     <Modal
-    //         animationType="slide"
-    //         transparent={false}
-    //         visible={pdfVisible}
-    //         onRequestClose={() => setPdfVisible(false)}
-    //     >
-    //         <SafeAreaView style={styles.modalContainer}>
-    //             <View style={styles.modalHeader}>
-    //                 <TouchableOpacity 
-    //                     onPress={() => setPdfVisible(false)}
-    //                     style={styles.closeButton}
-    //                 >
-    //                     <Text style={styles.closeButtonText}>닫기</Text>
-    //                 </TouchableOpacity>
-    //             </View>
-    //             <PDFViewer pdfUrl={healthData.resOriGinalData} />
-    //         </SafeAreaView>
-    //     </Modal>
-    // );
-    // const fetchResOriginalData = async () => {
-    //     if (!healthData.resOriGinalData) {
-    //         console.error('PDF URL not available');
-    //         Alert.alert('오류', 'PDF URL을 가져올 수 없습니다.');
-    //         return;
-    //     }
-    
-    //     try {
-    //         // Define the local path to save the PDF file
-    //         const pdfPath = `${RNFetchBlob.fs.dirs.DocumentDir}/downloaded_file.pdf`;
-    
-    //         // Step 1: Download the file directly using RNFetchBlob
-    //         await RNFetchBlob.config({
-    //             path: pdfPath,
-    //             trusty: true, // bypass SSL if needed
-    //         })
-    //         .fetch('GET', healthData.resOriGinalData)
-    //         .then((res) => {
-    //             console.log('PDF downloaded to:', res.path());
-    
-    //             // Update state to use the local file path instead of the remote URL
-    //             setHealthData((prevState) => ({
-    //                 ...prevState,
-    //                 resOriGinalData: `file://${res.path()}`,
-    //             }));
-    
-    //             // Show PDF modal
-    //             setPdfVisible(true);
-    //         });
-    //     } catch (error) {
-    //         console.error('Error fetching PDF:', error);
-    //         Alert.alert('오류', 'PDF를 가져오는 중 오류가 발생했습니다.');
-    //     }
-    // };
-    // 성별 및 providerId 정보 가져오기
     useEffect(() => {
         const getUserData = async () => {
             try {
@@ -288,7 +200,7 @@ const Health_checkup_specifics_screen = () => {
             <ScrollView>
                 <TouchableOpacity 
                     style={styles.pdfButton} 
-                    onPress={openPDFInBrowser}  // 수정된 부분
+                    //onPress={openPDFInBrowser}  // 수정된 부분
                 >
                     <Image
                         source={require('../../../images/health_screen/pdficon.png')}
