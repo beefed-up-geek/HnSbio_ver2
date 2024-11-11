@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import ModalComponent from '../../../components/ModalComponent';
 
 const My_profile_screen = () => {
   const navigation = useNavigation();
@@ -313,50 +314,6 @@ const DetailRow = ({ label, value, onPress, last }) => (
       )}
     </TouchableOpacity>
   </View>
-);
-
-const ModalComponent = ({
-  visible,
-  title,
-  label,
-  value,
-  setValue,
-  onClose,
-  placeholder,
-  maxLength,
-}) => (
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={visible}
-    onRequestClose={onClose}>
-    <TouchableOpacity
-      style={styles.modalVisibleBackground}
-      activeOpacity={1}
-      onPress={onClose}></TouchableOpacity>
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalTitle}>{title}</Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>{label}</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder={placeholder}
-          placeholderTextColor="#828287"
-          maxLength={maxLength}
-          value={value}
-          onChangeText={setValue}
-          keyboardType={
-            label === '키' || label === '몸무게' ? 'numeric' : 'default'
-          }
-        />
-      </View>
-      <View style={styles.modalSaveButtonContainer}>
-        <TouchableOpacity style={styles.saveButton} onPress={onClose}>
-          <Text style={styles.saveButtonText}>완료</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </Modal>
 );
 
 const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
