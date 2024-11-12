@@ -295,7 +295,7 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
-            navigation.navigate('NoTabs', {screen: 'kidney_info'})
+            navigation.navigate('BottomNavigation', {screen: 'HealthStack'})
           }>
           <View style={styles.titleContainer}>
             <Image
