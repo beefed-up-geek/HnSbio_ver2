@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
     marginTop: 12 * height_ratio,
   },
   saveButton: {
+    marginTop: 12 * height_ratio,
+    alignSelf: 'center',
     width: '60%',
     backgroundColor: '#EBEFFE',
     borderRadius: 24,

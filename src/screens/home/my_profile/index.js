@@ -1,18 +1,17 @@
 // src/screens/home/my_profile/index.js
 
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import {
   View,
   Text,
   Image,
   TextInput,
   TouchableOpacity,
-  Dimensions,
   Modal,
   Alert,
   Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import * as ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -34,6 +33,7 @@ const My_profile_screen = () => {
   const [genderAsync, setGenderAsync] = useState('');
   const [kidneyStatus, setKidneyStatus] = useState('해당사항 없음');
   const [underlyingCondition, setUnderlyingCondition] = useState([]);
+  const [initialSettings, setInitialSettings] = useState({}); // 변경사항 유무 확인
 
   const [modalVisible, setModalVisible] = useState({
     nickname: false,
@@ -62,7 +62,7 @@ const My_profile_screen = () => {
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
           setKidneyStatus(user.chronic_kidney_disease || '');
-          
+
           // Set profile image from AsyncStorage if available
           if (user.profile_image) {
             setProfileImage(user.profile_image);
@@ -80,13 +80,24 @@ const My_profile_screen = () => {
               hyperlipidemia: '고지혈증',
               retinal_complication: '망막합병증',
             };
-            Object.keys(user.underlying_disease).forEach((disease) => {
+            Object.keys(user.underlying_disease).forEach(disease => {
               if (user.underlying_disease[disease]) {
                 underlyingDiseases.push(diseaseMap[disease]);
               }
             });
           }
           setUnderlyingCondition(underlyingDiseases);
+
+          // 변경사항 여부 확인을 위한 현재상태 초기화
+          setInitialSettings({
+            nickname: user.nickname || '',
+            birthdate: user.birthdate || '',
+            height: user.height || '',
+            weight: user.weight || '',
+            kidneyStatus: user.chronic_kidney_disease || '',
+            profileImage: user.profile_image || null,
+            underlyingCondition: underlyingDiseases,
+          });
         }
       } catch (error) {
         console.log('Error loading user data', error);
@@ -96,10 +107,23 @@ const My_profile_screen = () => {
     loadUserData();
   }, []);
 
+  // 변경사항 여부 확인 함수
+  const hasChanges = () => {
+    return (
+      initialSettings.nickname !== nickname ||
+      initialSettings.birthdate !== birthdate ||
+      initialSettings.height !== height ||
+      initialSettings.weight !== weight ||
+      initialSettings.kidneyStatus !== kidneyStatus ||
+      initialSettings.profileImage !== profileImage ||
+      JSON.stringify(initialSettings.underlyingCondition) !==
+        JSON.stringify(underlyingCondition)
+    );
+  };
 
   const handleChooseProfilePicture = async () => {
-    const options = { mediaType: 'photo', includeBase64: false };
-    ImagePicker.launchImageLibrary(options, (response) => {
+    const options = {mediaType: 'photo', includeBase64: false};
+    ImagePicker.launchImageLibrary(options, response => {
       if (response.assets && response.assets.length > 0) {
         const uri = response.assets[0].uri;
         setProfileImage(uri);
@@ -107,12 +131,12 @@ const My_profile_screen = () => {
     });
   };
 
-  const toggleModal = (field) => {
-    setModalVisible((prevState) => ({ ...prevState, [field]: !prevState[field] }));
+  const toggleModal = field => {
+    setModalVisible(prevState => ({...prevState, [field]: !prevState[field]}));
   };
 
-  const closeModal = (field) => {
-    setModalVisible((prevState) => ({ ...prevState, [field]: false }));
+  const closeModal = field => {
+    setModalVisible(prevState => ({...prevState, [field]: false}));
   };
 
   const saveUserData = async () => {
@@ -122,9 +146,9 @@ const My_profile_screen = () => {
       if (!currentUserData) {
         throw new Error('현재 사용자 데이터를 찾을 수 없습니다.');
       }
-      
+
       const currentUser = JSON.parse(currentUserData);
-    
+
       // 만약 새로운 프로필 이미지를 선택했다면, uploadProfileImage API를 호출하여 업로드
       let profileImageUrl = currentUser.profile_image;
       if (profileImage && profileImage !== currentUser.profile_image) {
@@ -135,16 +159,20 @@ const My_profile_screen = () => {
           type: 'image/jpeg', // or image/png based on the selected image type
           name: `profile_${currentUser.providerId}.jpg`,
         });
-  
-        const uploadResponse = await axios.put('http://54.79.61.80:5000/user_info/uploadProfileImage', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+
+        const uploadResponse = await axios.put(
+          'http://54.79.61.80:5000/user_info/uploadProfileImage',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           },
-        });
-  
+        );
+
         profileImageUrl = uploadResponse.data.profile_image;
       }
-  
+
       // 현재 화면에서 수정 가능한 필드만 업데이트
       const updatedUserData = {
         ...currentUser, // 기존 데이터를 모두 유지
@@ -158,20 +186,37 @@ const My_profile_screen = () => {
           hypertension: underlyingCondition.includes('고혈압') ? 1 : 0,
           diabetes: underlyingCondition.includes('당뇨') ? 1 : 0,
           hyperlipidemia: underlyingCondition.includes('고지혈증') ? 1 : 0,
-          retinal_complication: underlyingCondition.includes('망막합병증') ? 1 : 0,
+          retinal_complication: underlyingCondition.includes('망막합병증')
+            ? 1
+            : 0,
         },
       };
-  
+
       // API 호출
-      await axios.put('http://54.79.61.80:5000/user_info/updateUser', updatedUserData, {
-        headers: {
-          'Content-Type': 'application/json',
+      await axios.put(
+        'http://54.79.61.80:5000/user_info/updateUser',
+        updatedUserData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
-  
+      );
+
       // AsyncStorage 업데이트
       await AsyncStorage.setItem('user', JSON.stringify(updatedUserData));
       Alert.alert('알림', '변경사항이 저장되었습니다.');
+
+      // 변경사항 저장 후 초기상태 업데이트
+      setInitialSettings({
+        nickname,
+        birthdate,
+        height,
+        weight,
+        kidneyStatus,
+        profileImage,
+        underlyingCondition,
+      });
     } catch (error) {
       console.log('Error saving user data', error);
       Alert.alert('오류', '변경사항 저장에 실패하였습니다.');
@@ -183,7 +228,7 @@ const My_profile_screen = () => {
       <View style={styles.profileImageContainer}>
         {profileImage ? (
           <Image
-            source={{ uri: profileImage }}
+            source={{uri: profileImage}}
             style={styles.profileImage}></Image>
         ) : (
           <Image
@@ -251,11 +296,23 @@ const My_profile_screen = () => {
         <Text style={styles.accountManagementText}>내 계정 관리</Text>
       </TouchableOpacity>
 
-      <View style={styles.saveButtonContainer}>
-        <TouchableOpacity style={styles.saveButton} onPress={saveUserData}>
-          <Text style={styles.saveButtonText}>변경사항 저장</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Save Button */}
+      <TouchableOpacity
+        style={[
+          styles.saveButton,
+          { backgroundColor: hasChanges() ? '#EBEFFE' : '#E8E8E8' },
+        ]}
+        onPress={saveUserData}
+        disabled={!hasChanges()}>
+        <Text
+          style={[
+            styles.saveButtonText,
+            { color: hasChanges() ? '#7596FF' : '#7F7F7F' },
+          ]}
+        >
+          변경사항 저장
+        </Text>
+      </TouchableOpacity>
 
       {/* Modals for editing details */}
       <ModalComponent
@@ -307,7 +364,7 @@ const My_profile_screen = () => {
           '신장 이식 받음',
         ]}
         selectedValue={kidneyStatus}
-        onSelect={(value) => {
+        onSelect={value => {
           setKidneyStatus(value);
         }}
         onClose={() => closeModal('kidneyStatus')}
@@ -317,7 +374,7 @@ const My_profile_screen = () => {
         title="어떤 기저질환이 있으신가요?"
         options={['해당사항 없음', '고혈압', '당뇨', '고지혈증', '망막합병증']}
         selectedValue={underlyingCondition}
-        onSelect={(value) => {
+        onSelect={value => {
           setUnderlyingCondition(value);
         }}
         onClose={() => closeModal('underlyingCondition')}
@@ -327,7 +384,7 @@ const My_profile_screen = () => {
   );
 };
 
-const DetailRow = ({ label, value, onPress, last }) => (
+const DetailRow = ({label, value, onPress, last}) => (
   <View style={last ? styles.detailLastRow : styles.detailRow}>
     <Text style={styles.detailLabel}>{label}</Text>
     <TouchableOpacity style={styles.textButtonWrapper} onPress={onPress}>
@@ -342,7 +399,7 @@ const DetailRow = ({ label, value, onPress, last }) => (
   </View>
 );
 
-const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
+const BirthdateModal = ({visible, title, value, setValue, onClose}) => {
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
   const [day, setDay] = useState('');
@@ -418,7 +475,6 @@ const BirthdateModal = ({ visible, title, value, setValue, onClose }) => {
   );
 };
 
-
 const SelectionModalComponent = ({
   visible,
   title,
@@ -438,7 +494,7 @@ const SelectionModalComponent = ({
     }
   }, [visible, selectedValue]);
 
-  const handleOptionPress = (option) => {
+  const handleOptionPress = option => {
     if (multiple) {
       if (option === '해당사항 없음') {
         setTempSelectedValue(['해당사항 없음']);
@@ -446,10 +502,10 @@ const SelectionModalComponent = ({
         let newSelection = [...tempSelectedValue];
 
         // Remove '해당사항 없음'
-        newSelection = newSelection.filter((item) => item !== '해당사항 없음');
+        newSelection = newSelection.filter(item => item !== '해당사항 없음');
 
         if (newSelection.includes(option)) {
-          newSelection = newSelection.filter((item) => item !== option);
+          newSelection = newSelection.filter(item => item !== option);
         } else {
           newSelection.push(option);
         }
@@ -478,14 +534,15 @@ const SelectionModalComponent = ({
       <View style={styles.modalContainer}>
         <Text style={styles.modalTitle}>{title}</Text>
         <View style={styles.optionContainer}>
-          {options.map((option) => (
+          {options.map(option => (
             <TouchableOpacity
               key={option}
               style={[
                 styles.optionButton,
                 (multiple
                   ? tempSelectedValue.includes(option)
-                  : tempSelectedValue === option) && styles.selectedOptionButton,
+                  : tempSelectedValue === option) &&
+                  styles.selectedOptionButton,
               ]}
               onPress={() => handleOptionPress(option)}>
               <Text
@@ -493,7 +550,8 @@ const SelectionModalComponent = ({
                   styles.optionText,
                   (multiple
                     ? tempSelectedValue.includes(option)
-                    : tempSelectedValue === option) && styles.selectedOptionText,
+                    : tempSelectedValue === option) &&
+                    styles.selectedOptionText,
                 ]}>
                 {option}
               </Text>
