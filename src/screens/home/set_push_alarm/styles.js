@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40 * height_ratio,
     width: '60%',
-    backgroundColor: '#EBEFFE',
     borderRadius: 24,
     paddingVertical: 15 * height_ratio,
     alignItems: 'center',
@@ -73,8 +72,38 @@ const styles = StyleSheet.create({
   saveButtonText: {
     ...theme.fonts.SemiBold,
     fontSize: 15,
-    color: '#7596FF',
   },
+
+    // 변경사항 저장 컨펌 모달 스타일
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      width: 300 * width_ratio,
+      backgroundColor: 'white',
+      borderRadius: 24,
+      paddingVertical: 30 * height_ratio,
+      paddingHorizontal: 32 * width_ratio,
+    },
+    modalMessage: {
+      ...theme.fonts.Regular,
+      fontSize: 16,
+      textAlign: 'left',
+      marginBottom: 24 * height_ratio,
+      color: '#353535',
+    }, 
+    modalButtonContainer: {
+      alignSelf: 'center',
+      flexDirection: 'row',
+    },
+    modalButtonImage: {
+      height: 42 * height_ratio,
+      width: 105 * width_ratio,
+      resizeMode: 'contain',
+    },
   
 });
 
