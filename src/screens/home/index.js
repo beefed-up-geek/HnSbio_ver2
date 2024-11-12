@@ -1,5 +1,5 @@
 // src/screens/home/index.js
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 
 import styles from './styles.js'; // 스타일 분리
 
@@ -58,9 +58,11 @@ const HomeScreen = () => {
     }
   };
 
-  useEffect(() => {
-    checkDailyCompletionStatus();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      checkDailyCompletionStatus();
+    }, [])
+  );
 
   const checkDailyCompletionStatus = async () => {
     const today = new Date().toDateString(); // today's date as a string
@@ -146,7 +148,9 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('NoTabs', {screen: 'kit_guide_1'})}>
+            onPress={() =>
+              navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
+            }>
             <Image
               source={require('../../images/home/testButton.png')}
               style={styles.button}
