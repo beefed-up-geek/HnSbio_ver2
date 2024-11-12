@@ -102,8 +102,8 @@ const HomeScreen = () => {
   const getCKDRiskImage = () => {
     if (resGFR === null) return require('../../images/home/unknown.png');
     if (resGFR >= 90) return require('../../images/home/낮음.png');
-    if (resGFR >= 60) return require('../../images/home/주의.png');
-    return require('../../images/home/high.png');
+    if (resGFR >= 60) return require('../../images/home/중등도.png');
+    return require('../../images/home/높음.png');
   };
 
   return (
