@@ -22,7 +22,6 @@ const HomeScreen = () => {
   // 사용자 정보를 저장할 상태 변수들
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [resGFR, setResGFR] = useState(null);
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -35,6 +34,9 @@ const HomeScreen = () => {
     retinal_complication: 0,
   });
 
+  const [latestResGFR, setLatestResGFR] = useState(null);
+  const [latestCheckupDate, setLatestCheckupDate] = useState('');
+
   const characterOpacity = useState(new Animated.Value(1))[0];
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
@@ -45,33 +47,64 @@ const HomeScreen = () => {
         const parsedData = JSON.parse(userData);
         setName(parsedData.name);
         setGender(parsedData.gender);
-        // 가장 최근의 healthCheckup 데이터에서 resGFR 값을 추출하여 상태에 저장
-        const recentHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
-          const dateA = new Date(
-            a.resCheckupYear,
-            a.resCheckupDate.substring(0, 2) - 1,
-            a.resCheckupDate.substring(2),
-          );
-          const dateB = new Date(
-            b.resCheckupYear,
-            b.resCheckupDate.substring(0, 2) - 1,
-            b.resCheckupDate.substring(2),
-          );
-          return dateB - dateA;
-        })[0];
-
-        if (recentHealthCheckup && recentHealthCheckup.resGFR) {
-          setResGFR(parseFloat(recentHealthCheckup.resGFR));
-        }
         setHeight(parsedData.height);
         setWeight(parsedData.weight);
         setBirthdate(parsedData.birthdate);
         setNickname(parsedData.nickname);
         setChronicKidneyDisease(parsedData.chronic_kidney_disease);
         setUnderlyingDisease(parsedData.underlying_disease);
+
+        // 가장 최근의 resGFR 값 가져오기
+        if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+          const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
+            const dateA = new Date(
+              a.resCheckupYear,
+              a.resCheckupDate.substring(0, 2) - 1,
+              a.resCheckupDate.substring(2),
+            );
+            const dateB = new Date(
+              b.resCheckupYear,
+              b.resCheckupDate.substring(0, 2) - 1,
+              b.resCheckupDate.substring(2),
+            );
+            return dateB - dateA;
+          });
+
+          const latestCheckup = sortedHealthCheckup[0];
+          const resGFRValue = parseFloat(latestCheckup.resGFR);
+          if (!isNaN(resGFRValue)) {
+            setLatestResGFR(resGFRValue);
+          } else {
+            setLatestResGFR(null);
+          }
+
+          // 날짜 문자열 형식화
+          const dateString = `${
+            latestCheckup.resCheckupYear
+          }.${latestCheckup.resCheckupDate.substring(
+            0,
+            2,
+          )}.${latestCheckup.resCheckupDate.substring(2)}`;
+          setLatestCheckupDate(dateString);
+        }
       }
     } catch (error) {
       console.error('Error loading user data from AsyncStorage:', error);
+    }
+  };
+
+  // CKD 위험도에 따른 이미지 선택 함수
+  const getCKDRiskImage = resGFR => {
+    if (resGFR === null || resGFR === undefined || isNaN(resGFR)) {
+      return require('../../images/home/낮음.png'); // 기본 이미지
+    } else if (resGFR >= 90) {
+      return require('../../images/home/낮음.png');
+    } else if (resGFR >= 60) {
+      return require('../../images/home/중간.png');
+    } else if (resGFR >= 30) {
+      return require('../../images/home/높음.png');
+    } else {
+      return require('../../images/home/매우높음.png');
     }
   };
 
@@ -98,13 +131,6 @@ const HomeScreen = () => {
   useEffect(() => {
     loadUserData(); // 컴포넌트가 마운트될 때 사용자 데이터 로드
   }, []);
-
-  const getCKDRiskImage = () => {
-    if (resGFR === null) return require('../../images/home/unknown.png');
-    if (resGFR >= 90) return require('../../images/home/낮음.png');
-    if (resGFR >= 60) return require('../../images/home/주의.png');
-    return require('../../images/home/high.png');
-  };
 
   return (
     <LinearGradient
@@ -274,7 +300,7 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
-            navigation.navigate('NoTabs', {screen: 'kidney_info'})
+            navigation.navigate('BottomNavigation', {screen: 'HealthStack'})
           }>
           <View style={styles.titleContainer}>
             <Image
@@ -284,11 +310,14 @@ const HomeScreen = () => {
             <View style={styles.titleLines}>
               <Text style={styles.boxText}>만성콩팥병 위험도</Text>
               <Text style={styles.boxSubText}>
-                2024.10.17 건강검진 결과 기준
+                {latestCheckupDate} 건강검진 결과 기준
               </Text>
             </View>
           </View>
-          <Image source={getCKDRiskImage()} style={styles.CKDstage1Image} />
+          <Image
+            source={getCKDRiskImage(latestResGFR)}
+            style={styles.CKDstage1Image}
+          />{' '}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -309,8 +338,8 @@ const HomeScreen = () => {
           <Image
             source={
               checkCompletedToday
-                ? require('../../images/home/완료.png')
-                : require('../../images/home/미완료.png')
+                ? require('../../images/home/done.png')
+                : require('../../images/home/undone.png')
             }
             style={styles.checkStatusImage}
           />
