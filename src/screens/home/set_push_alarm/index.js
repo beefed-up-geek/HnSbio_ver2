@@ -14,7 +14,7 @@ import styles from './styles.js'; // 스타일 불러오기 // 개발 규칙: st
 const Set_push_alarm_screen = () => {
   const navigation = useNavigation();
 
-  const [alarmEnabled, setAlarmEnabled] = useState(true);
+  const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [repeatInterval, setRepeatInterval] = useState('28');
   const [initialSettings, setInitialSettings] = useState({}); // 변경사항 유무 확인
@@ -27,18 +27,50 @@ const Set_push_alarm_screen = () => {
   const [providerId, setProviderId] = useState('');
 
   useEffect(() => {
-    (async () => {
+    const fetchUserData = async () => {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
         const parsedData = JSON.parse(userData);
         setProviderId(parsedData.providerId);
-        setInitialSettings({
-          alarmEnabled,
-          startDate,
-          repeatInterval: '28',
-        });
+
+        // 서버에서 알림 설정 가져오기
+        fetchPushNotificationSettings(parsedData.providerId);
       }
-    })();
+    };
+
+    const fetchPushNotificationSettings = async providerId => {
+      try {
+        const response = await axios.get(
+          `http://54.79.61.80:5000/user_info/getPushNotificationSettings?providerId=${providerId}`,
+        );
+
+        if (response.data) {
+          const {alarmEnabled, startDate, repeatInterval} = response.data;
+          setAlarmEnabled(alarmEnabled);
+          setStartDate(new Date(startDate));
+          setRepeatInterval(String(repeatInterval));
+
+          // 초기 설정값 설정
+          setInitialSettings({
+            alarmEnabled,
+            startDate: new Date(startDate),
+            repeatInterval: String(repeatInterval),
+          });
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          console.log('Default settings applied due to missing user data.');
+          setAlarmEnabled(false); // 디폴트 알림 설정을 "꺼짐"으로 설정
+          setStartDate(new Date());
+          setRepeatInterval('28');
+        } else {
+          console.error('Error fetching push notification settings:', error);
+          Alert.alert('Error', '알림 설정을 불러오는 중 오류가 발생했습니다.');
+        }
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const toggleAlarm = () => setAlarmEnabled(previousState => !previousState);
@@ -78,7 +110,7 @@ const Set_push_alarm_screen = () => {
       );
 
       setConfirmationModalVisible(true);
-      setInitialSettings({ alarmEnabled, startDate, repeatInterval }); // 저장 후 initial setting 초기화
+      setInitialSettings({alarmEnabled, startDate, repeatInterval}); // 저장 후 initial setting 초기화
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
@@ -88,30 +120,32 @@ const Set_push_alarm_screen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.detailsContainer}>
-        <DetailRow
-          icon={require('../../../images/home/set_push_alarm/알림.png')}
-          label="알림"
-          value={
-            <Switch
-              value={alarmEnabled}
-              onValueChange={toggleAlarm}
-              disabled={false}
-              activeText={''}
-              inActiveText={''}
-              circleSize={27} // 원 크기
-              barHeight={31} // 스위치 바 높이
-              circleBorderWidth={0} // 원 둘레 색
-              backgroundActive={'#7697FF'} // 켜짐 배경색
-              backgroundInactive={'#7F7F7F'} // 꺼짐 배경색
-              circleActiveColor={'white'} // 켜짐 원 내부 색
-              circleInActiveColor={'white'} // 꺼짐 원 내부 색
-              switchLeftPx={4} // 스위치의 왼쪽 패딩
-              switchRightPx={4} // 스위치의 오른쪽 패딩
-              switchWidthMultiplier={1.9} // 스위치 바 너비
-            />
-          }
-          last={!alarmEnabled} // 알림이 꺼졌을 때 last 스타일 적용
-        />
+        {alarmEnabled !== null && ( // alarmEnabled가 null이 아닌 경우에만 렌더링
+          <DetailRow
+            icon={require('../../../images/home/set_push_alarm/알림.png')}
+            label="알림"
+            value={
+              <Switch
+                value={alarmEnabled}
+                onValueChange={toggleAlarm}
+                disabled={false}
+                activeText={''}
+                inActiveText={''}
+                circleSize={27}
+                barHeight={31}
+                circleBorderWidth={0}
+                backgroundActive={'#7697FF'}
+                backgroundInactive={'#7F7F7F'}
+                circleActiveColor={'white'}
+                circleInActiveColor={'white'}
+                switchLeftPx={4}
+                switchRightPx={4}
+                switchWidthMultiplier={1.9}
+              />
+            }
+            last={!alarmEnabled}
+          />
+        )}
         {alarmEnabled && (
           <>
             <DetailRow
@@ -193,9 +227,8 @@ const Set_push_alarm_screen = () => {
         <Text
           style={[
             styles.saveButtonText,
-            { color: hasChanges() ? '#7596FF' : '#7F7F7F' },
-          ]}
-        >
+            {color: hasChanges() ? '#7596FF' : '#7F7F7F'},
+          ]}>
           변경사항 저장
         </Text>
       </TouchableOpacity>
