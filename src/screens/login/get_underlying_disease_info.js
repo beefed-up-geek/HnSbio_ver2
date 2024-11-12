@@ -94,7 +94,6 @@ const GetUnderlyingDiseaseInfo = () => {
     const diabetes = selectedOptions.includes('당뇨') ? 1 : 0;
     const hyperlipidemia = selectedOptions.includes('고지혈증') ? 1 : 0;
     const retinal_complication = selectedOptions.includes('망막합병증') ? 1 : 0;
-
     const userData = {
       name,
       gender,
@@ -111,16 +110,21 @@ const GetUnderlyingDiseaseInfo = () => {
         diabetes,
         hyperlipidemia,
         retinal_complication,
-      }
+      },
     };
-
+  
     try {
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      await axios.post('http://54.79.61.80:5000/login/register', userData, {
+      // register API 호출
+      const response = await axios.post('http://54.79.61.80:5000/login/register', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+  
+      // 응답에서 newUser 데이터를 AsyncStorage에 저장
+      const newUser = response.data.newUser;
+      await AsyncStorage.setItem('user', JSON.stringify(newUser));
+  
       setIsModalVisible(false); // Hide modal
       navigation.navigate('BottomNavigation');
     } catch (error) {
@@ -128,6 +132,7 @@ const GetUnderlyingDiseaseInfo = () => {
       Alert.alert('오류', '데이터 전송 중 문제가 발생했습니다.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

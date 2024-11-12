@@ -9,12 +9,26 @@ import {
     SafeAreaView,
     StatusBar,
     Alert,
+    Linking,
     Modal,
-    Platform
+    Platform,
+    ActivityIndicator  // 추가된 부분
 } from 'react-native';
+import RNFetchBlob from 'react-native-blob-util';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
+import {
+    KidneyDiseaseCard,
+    ChronicKidneyDiseaseCard,
+    HypertensionCard,
+    DiabetesCard,
+    DyslipidemiaCard,
+    ObesityCard,
+    AnemiaCard,
+    LiverDiseaseCard
+} from './DiseaseMetricCards';
+import { dummy_pdf } from '../data';
 import theme from '../../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;
@@ -24,6 +38,7 @@ const Health_checkup_specifics_screen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const [gender, setGender] = useState('');
+    const [providerId, setProviderId] = useState('');  // 추가된 부분
     const [pdfVisible, setPdfVisible] = useState(false);
     
     // 상태 변수들
@@ -64,72 +79,40 @@ const Health_checkup_specifics_screen = () => {
         anemia: false,
         liverDisease: false
     });
-
-    // PDF Viewer 컴포넌트
-    const PDFViewer = ({ base64Data }) => {
-        if (!base64Data) return null;
-
-        const source = {
-            uri: `data:application/pdf;base64,${base64Data}`,
-            cache: true
-        };
-
-        return (
-            <View style={styles.pdfContainer}>
-                <Pdf
-                    source={source}
-                    onLoadComplete={(numberOfPages, filePath) => {
-                        console.log(`PDF loaded: ${numberOfPages} pages`);
-                    }}
-                    onPageChanged={(page, numberOfPages) => {
-                        console.log(`Current page: ${page}`);
-                    }}
-                    onError={(error) => {
-                        console.log(error);
-                        Alert.alert('오류', 'PDF를 불러오는 중 오류가 발생했습니다.');
-                    }}
-                    style={styles.pdf}
-                />
-            </View>
-        );
+    
+    const openPDFInBrowser = async () => {
+        console.log(healthData.resOriGinalData);
+        if (!healthData.resOriGinalData) {
+            Alert.alert('오류', 'PDF URL을 가져올 수 없습니다.');
+            return;
+        }
+        try {
+            const supported = await Linking.canOpenURL(healthData.resOriGinalData);
+            if (supported) {
+                
+                await Linking.openURL(healthData.resOriGinalData);
+            } else {
+                Alert.alert('오류', '이 링크를 열 수 없습니다.');
+            }
+        } catch (error) {
+            Alert.alert('오류', 'PDF를 여는 중 문제가 발생했습니다.');
+        }
     };
-
-    // PDF 모달
-    const PDFModal = () => (
-        <Modal
-            animationType="slide"
-            transparent={false}
-            visible={pdfVisible}
-            onRequestClose={() => setPdfVisible(false)}
-        >
-            <SafeAreaView style={styles.modalContainer}>
-                <View style={styles.modalHeader}>
-                    <TouchableOpacity 
-                        onPress={() => setPdfVisible(false)}
-                        style={styles.closeButton}
-                    >
-                        <Text style={styles.closeButtonText}>닫기</Text>
-                    </TouchableOpacity>
-                </View>
-                <PDFViewer base64Data={healthData.resOriGinalData} />
-            </SafeAreaView>
-        </Modal>
-    );
-
-    // 성별 정보 가져오기
+    
     useEffect(() => {
-        const getUserGender = async () => {
+        const getUserData = async () => {
             try {
                 const userData = await AsyncStorage.getItem('user');
                 if (userData) {
-                    const { gender } = JSON.parse(userData);
+                    const { gender, providerId } = JSON.parse(userData);
                     setGender(gender);
+                    setProviderId(providerId);
                 }
             } catch (error) {
-                console.error('Gender fetch error:', error);
+                console.error('User data fetch error:', error);
             }
         };
-        getUserGender();
+        getUserData();
     }, []);
 
     // 날짜 포맷팅 함수
@@ -203,6 +186,8 @@ const Health_checkup_specifics_screen = () => {
         checkDiseases();
     }, [healthData, gender]);
 
+    
+
     const DiseaseBox = ({ title, isActive }) => (
         <View style={[styles.diseaseBox, isActive && styles.activeDiseaseBox]}>
             <Text style={[styles.diseaseText, isActive && styles.activeDiseaseText]}>
@@ -218,7 +203,7 @@ const Health_checkup_specifics_screen = () => {
             <ScrollView>
                 <TouchableOpacity 
                     style={styles.pdfButton} 
-                    onPress={() => setPdfVisible(true)}
+                    //onPress={openPDFInBrowser}  // 수정된 부분
                 >
                     <Image
                         source={require('../../../images/health_screen/pdficon.png')}
@@ -227,56 +212,147 @@ const Health_checkup_specifics_screen = () => {
                     <Text style={styles.pdfButtonText}>PDF로 보기</Text>
                 </TouchableOpacity>
 
+                
                 <View style={styles.summaryContainer}>
-                    <View style={styles.summaryHeader}>
-                        <Text style={styles.summaryTitle}>요약</Text>
-                        <View style={styles.indicators}>
-                            <View style={styles.indicator}>
-                                <View style={styles.circleRed} />
-                                <Text style={styles.indicatorText}>비정상</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.diseaseGrid}>
-                        <DiseaseBox title="신장질환" isActive={diseases.kidneyDisease} />
-                        <DiseaseBox title="만성신장질환" isActive={diseases.chronicKidneyDisease} />
-                        <DiseaseBox title="고혈압" isActive={diseases.hypertension} />
-                        <DiseaseBox title="당뇨" isActive={diseases.diabetes} />
-                        <DiseaseBox title="이상지질혈증" isActive={diseases.dyslipidemia} />
-                        <DiseaseBox
-                            title={diseases.obesity ? "비만" : "과체중"}
-                            isActive={diseases.obesity || diseases.overweight}
-                        />
-                        <DiseaseBox title="빈혈" isActive={diseases.anemia} />
-                        <DiseaseBox title="간장질환" isActive={diseases.liverDisease} />
-                    </View>
-                </View>
-
-                <View style={styles.contentContainer}>
-                    <Text style={styles.sectionTitle}>기본 정보</Text>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>검진일자</Text>
-                        <Text style={styles.value}>{healthData.formattedCheckupDate}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>키</Text>
-                        <Text style={styles.value}>{healthData.resHeight} cm</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>체중</Text>
-                        <Text style={styles.value}>{healthData.resWeight} kg</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.label}>BMI</Text>
-                        <Text style={styles.value}>{healthData.resBMI}</Text>
-                    </View>
-                </View>
+    <View style={styles.summaryHeader}>
+        <Text style={styles.summaryTitle}>요약</Text>
+        <View style={styles.indicators}>
+            <View style={styles.indicator}>
+                <View style={styles.circleRed} />
+                <Text style={styles.indicatorText}>비정상</Text>
+            </View>
+        </View>
+    </View>
+    <View style={styles.diseaseGrid}>
+        <DiseaseBox title="신장질환" isActive={diseases.kidneyDisease} />
+        <DiseaseBox title="만성신장질환" isActive={diseases.chronicKidneyDisease} />
+        <DiseaseBox title="고혈압" isActive={diseases.hypertension} />
+        <DiseaseBox title="당뇨" isActive={diseases.diabetes} />
+        <DiseaseBox title="이상지질혈증" isActive={diseases.dyslipidemia} />
+        <DiseaseBox
+            title={diseases.obesity ? "비만" : "과체중"}
+            isActive={diseases.obesity || diseases.overweight}
+        />
+        <DiseaseBox title="빈혈" isActive={diseases.anemia} />
+        <DiseaseBox title="간장질환" isActive={diseases.liverDisease} />
+    </View>
+</View>
+<View style={[styles.cardsContainer, { marginTop: 16 * height_ratio }]}>
+    <KidneyDiseaseCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <ChronicKidneyDiseaseCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <HypertensionCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <DiabetesCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <DyslipidemiaCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <ObesityCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData} 
+    />
+    <AnemiaCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData}
+        gender={gender}
+    />
+    <LiverDiseaseCard 
+        MetricCard={MetricCard} 
+        MetricRow={MetricRow} 
+        healthData={healthData}
+        gender={gender}
+    />
+</View>
             </ScrollView>
 
-            <PDFModal />
+            
         </SafeAreaView>
     );
 };
+
+const MetricRow = ({ label, value, unit = "", normalRange = "", isAbnormal = false, customColor }) => {
+        const getProgressWidth = (value) => {
+            // 정상 범위를 기준으로 게이지 너비 계산
+            let maxValue = 200;  // 기본 최대값
+            if (normalRange && normalRange.includes('~')) {
+                const [min, max] = normalRange.split('~').map(num => parseFloat(num));
+                maxValue = max * 1.5;  // 정상 범위 최대값의 1.5배를 전체 너비로 설정
+            }
+            return `${Math.min((parseFloat(value)/maxValue) * 100, 100)}%`;
+        };
+    
+        return (
+            <View style={styles.metricRow}>
+                <View style={styles.metricHeader}>
+                    <Text style={styles.metricLabel}>{label}</Text>
+                    <Text style={[
+                        styles.metricValue,
+                        { color: customColor || (isAbnormal ? '#FF5252' : '#333333') }
+                    ]}>
+                        {value}{unit}
+                    </Text>
+                </View>
+                <View style={styles.progressContainer}>
+                    <View style={styles.progressBarBackground}>
+                        {/* 정상 범위 표시 */}
+                        {normalRange && (
+                            <View style={[styles.normalRangeIndicator]}>
+                                <View style={styles.normalRangeBar} />
+                            </View>
+                        )}
+                        {/* 현재 값 표시 */}
+                        <View 
+                            style={[
+                                styles.progressBar,
+                                { 
+                                    width: getProgressWidth(value),
+                                    backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
+                                }
+                            ]}
+                        />
+                        {/* 현재 값 마커 */}
+                        <View style={[
+                            styles.valueMarker,
+                            { 
+                                left: getProgressWidth(value),
+                                backgroundColor: customColor || (isAbnormal ? '#FF5252' : '#4CAF50')
+                            }
+                        ]} />
+                    </View>
+                </View>
+                {normalRange && (
+                    <Text style={styles.normalRange}>정상범위: {normalRange}</Text>
+                )}
+            </View>
+        );
+    };
+
+    const MetricCard = ({ title, children }) => (
+        <View style={styles.metricCard}>
+            <Text style={styles.cardTitle}>{title}</Text>
+            {children}
+        </View>
+    );
+    
+
 
 const styles = {
     container: {
@@ -353,8 +429,8 @@ const styles = {
         justifyContent: 'flex-start',
     },
     diseaseBox: {
-        width: (Dimensions.get('window').width - (16 * 2 * width_ratio) - (8 * 3 * width_ratio)) / 4-10,
-        height: (Dimensions.get('window').width - (16 * 2 * width_ratio) - (8 * 3 * width_ratio)) / 4-10,
+        width: (Dimensions.get('window').width - (16 * 2 * width_ratio) - (8 * 3 * width_ratio)) / 4 - 10,
+        height: (Dimensions.get('window').width - (16 * 2 * width_ratio) - (8 * 3 * width_ratio)) / 4 - 10,
         backgroundColor: '#F5F5F5',
         borderRadius: 8 * width_ratio,
         justifyContent: 'center',
@@ -406,7 +482,8 @@ const styles = {
         fontWeight: '500',
         flex: 1,
         textAlign: 'right',
-    },modalContainer: {
+    },
+    modalContainer: {
         flex: 1,
         backgroundColor: '#FFFFFF',
     },
@@ -435,6 +512,89 @@ const styles = {
         flex: 1,
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    loadingContainer: {  // 추가된 부분
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    metricRow: {
+        marginBottom: 20 * height_ratio,
+    },
+    cardTitle: {
+        ...theme.fonts.Bold,
+        fontSize: 16 * width_ratio,
+        color: '#000000',
+        marginBottom: 16 * height_ratio,
+        textAlign: 'left',  // 왼쪽 정렬 명시적 지정
+    },
+    metricHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4 * height_ratio,
+    },
+    metricLabel: {
+        ...theme.fonts.Medium,
+        fontSize: 14 * width_ratio,
+        color: '#666666',
+    },
+    metricValue: {
+        ...theme.fonts.Medium,
+        fontSize: 14 * width_ratio,
+        color: '#333333',
+    },
+    progressContainer: {
+        marginTop: 4 * height_ratio,
+    },
+    progressBarBackground: {
+        position: 'relative',
+        height: 8 * height_ratio,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 4 * width_ratio,
+    },
+    normalRangeIndicator: {
+        position: 'absolute',
+        height: '100%',
+        width: '60%',  // 정상 범위 표시 영역
+        left: '20%',   // 중앙 정렬을 위해
+    },
+    normalRangeBar: {
+        height: '100%',
+        backgroundColor: '#E8F5E9',
+        borderRadius: 4 * width_ratio,
+    },
+    progressBar: {
+        position: 'absolute',
+        height: '100%',
+        borderRadius: 4 * width_ratio,
+    },
+    valueMarker: {
+        position: 'absolute',
+        width: 2 * width_ratio,
+        height: 12 * height_ratio,
+        top: -2 * height_ratio,
+        transform: [{ translateX: -1 * width_ratio }],
+    },
+    normalRange: {
+        ...theme.fonts.Regular,
+        fontSize: 12 * width_ratio,
+        color: '#999999',
+        marginTop: 4 * height_ratio,
+    },
+    cardsContainer: {
+        padding: 16 * width_ratio,  // 좌우 패딩
+        gap: 16 * height_ratio,     // 카드들 사이의 간격
+    },
+    metricCard: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12 * width_ratio,
+        padding: 16 * width_ratio,
+        elevation: 3,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
 };
 
