@@ -62,6 +62,8 @@ const styles = StyleSheet.create({
   },
   
   saveButton: {
+    position: 'absolute',
+    bottom: 40 * height_ratio,
     width: '60%',
     backgroundColor: '#EBEFFE',
     borderRadius: 24,
@@ -73,6 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#7596FF',
   },
+  
 });
 
 export default styles;
