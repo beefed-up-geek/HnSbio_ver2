@@ -26,6 +26,22 @@ const Set_push_alarm_screen = () => {
     useState(false); // 변경사항 저장 완료 모달
   const [providerId, setProviderId] = useState('');
 
+  const formatDate = date => {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  // 변경사항 유무 확인 함수
+  const hasChanges = () => {
+    return (
+      initialSettings.alarmEnabled !== alarmEnabled ||
+      formatDate(initialSettings.startDate) !== formatDate(startDate) ||
+      initialSettings.repeatInterval !== repeatInterval
+    );
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -46,14 +62,18 @@ const Set_push_alarm_screen = () => {
 
         if (response.data) {
           const {alarmEnabled, startDate, repeatInterval} = response.data;
+
+          // Ensure startDate is a Date object
+          const parsedStartDate = new Date(startDate);
+
           setAlarmEnabled(alarmEnabled);
-          setStartDate(new Date(startDate));
+          setStartDate(parsedStartDate);
           setRepeatInterval(String(repeatInterval));
 
           // 초기 설정값 설정
           setInitialSettings({
             alarmEnabled,
-            startDate: new Date(startDate),
+            startDate: parsedStartDate,
             repeatInterval: String(repeatInterval),
           });
         }
@@ -63,6 +83,13 @@ const Set_push_alarm_screen = () => {
           setAlarmEnabled(false); // 디폴트 알림 설정을 "꺼짐"으로 설정
           setStartDate(new Date());
           setRepeatInterval('28');
+
+          // Set initialSettings with default values
+          setInitialSettings({
+            alarmEnabled: false,
+            startDate: new Date(),
+            repeatInterval: '28',
+          });
         } else {
           console.error('Error fetching push notification settings:', error);
           Alert.alert('Error', '알림 설정을 불러오는 중 오류가 발생했습니다.');
@@ -83,15 +110,6 @@ const Set_push_alarm_screen = () => {
     setModalVisible(prevState => ({...prevState, [key]: false}));
   };
 
-  // 변경사항 유무 확인 함수
-  const hasChanges = () => {
-    return (
-      initialSettings.alarmEnabled !== alarmEnabled ||
-      initialSettings.startDate.toISOString() !== startDate.toISOString() ||
-      initialSettings.repeatInterval !== repeatInterval
-    );
-  };
-
   const savePushNotificationSettings = async () => {
     if (!providerId) {
       Alert.alert('Error', 'Provider ID를 찾을 수 없습니다.');
@@ -110,7 +128,12 @@ const Set_push_alarm_screen = () => {
       );
 
       setConfirmationModalVisible(true);
-      setInitialSettings({alarmEnabled, startDate, repeatInterval}); // 저장 후 initial setting 초기화
+      // Ensure startDate is a Date object when updating initialSettings
+      setInitialSettings({
+        alarmEnabled,
+        startDate,
+        repeatInterval,
+      });
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
