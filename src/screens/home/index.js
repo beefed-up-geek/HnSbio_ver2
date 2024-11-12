@@ -1,10 +1,8 @@
 // src/screens/home/index.js
-import React, {useEffect, useState, useRef, useCallback } from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Dimensions,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -24,6 +22,7 @@ const HomeScreen = () => {
   // 사용자 정보를 저장할 상태 변수들
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
+  const [resGFR, setResGFR] = useState(null);
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -46,6 +45,24 @@ const HomeScreen = () => {
         const parsedData = JSON.parse(userData);
         setName(parsedData.name);
         setGender(parsedData.gender);
+        // 가장 최근의 healthCheckup 데이터에서 resGFR 값을 추출하여 상태에 저장
+        const recentHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
+          const dateA = new Date(
+            a.resCheckupYear,
+            a.resCheckupDate.substring(0, 2) - 1,
+            a.resCheckupDate.substring(2),
+          );
+          const dateB = new Date(
+            b.resCheckupYear,
+            b.resCheckupDate.substring(0, 2) - 1,
+            b.resCheckupDate.substring(2),
+          );
+          return dateB - dateA;
+        })[0];
+
+        if (recentHealthCheckup && recentHealthCheckup.resGFR) {
+          setResGFR(parseFloat(recentHealthCheckup.resGFR));
+        }
         setHeight(parsedData.height);
         setWeight(parsedData.weight);
         setBirthdate(parsedData.birthdate);
@@ -61,7 +78,7 @@ const HomeScreen = () => {
   useFocusEffect(
     useCallback(() => {
       checkDailyCompletionStatus();
-    }, [])
+    }, []),
   );
 
   const checkDailyCompletionStatus = async () => {
@@ -81,6 +98,13 @@ const HomeScreen = () => {
   useEffect(() => {
     loadUserData(); // 컴포넌트가 마운트될 때 사용자 데이터 로드
   }, []);
+
+  const getCKDRiskImage = () => {
+    if (resGFR === null) return require('../../images/home/unknown.png');
+    if (resGFR >= 90) return require('../../images/home/낮음.png');
+    if (resGFR >= 60) return require('../../images/home/주의.png');
+    return require('../../images/home/high.png');
+  };
 
   return (
     <LinearGradient
@@ -264,10 +288,7 @@ const HomeScreen = () => {
               </Text>
             </View>
           </View>
-          <Image
-            source={require('../../images/home/낮음.png')}
-            style={styles.CKDstage1Image}
-          />
+          <Image source={getCKDRiskImage()} style={styles.CKDstage1Image} />
         </TouchableOpacity>
 
         <TouchableOpacity
