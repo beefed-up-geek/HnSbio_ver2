@@ -9,6 +9,7 @@ import {
     SafeAreaView,
     StatusBar,
     Alert,
+    Linking,
     Modal,
     Platform,
     ActivityIndicator  // 추가된 부분
@@ -80,6 +81,7 @@ const Health_checkup_specifics_screen = () => {
     });
     
     const openPDFInBrowser = async () => {
+        console.log(healthData.resOriGinalData);
         if (!healthData.resOriGinalData) {
             Alert.alert('오류', 'PDF URL을 가져올 수 없습니다.');
             return;
@@ -87,6 +89,7 @@ const Health_checkup_specifics_screen = () => {
         try {
             const supported = await Linking.canOpenURL(healthData.resOriGinalData);
             if (supported) {
+                
                 await Linking.openURL(healthData.resOriGinalData);
             } else {
                 Alert.alert('오류', '이 링크를 열 수 없습니다.');
@@ -280,7 +283,7 @@ const Health_checkup_specifics_screen = () => {
 </View>
             </ScrollView>
 
-            <PDFModal />
+            
         </SafeAreaView>
     );
 };
