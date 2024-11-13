@@ -49,9 +49,6 @@ const CustomHeader = ({title}) => {
       <TouchableOpacity
         onPress={handleBackPress}
         style={styles.leftButtonContainer}>
-      <TouchableOpacity
-        onPress={handleBackPress}
-        style={styles.leftButtonContainer}>
         <Image
           source={require('../images/back.png')}
           style={styles.leftButton}
