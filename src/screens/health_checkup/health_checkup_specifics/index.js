@@ -203,7 +203,7 @@ const Health_checkup_specifics_screen = () => {
             <ScrollView>
                 <TouchableOpacity 
                     style={styles.pdfButton} 
-                    //onPress={openPDFInBrowser}  // 수정된 부분
+                    onPress={openPDFInBrowser}  // 수정된 부분
                 >
                     <Image
                         source={require('../../../images/health_screen/pdficon.png')}
