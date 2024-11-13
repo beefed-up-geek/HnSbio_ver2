@@ -191,9 +191,10 @@ const styles = StyleSheet.create({
   percentageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E8EFFD',
+    backgroundColor: '#E8E8E8',
     borderRadius: 24 * width_ratio,
-    width: 68 * width_ratio,
+    paddingHorizontal: 8 * width_ratio,
+    // width: 68 * width_ratio,
     height: 30 * width_ratio,
   },
   percentageText: {
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   noDataText: {
     ...theme.fonts.Medium,
     fontSize: 14 * width_ratio,
-    color: '#828282',
+    color: '#4A4A4F',
   },
   checkStatusImage: {
     width: 68 * width_ratio,

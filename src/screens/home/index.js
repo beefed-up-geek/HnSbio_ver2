@@ -50,8 +50,7 @@ const HomeScreen = () => {
       return {
         backgroundColor: '#D9F9CF',
         color: '#5E8254',
-        description:
-          '약간의 신기능 감소가 있습니다.',
+        description: '약간의 신기능 감소가 있습니다.',
       };
     } else if (functionValue >= 30) {
       return {
@@ -205,9 +204,16 @@ const HomeScreen = () => {
           />
         </Animated.View>
 
+        {/* <Text style={styles.nextCheckupText1}>아직 검사를 하지 않았어요</Text> */}
         <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
+        {/* <View style={styles.lineWrapper}>
+          <Text style={styles.nextCheckupText2}>
+            콩팥 건강 관리를 시작해보세요
+          </Text> */}
         <View style={styles.lineWrapper}>
-          <Text style={styles.nextCheckupText2}>13일 남았어요</Text>
+          <Text style={styles.nextCheckupText2}>
+            13일 남았습니다.
+          </Text>
           <TouchableOpacity
             style={styles.setPushAlarmButton}
             onPress={() =>
@@ -306,11 +312,20 @@ const HomeScreen = () => {
               <Text style={styles.boxText}>신기능 추정치</Text>
               <View style={styles.subLines}>
                 <Text style={styles.boxSubTextDark}>
-                  {latestCheckupDate} 건강검진 결과 기준
+                  {latestCheckupDate
+                    ? `${latestCheckupDate} 건강검진 결과 기준`
+                    : '병원 기록을 입력하고'}
                 </Text>
-                {estimatedKidneyFunction !== null && (
+                {estimatedKidneyFunction !== null ? (
                   <Text style={styles.boxSubLight}>
-                    {getKidneyFunctionStyle(estimatedKidneyFunction).description}
+                    {
+                      getKidneyFunctionStyle(estimatedKidneyFunction)
+                        .description
+                    }
+                  </Text>
+                ) : (
+                  <Text style={styles.boxSubTextDark}>
+                    나의 신기능 추정치를 알아보세요
                   </Text>
                 )}
               </View>
@@ -320,8 +335,11 @@ const HomeScreen = () => {
             style={[
               styles.percentageContainer,
               {
-                backgroundColor: getKidneyFunctionStyle(estimatedKidneyFunction)
-                  .backgroundColor,
+                backgroundColor:
+                  estimatedKidneyFunction !== null
+                    ? getKidneyFunctionStyle(estimatedKidneyFunction)
+                        .backgroundColor
+                    : '#E8E8E8',
               },
             ]}>
             {estimatedKidneyFunction !== null ? (
@@ -353,7 +371,9 @@ const HomeScreen = () => {
             />
             <View style={styles.titleLines}>
               <Text style={styles.boxText}>오늘의 콩팥 상태 체크하기</Text>
-              <Text style={styles.boxSubLight}>매일 체크하는 것을 권장해요</Text>
+              <Text style={styles.boxSubLight}>
+                매일 체크하는 것을 권장해요
+              </Text>
             </View>
           </View>
           <Image
