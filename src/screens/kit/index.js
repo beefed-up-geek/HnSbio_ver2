@@ -1,11 +1,9 @@
-// src/screens/kit/index.js
-
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TouchableOpacity, Alert } from 'react-native';
-import theme from '../../theme'; // 개발 규칙: 폰트 적용
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
-const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
-const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+import theme from '../../theme';
+import styles from './styles.js';
+const width_ratio = Dimensions.get('screen').width / 390;
+const height_ratio = Dimensions.get('screen').height / 844;
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -30,11 +28,13 @@ const Kit_screen = () => {
         const newCount = buttonPressCount + 1;
         setButtonPressCount(newCount);
 
-        if (newCount === 7) {
+        // 7의 배수일 때마다 체크
+        if (newCount % 7 === 0) {
             try {
+                // 7, 21, 35, ... 번째 누름 (7로 나누었을 때 나머지가 0이고, 14로 나누었을 때 나머지가 7인 경우)
                 if (newCount % 14 === 7) {
-                    console.log("7");
-                    // 7번째 누름 - /setTestResultsDev 호출
+                    console.log(newCount);
+                    // setTestResultsDev 호출
                     const response = await axios.post('http://54.79.61.80:5000/kit/setTestResultsDev', { providerId });
                     const updatedUserData = await AsyncStorage.getItem('user');
                     const parsedData = JSON.parse(updatedUserData);
@@ -43,9 +43,11 @@ const Kit_screen = () => {
                     const newdata = await AsyncStorage.getItem('user');
                     console.log(newdata);
                     Alert.alert('Success', 'kit_result가 초기 데이터로 설정되었습니다.');
-                } else {
-                    // 14번째 누름 - /clearTestResultsDev 호출
-                    console.log("14");
+                } 
+                // 14, 28, 42, ... 번째 누름 (7로 나누었을 때 나머지가 0이고, 14로 나누었을 때 나머지가 0인 경우)
+                else {
+                    console.log(newCount);
+                    // clearTestResultsDev 호출
                     await axios.post('http://54.79.61.80:5000/kit/clearTestResultsDev', { providerId });
                     const updatedUserData = await AsyncStorage.getItem('user');
                     const parsedData = JSON.parse(updatedUserData);
@@ -59,7 +61,6 @@ const Kit_screen = () => {
                 console.error('API 요청 오류:', error);
                 Alert.alert('Error', 'API 요청에 실패했습니다.');
             }
-            setButtonPressCount(0); // 카운트 초기화
         }
     };
 
@@ -79,7 +80,7 @@ const Kit_screen = () => {
                 style={styles.button}
                 onPress={handleButtonPress}
             >
-                <Text style={{ color: 'black' }}>개발자용 기능 버튼</Text>
+                <Text style={{ color: 'black' }}>개발자용 기능 버튼 ({buttonPressCount})</Text>
             </TouchableOpacity>
         </View>
     );

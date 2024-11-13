@@ -12,7 +12,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
-
+import DevButton from '../../components/devButton.js';
 import styles from './styles.js'; // 스타일 분리
 
 const HomeScreen = () => {
@@ -169,11 +169,8 @@ const HomeScreen = () => {
       end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}>
       <View style={styles.logoContainer}>
-        <Image
-          source={require('../../images/home/logo.png')}
-          style={styles.logoImage}
-        />
-      </View>
+            <DevButton />
+        </View>
       <ScrollView
         contentContainerStyle={styles.container}
         scrollEventThrottle={16}
