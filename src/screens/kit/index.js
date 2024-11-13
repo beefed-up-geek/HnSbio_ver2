@@ -18,6 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 import styles from './index_styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 import {useState, useEffect} from 'react';
+import {Alert} from 'react-native';
 
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
@@ -31,6 +32,16 @@ const Kit_screen = ({onPress, navigation, route}) => {
     return `${year}년 ${month}월 ${date}일`;
   };
 
+  const getCurrentDateTime = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const hours = today.getHours();
+    const minutes = today.getMinutes();
+    return `${year}년 ${month}월 ${date}일 ${hours}시 ${minutes}분`;
+  };
+
   const handleKitPurchase = () => {
     Linking.openURL('https://hnsbiolab.com/device');
   };
@@ -39,19 +50,57 @@ const Kit_screen = ({onPress, navigation, route}) => {
   ]);
 
   useEffect(() => {
+    loadResults();
     if (route.params) {
       const {status} = route.params;
-      const currentDate = new Date();
-      const formattedDate = `${currentDate.getFullYear()}년 ${
-        currentDate.getMonth() + 1
-      }월 ${currentDate.getDate()}일`;
-
-      setResults(prevResults => [
-        ...prevResults,
-        {date: formattedDate, status},
-      ]);
+      const formattedDate = getCurrentDateTime();
+      const newResult = {date: formattedDate, status};
+      const updatedResults = [newResult, ...results];
+      setResults(updatedResults);
+      saveResults(updatedResults); // 결과 저장
     }
   }, [route.params]);
+
+  // AsyncStorage에 결과 저장
+  const saveResults = async newResults => {
+    try {
+      const jsonResults = JSON.stringify(newResults);
+      await AsyncStorage.setItem('@kit_results', jsonResults);
+    } catch (error) {
+      console.error('Failed to save results:', error);
+    }
+  };
+
+  // AsyncStorage에서 결과 불러오기
+  const loadResults = async () => {
+    try {
+      const jsonResults = await AsyncStorage.getItem('@kit_results');
+      if (jsonResults) {
+        setResults(JSON.parse(jsonResults));
+      }
+    } catch (error) {
+      console.error('Failed to load results:', error);
+    }
+  };
+
+  const deleteResult = async index => {
+    const updatedResults = results.filter((_, i) => i !== index);
+    setResults(updatedResults);
+    await saveResults(updatedResults); // 삭제 후 AsyncStorage에 업데이트
+  };
+
+  // 결과 삭제 확인
+  const confirmDelete = index => {
+    Alert.alert(
+      '삭제 확인',
+      '이 결과를 삭제하시겠습니까?',
+      [
+        {text: '취소', style: 'cancel'},
+        {text: '삭제', onPress: () => deleteResult(index)},
+      ],
+      {cancelable: true},
+    );
+  };
 
   const renderResults = () => {
     if (results.length === 0) {
@@ -74,6 +123,11 @@ const Kit_screen = ({onPress, navigation, route}) => {
           ]}>
           {result.status}
         </Text>
+        <TouchableOpacity
+          onPress={() => confirmDelete(index)}
+          style={styles.deleteButton}>
+          <Text style={styles.deleteButtonText}>삭제</Text>
+        </TouchableOpacity>
       </View>
     ));
   };

@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, BackHandler } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 
 import styles from './navigation_without_tabs_styles';
 
@@ -24,7 +24,7 @@ import Authentication_1_screen from '../screens/health_checkup/authentication_1'
 import Authentication_2_screen from '../screens/health_checkup/authentication_2';
 import Authentication_3_screen from '../screens/health_checkup/authentication_3';
 
-const CustomHeader = ({ title }) => {
+const CustomHeader = ({title}) => {
   const navigation = useNavigation();
 
   const handleBackPress = () => {
@@ -37,7 +37,9 @@ const CustomHeader = ({ title }) => {
 
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={handleBackPress} style={styles.leftButtonContainer}>
+      <TouchableOpacity
+        onPress={handleBackPress}
+        style={styles.leftButtonContainer}>
         <Image
           source={require('../images/chevronArrowLeft.png')}
           style={styles.leftButton}
@@ -50,9 +52,9 @@ const CustomHeader = ({ title }) => {
 
 const Stack = createStackNavigator();
 
-const stackScreenOptions = ({ route, navigation }) => {
+const stackScreenOptions = ({route, navigation}) => {
   return {
-    header: ({ options }) => {
+    header: ({options}) => {
       const title = options.title || route.name;
       return <CustomHeader title={title} />;
     },
@@ -73,7 +75,10 @@ const NavigationWithoutTabs = () => {
         return true;
       };
 
-      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
       return () => subscription.remove();
     }, [navigation]),
   );
@@ -83,62 +88,67 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="authentication_1"
         component={Authentication_1_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="authentication_2"
         component={Authentication_2_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="authentication_3"
         component={Authentication_3_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="medicine_specifics"
         component={Medicine_specifics_screen}
-        options={{ title: '의약품 상세정보' }}
+        options={{title: '의약품 상세정보'}}
+      />
+      <Stack.Screen
+        name="Kit"
+        component={Kit_screen}
+        options={{title: '키트 검사'}}
       />
       <Stack.Screen
         name="kit_guide_1"
         component={Kit_guide_1_screen}
-        options={{ title: '소변 검사 가이드' }}
+        options={{title: '소변 검사 가이드'}}
       />
       <Stack.Screen
         name="kit_guide_2"
         component={Kit_guide_2_screen}
-        options={{ title: '소변 검사 가이드' }}
+        options={{title: '소변 검사 가이드'}}
       />
       <Stack.Screen
         name="kit_test"
         component={Kit_test_screen}
-        options={{ title: '촬영하기' }}
+        options={{title: '촬영하기'}}
       />
       <Stack.Screen
         name="daily_check"
         component={Daily_check_screen}
-        options={{ title: '매일매일 건강 체크' }}
+        options={{title: '매일매일 건강 체크'}}
       />
       <Stack.Screen
         name="kidney_info"
         component={Kidney_info_screen}
-        options={{ title: '내 콩팥 건강' }}
+        options={{title: '내 콩팥 건강'}}
       />
       <Stack.Screen
         name="my_profile"
         component={My_profile_screen}
-        options={{ title: '내 프로필' }}
+        options={{title: '내 프로필'}}
       />
       <Stack.Screen
         name="set_push_alarm"
         component={Set_push_alarm_screen}
-        options={{ title: '키트 검사 주기' }}
+        options={{title: '키트 검사 주기'}}
       />
       <Stack.Screen
         name="HealthCheckupSpecifics"
         component={Health_checkup_specifics_screen}
-        options={{ title: '건강 검진 결과' }}
+        options={{title: '건강 검진 결과'}}
       />
     </Stack.Navigator>
   );
