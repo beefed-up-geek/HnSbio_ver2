@@ -41,58 +41,7 @@ const Health_checkup_screen = () => {
     })();
   }, []);
 
-  const handleTap = async () => {
-    tapCount.current += 1;
 
-    if (tapCount.current === 7) {
-      tapCount.current = 0;
-      if (addingData) {
-        try {
-          console.log('Fetching health checkup data from /healthCheckupDev API');
-          const response = await axios.post(
-            'http://54.79.61.80:5000/health_checkup/healthCheckupDev',
-            { providerId },
-          );
-
-          if (response.data && response.data.data) {
-            const healthCheckupData = response.data.data;
-            const userData = await AsyncStorage.getItem('user');
-            if (userData) {
-              const parsedUserData = JSON.parse(userData);
-              parsedUserData.healthCheckup = healthCheckupData;
-              await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-              console.log('User information updated successfully in AsyncStorage');
-              setHealthCheckupData(healthCheckupData);
-              setAddingData(false);
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching health checkup data:', error);
-        }
-      } else {
-        try {
-          console.log('Removing health checkup data');
-          const response = await axios.post(
-            'http://54.79.61.80:5000/health_checkup/healthCheckupDevRemove',
-            { providerId },
-          );
-
-          if (response.data) {
-            const userData = await AsyncStorage.getItem('user');
-            if (userData) {
-              const parsedUserData = JSON.parse(userData);
-              delete parsedUserData.healthCheckup;
-              await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-              setHealthCheckupData([]);
-              setAddingData(true);
-            }
-          }
-        } catch (error) {
-          console.error('Error removing health checkup data:', error);
-        }
-      }
-    }
-  };
 
   const getHealthTags = (item) => {
     const healthTags = [];
@@ -217,9 +166,7 @@ const Health_checkup_screen = () => {
           <Text style={styles.headerTitle}>건강검진</Text>
         </View>
         <View style={styles.contentContainer}>
-          <TouchableOpacity onPress={handleTap}>
             <Text style={styles.recentRecordText}>최근 기록</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.refreshButton}
             onPress={() =>

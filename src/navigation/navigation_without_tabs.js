@@ -155,11 +155,6 @@ const NavigationWithoutTabs = () => {
         options={{ title: '매일매일 건강 체크' }}
       />
       <Stack.Screen
-        name="kidney_info"
-        component={Kidney_info_screen}
-        options={{ title: '내 콩팥 건강' }}
-      />
-      <Stack.Screen
         name="my_profile"
         component={My_profile_screen}
         options={{ title: '내 프로필' }}
