@@ -1,4 +1,4 @@
-// src/screen(구버전)/diet/index.js
+// src\screen(구버전)\diet\index.js
 import React from 'react';
 import {
   View,

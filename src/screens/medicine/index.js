@@ -1,5 +1,4 @@
-// src/screens/medicine/index.js
-
+// src\screens\medicine\index.js
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions,  Text, View, TouchableOpacity, } from 'react-native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용

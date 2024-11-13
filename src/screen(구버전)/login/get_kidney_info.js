@@ -1,4 +1,4 @@
-// src/screen(구버전)/login/get_kidney_info.js
+// src\screen(구버전)\login\get_kidney_info.js
 import React, {useState} from 'react';
 import {
   View,

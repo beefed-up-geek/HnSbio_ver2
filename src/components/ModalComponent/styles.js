@@ -1,5 +1,4 @@
-// src/components/styles.js
-
+// src\components\ModalComponent\styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from '../../theme'; // Adjust the path to your theme file
 

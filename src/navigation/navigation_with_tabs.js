@@ -1,4 +1,4 @@
-// src/navigation/navigation_with_tabs.js
+// src\navigation\navigation_with_tabs.js
 import React, { useState, useEffect } from 'react';
 import {
   View,

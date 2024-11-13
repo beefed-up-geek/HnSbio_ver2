@@ -1,3 +1,4 @@
+// src\screens\health_checkup\health_checkup_specifics\index.js
 import React, { useState, useEffect } from 'react';
 import { 
     View, 

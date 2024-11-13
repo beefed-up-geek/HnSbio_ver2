@@ -1,5 +1,4 @@
-// src/screens/home/my_profile/index.js
-
+// src\screens\home\my_profile\index.js
 import {useState, useEffect} from 'react';
 import {
   View,

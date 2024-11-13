@@ -1,4 +1,4 @@
-// src/navigation/navigation_without_tabs.js
+// src\navigation\navigation_without_tabs.js
 import React from 'react';
 import {
   View,

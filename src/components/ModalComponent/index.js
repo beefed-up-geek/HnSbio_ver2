@@ -1,5 +1,4 @@
-// src/components/ModalComponent.js
-
+// src\components\ModalComponent\index.js
 import React from 'react';
 import {
   View,

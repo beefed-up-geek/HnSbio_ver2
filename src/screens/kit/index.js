@@ -1,3 +1,4 @@
+// src\screens\kit\index.js
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TouchableOpacity, Alert } from 'react-native';
 import theme from '../../theme';

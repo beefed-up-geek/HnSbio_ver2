@@ -1,4 +1,4 @@
-// src/screens/health_checkup/authentication_3/index.js
+// src\screens\health_checkup\authentication_3\index.js
 import React, { useState } from 'react';
 import {
   View,

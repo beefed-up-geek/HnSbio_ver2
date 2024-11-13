@@ -1,82 +1,46 @@
-// src/navigation/navigation_with_tabs_styles.js
+// src\navigation\navigation_with_tabs_styles.js
+const fs = require('fs');
+const path = require('path');
 
-import { StyleSheet } from 'react-native';
-import theme from '../theme';
+// 프로젝트의 루트 디렉토리를 설정합니다.
+const directoryPath = path.join(__dirname, 'src'); // src 대신 프로젝트 폴더 경로 지정
 
-const styles = StyleSheet.create({
-  // CustomTabBar 스타일
-  floatingContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: '50%',
-    transform: [{ translateX: -175 }],
-    backgroundColor: 'transparent',
-  },
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    width: 350,
-    borderRadius: 24,
-    elevation: 5,
-  },
+// 파일의 시작 부분 주석 제거 함수
+function removeInitialComments(filePath) {
+  let content = fs.readFileSync(filePath, 'utf-8');
+  const relativePath = path.relative(__dirname, filePath);
 
-  // TabDesign 스타일
-  tabButton: {
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#000',
-    borderRadius: 25,
-    paddingHorizontal: 10,
-    overflow: 'hidden',
-  },
-  tabIcon: {
-    width: 24,
-    height: 24,
-    marginBottom: 4,
-  },
-  tabLabel: {
-    color: '#fff',
-    marginLeft: 5,
-    ...theme.fonts.Bold,
-    fontWeight: 'bold',
-  },
+  // import/require 문을 찾습니다
+  const importMatch = content.match(/^(?!.*\/\/.*)(?!.*\/\*.*)(import|const.*require|let.*require|var.*require)/m);
+  
+  if (importMatch) {
+    // import/require 문의 위치를 찾습니다
+    const importIndex = importMatch.index;
+    
+    // import 이전의 내용을 제거하고 import부터 시작하도록 합니다
+    content = content.slice(importIndex);
+  } else {
+    // import가 없는 경우 파일 시작의 모든 주석을 제거
+    content = content.replace(/^(\s*\/\/.*\n|\s*\/\*[\s\S]*?\*\/\s*|\s*\n)*/g, '');
+  }
 
-  // CustomHeader 스타일
-  headerContainer: {
-    height: 50, // 아이콘 크기에 맞게 헤더 높이 설정
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  leftButtonContainer: {
-    position: 'absolute',
-    left: 16,
-  },
-  leftButton: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-  },
-  homeLeftButton: {
-    width: 48, // 아이콘 크기 증가
-    height: 48,
-    resizeMode: 'contain',
-  },
-  headerTitle: {
-    fontSize: 18,
-    ...theme.fonts.Bold,
-    color: '#333',
-  },
-});
+  // 파일 시작 부분의 빈 줄 제거
+  content = content.replace(/^\s*\n/, '');
 
-export default styles;
+  fs.writeFileSync(filePath, content);
+  console.log(`Removed initial comments from: ${relativePath}`);
+}
+
+// 디렉토리 순회하며 .js 파일의 주석 제거
+function processDirectory(directory) {
+  fs.readdirSync(directory).forEach((file) => {
+    const fullPath = path.join(directory, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      processDirectory(fullPath); // 하위 디렉토리 탐색
+    } else if (file.endsWith('.js')) {
+      removeInitialComments(fullPath);
+    }
+  });
+}
+
+processDirectory(directoryPath);

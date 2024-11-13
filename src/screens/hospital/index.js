@@ -1,5 +1,4 @@
-// src/screens/hospital/index.js
-
+// src\screens\hospital\index.js
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text } from 'react-native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용

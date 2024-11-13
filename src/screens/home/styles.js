@@ -1,5 +1,4 @@
-// src/screens/home/styles.js
-
+// src\screens\home\styles.js
 import {StyleSheet, Dimensions} from 'react-native';
 
 import theme from '../../theme'; // 개발 규칙: 폰트 적용

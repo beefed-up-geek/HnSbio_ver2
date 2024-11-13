@@ -1,4 +1,4 @@
-// src/screens/health_checkup/index.js
+// src\screens\health_checkup\index.js
 import React, { useEffect, useState, useRef } from 'react';
 import {
   Image,

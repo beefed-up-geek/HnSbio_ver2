@@ -1,4 +1,4 @@
-// src/screens/login/get_underlying_disease_info.js
+// src\screens\login\get_underlying_disease_info.js
 import React, { useState } from 'react';
 import {
   View,

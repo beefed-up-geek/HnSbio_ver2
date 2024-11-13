@@ -1,4 +1,4 @@
-// src/screens/home/index.js
+// src\screens\home\index.js
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
