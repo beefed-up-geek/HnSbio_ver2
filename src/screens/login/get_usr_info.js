@@ -1,4 +1,4 @@
-// src/screens/login/get_usr_info.js
+// src\screens\login\get_usr_info.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {

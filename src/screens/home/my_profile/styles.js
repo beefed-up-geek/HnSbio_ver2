@@ -1,5 +1,4 @@
-// src/screens/home/my_profile/styles.js
-
+// src\screens\home\my_profile\styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
@@ -25,12 +24,11 @@ const styles = StyleSheet.create({
   cameraIconContainer: {
     position: 'absolute',
     bottom: 0,
-    right: 133 * width_ratio,
-    width: 28 * width_ratio,
+    right: 140 * width_ratio,
   },
   cameraIcon: {
-    width: 36 * width_ratio,
-    height: 36 * width_ratio,
+    width: 32 * width_ratio,
+    height: 32 * width_ratio,
   },
 
   detailsContainer: {
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginVertical: 10 * height_ratio,
+    marginVertical: 9 * height_ratio,
     marginHorizontal: 36 * width_ratio,
   },
   settingsIcon: {
@@ -95,10 +93,11 @@ const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     alignItems: 'center',
-    marginTop: 22 * height_ratio,
-    alignItems: 'center',
+    marginTop: 12 * height_ratio,
   },
   saveButton: {
+    marginTop: 12 * height_ratio,
+    alignSelf: 'center',
     width: '60%',
     backgroundColor: '#EBEFFE',
     borderRadius: 24,

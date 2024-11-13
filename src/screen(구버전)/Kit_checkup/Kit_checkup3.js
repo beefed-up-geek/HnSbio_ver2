@@ -1,4 +1,4 @@
-// src/screen(구버전)/Kit_checkup/Kit_checkup3.js
+// src\screen(구버전)\Kit_checkup\Kit_checkup3.js
 import React, {useEffect} from 'react';
 import {
   View,

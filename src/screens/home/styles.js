@@ -1,6 +1,5 @@
-// src/screens/home/styles.js
-
-import { StyleSheet, Dimensions } from 'react-native';
+// src\screens\home\styles.js
+import {StyleSheet, Dimensions} from 'react-native';
 
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 
@@ -45,11 +44,12 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   character: {
+    alignItems: 'center',
   },
   characterImage: {
-    width: '100%', // 화면 너비에 꽉 차게 설정
+    width: '90%',
     height: 303 * height_ratio,
-    resizeMode: 'contain', 
+    resizeMode: 'contain',
   },
   lineWrapper: {
     gap: 8,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextCheckupText1: {
-    marginTop: 0,
+    marginTop: 12,
     marginLeft: 24,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,
@@ -69,8 +69,7 @@ const styles = StyleSheet.create({
     fontSize: 24 * width_ratio,
     color: '#4D495A',
   },
-  setPushAlarmButton: {
-  },
+  setPushAlarmButton: {},
   setPushAlarmIcon: {
     width: 26 * width_ratio,
     height: 26 * width_ratio,
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 32 * height_ratio,
     marginBottom: 32 * height_ratio,
-    gap: 4 * width_ratio, 
+    gap: 4 * width_ratio,
   },
   button: {
     height: 54 * height_ratio,
@@ -136,8 +135,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
     marginHorizontal: 24 * width_ratio,
-    height: 99 * height_ratio,
     paddingHorizontal: 22 * width_ratio,
+    paddingVertical: 28 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -157,26 +156,6 @@ const styles = StyleSheet.create({
     ...theme.fonts.SemiBold,
     color: '#4A4A4F',
   },
-  CKDstage1Image: {
-    width: 49,
-    height: 28,
-    resizeMode: 'contain',
-  },
-  CKDstage2Image: {
-    width: 61,
-    height: 28,
-    resizeMode: 'contain',
-  },
-  CKDstage3Image: {
-    width: 49,
-    height: 28,
-    resizeMode: 'contain',
-  },
-  CKDstage4Image: {
-    width: 76,
-    height: 28,
-    resizeMode: 'contain',
-  },
   goIcon: {
     width: 26.93 * width_ratio,
     height: 23 * height_ratio,
@@ -193,10 +172,39 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 4 * height_ratio,
   },
-  boxSubText: {
+  subLines: {
+    gap: 1 * height_ratio,
+  },
+  boxSubLight: {
+    width: 170 * width_ratio,
+    fontSize: 12 * width_ratio,
+    ...theme.fonts.Light,
+    color: '#4A4A4F',
+  },
+  boxSubTextDark: {
+    width: 170 * width_ratio,
     fontSize: 12 * width_ratio,
     ...theme.fonts.Light,
     color: '#7F7F7F',
+  },
+  percentageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E8E8E8',
+    borderRadius: 24 * width_ratio,
+    paddingHorizontal: 8 * width_ratio,
+    // width: 68 * width_ratio,
+    height: 30 * width_ratio,
+  },
+  percentageText: {
+    ...theme.fonts.Medium,
+    fontSize: 16 * width_ratio,
+    color: '#4A4A4F',
+  },
+  noDataText: {
+    ...theme.fonts.Medium,
+    fontSize: 14 * width_ratio,
+    color: '#4A4A4F',
   },
   checkStatusImage: {
     width: 68 * width_ratio,
@@ -207,5 +215,5 @@ const styles = StyleSheet.create({
     height: 100 * height_ratio,
   },
 });
-  
+
 export default styles;

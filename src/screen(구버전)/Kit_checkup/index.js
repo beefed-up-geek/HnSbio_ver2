@@ -1,11 +1,4 @@
-// src/screen(구버전)/Kit_checkup/index.js
-/**
- * Codia React Native App
- * https://codia.ai
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// src\screen(구버전)\Kit_checkup\index.js
 import React, {useEffect} from 'react';
 import {
   View,

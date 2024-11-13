@@ -1,5 +1,5 @@
-// src/navigation/navigation_with_tabs.js
-import React, { useState, useEffect } from 'react';
+// src\navigation\navigation_with_tabs.js
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Dimensions,
@@ -9,8 +9,8 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import styles from './navigation_with_tabs_styles';
 
@@ -19,7 +19,6 @@ import Health_checkup_specifics_screen from '../screens/health_checkup/health_ch
 import Health_checkup_screen from '../screens/health_checkup/index';
 import Daily_check_screen from '../screens/home/daily_check/index';
 import Home_screen from '../screens/home/index';
-import Kidney_info_screen from '../screens/home/kidney_info/index';
 import My_profile_screen from '../screens/home/my_profile/index';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm/index';
 import Hospital_screen from '../screens/hospital/index';
@@ -55,19 +54,17 @@ const selectedIconSources = {
   MedicineStack: require('../images/bottm_navigation/drugwhite.png'),
 };
 
-const CustomHeader = ({ title, leftIcon, onLeftPress, isHomeScreen }) => {
+const CustomHeader = ({title, leftIcon, onLeftPress, isHomeScreen}) => {
   return (
     <View
       style={[
         styles.headerContainer,
-        isHomeScreen && { backgroundColor: '#EBEFFE' }, // Apply background color on home screen
-      ]}
-    >
+        isHomeScreen && {backgroundColor: '#EBEFFE'}, // Apply background color on home screen
+      ]}>
       {isHomeScreen && (
         <TouchableOpacity
           onPress={onLeftPress}
-          style={styles.leftButtonContainer}
-        >
+          style={styles.leftButtonContainer}>
           <Image source={leftIcon} style={styles.homeLeftButton} />
         </TouchableOpacity>
       )}
@@ -76,13 +73,13 @@ const CustomHeader = ({ title, leftIcon, onLeftPress, isHomeScreen }) => {
   );
 };
 
-const stackScreenOptions = ({ route, navigation }) => {
+const stackScreenOptions = ({route, navigation}) => {
   const isHomeScreen = route.name === 'Home';
   const leftIcon = require('../images/hns.png');
 
   return {
     headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
-    header: (props) => {
+    header: props => {
       const title = props.options.title || route.name;
       return (
         <CustomHeader
@@ -98,13 +95,32 @@ const stackScreenOptions = ({ route, navigation }) => {
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen name="Home" component={Home_screen} options={{ title: ' ' }} />
+    <Stack.Screen name="Home" component={Home_screen} options={{title: ' '}} />
   </Stack.Navigator>
 );
 
 const KitStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen name="Kit" component={Kit_screen} options={{ title: '키트 검사' }} />
+    <Stack.Screen
+      name="Kit"
+      component={Kit_screen}
+      options={{title: '키트 검사'}}
+    />
+    <Stack.Screen
+      name="kit_guide_1"
+      component={Kit_guide_1_screen}
+      options={{title: '소변 검사 안내'}}
+    />
+    <Stack.Screen
+      name="kit_guide_2"
+      component={Kit_guide_2_screen}
+      options={{title: '소변 검사 안내'}}
+    />
+    <Stack.Screen
+      name="kit_test"
+      component={Kit_test_screen}
+      options={{title: '소변 검사 안내'}}
+    />
   </Stack.Navigator>
 );
 
@@ -113,7 +129,7 @@ const HealthStack = () => (
     <Stack.Screen
       name="HealthCheckup"
       component={Health_checkup_screen}
-      options={{ title: '건강 검진' }}
+      options={{title: '건강 검진'}}
     />
   </Stack.Navigator>
 );
@@ -123,7 +139,7 @@ const HospitalStack = () => (
     <Stack.Screen
       name="Hospital"
       component={Hospital_screen}
-      options={{ title: '병원 찾기' }}
+      options={{title: '병원 찾기'}}
     />
   </Stack.Navigator>
 );
@@ -133,7 +149,7 @@ const MedicineStack = () => (
     <Stack.Screen
       name="Medicine"
       component={Medicine_screen}
-      options={{ title: '의약품 검색' }}
+      options={{title: '의약품 검색'}}
     />
   </Stack.Navigator>
 );
@@ -154,44 +170,43 @@ const BottomNavigation = () => {
           height: 64,
         },
       }}
-      tabBar={(props) => <CustomTabBar {...props} />}
-    >
+      tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
-        options={{ title: '홈 화면' }}
+        options={{title: '홈 화면'}}
       />
       <Tab.Screen
         name="KitStack"
         component={KitStack}
-        options={{ title: '키트 결과' }}
+        options={{title: '키트 결과'}}
       />
       <Tab.Screen
         name="HealthStack"
         component={HealthStack}
-        options={{ title: '건강검진' }}
+        options={{title: '건강검진'}}
       />
       <Tab.Screen
         name="HospitalStack"
         component={HospitalStack}
-        options={{ title: '병원찾기' }}
+        options={{title: '병원찾기'}}
       />
       <Tab.Screen
         name="MedicineStack"
         component={MedicineStack}
-        options={{ title: '약 검색' }}
+        options={{title: '약 검색'}}
       />
     </Tab.Navigator>
   );
 };
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const CustomTabBar = ({state, descriptors, navigation}) => {
   return (
     <View style={styles.floatingContainer}>
       <View style={styles.container}>
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
-          const { options } = descriptors[route.key];
+          const {options} = descriptors[route.key];
           const label = options.title || route.name;
 
           const iconSource = isFocused
@@ -217,7 +232,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-const TabDesign = ({ label, iconSource, isSelected, onPress }) => {
+const TabDesign = ({label, iconSource, isSelected, onPress}) => {
   const [width] = useState(new Animated.Value(isSelected ? 120 : 50));
 
   useEffect(() => {
@@ -240,13 +255,12 @@ const TabDesign = ({ label, iconSource, isSelected, onPress }) => {
             borderWidth: isSelected ? 0 : 1,
             borderColor: '#fff',
           },
-        ]}
-      >
+        ]}>
         <Image
           source={iconSource}
           style={[
             styles.tabIcon,
-            { tintColor: isSelected ? '#FFFFFF' : '#828287' },
+            {tintColor: isSelected ? '#FFFFFF' : '#828287'},
           ]}
         />
         {isSelected && <Text style={styles.tabLabel}>{label}</Text>}

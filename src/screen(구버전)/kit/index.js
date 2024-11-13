@@ -1,11 +1,4 @@
-// src/screen(구버전)/kit/index.js
-/**
- * Codia React Native App
- * https://codia.ai
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// src\screen(구버전)\kit\index.js
 import React from 'react';
 import {
   View,

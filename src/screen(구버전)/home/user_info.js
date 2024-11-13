@@ -1,4 +1,4 @@
-// src/screen(구버전)/home/user_info.js
+// src\screen(구버전)\home\user_info.js
 import React, {useState, useEffect} from 'react';
 import {
   Dimensions,

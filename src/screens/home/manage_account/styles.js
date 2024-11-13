@@ -1,5 +1,4 @@
-// src/screens/home/manage_account/styles.js
-
+// src\screens\home\manage_account\styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 
 import theme from '../../../theme';

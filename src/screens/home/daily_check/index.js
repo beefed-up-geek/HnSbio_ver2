@@ -1,5 +1,4 @@
-// src/screens/home/daily_check/index.js
-
+// src\screens\home\daily_check\index.js
 import React, {useState} from 'react';
 import {
   View,
@@ -10,6 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 
@@ -35,13 +35,20 @@ const Daily_check_screen = () => {
     setChecks(newChecks);
   };
 
-  const calculateChecked = () => {
+  const calculateChecked = async () => {
     const count = checks.filter(Boolean).length;
     setCheckedCount(count);
     setModalVisible(true);
+
+    const today = new Date().toDateString(); // 오늘 날짜를 string 형식으로 받아옴
+    try {
+      await AsyncStorage.setItem('dailyCheckComplete', today);
+    } catch (error) {
+      console.error('Failed to save check completion status:', error);
+    }
   };
 
-  // 개수에 따른 모달
+  // 개수에 따른 모달 two versions
   const renderModalContent = () => {
     if (checkedCount === 0) {
       return (
@@ -107,7 +114,10 @@ const Daily_check_screen = () => {
                   style={styles.modalButtonImage1}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('BottomNavigation', {screen: 'Kit_screen'})}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('BottomNavigation', {screen: 'KitStack'})
+                }>
                 <Image
                   source={require('../../../images/home/daily_check/키트.png')}
                   style={styles.modalButtonImage2}

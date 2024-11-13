@@ -1,4 +1,4 @@
-// src/screen(구버전)/Kit_checkup/QRcode.js
+// src\screen(구버전)\Kit_checkup\QRcode.js
 import React, {Fragment, useEffect, useState, useRef} from 'react';
 import {StyleSheet, View, Text, Linking, TouchableOpacity, Dimensions} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
