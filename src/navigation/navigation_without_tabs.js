@@ -26,7 +26,6 @@ import Kit_guide_1_screen from '../screens/kit/kit_guide_1';
 import Kit_guide_2_screen from '../screens/kit/kit_guide_2';
 import Kit_test_screen from '../screens/kit/kit_test';
 import Daily_check_screen from '../screens/home/daily_check';
-import Kidney_info_screen from '../screens/home/kidney_info';
 import My_profile_screen from '../screens/home/my_profile';
 import Manage_account_screen from '../screens/home/manage_account';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm';
@@ -154,11 +153,6 @@ const NavigationWithoutTabs = () => {
         name="daily_check"
         component={Daily_check_screen}
         options={{ title: '매일매일 건강 체크' }}
-      />
-      <Stack.Screen
-        name="kidney_info"
-        component={Kidney_info_screen}
-        options={{ title: '내 콩팥 건강' }}
       />
       <Stack.Screen
         name="my_profile"

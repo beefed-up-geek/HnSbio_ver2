@@ -19,7 +19,6 @@ import Health_checkup_specifics_screen from '../screens/health_checkup/health_ch
 import Health_checkup_screen from '../screens/health_checkup/index';
 import Daily_check_screen from '../screens/home/daily_check/index';
 import Home_screen from '../screens/home/index';
-import Kidney_info_screen from '../screens/home/kidney_info/index';
 import My_profile_screen from '../screens/home/my_profile/index';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm/index';
 import Hospital_screen from '../screens/hospital/index';
