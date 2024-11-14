@@ -22,10 +22,6 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string> <!-- 세로 모드만 허용 -->
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -74,32 +70,39 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-        <key>NSAllowsLocalNetworking</key>
-        <true/>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>54.79.61.80:3000</key>
-            <dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-            </dict>
-        </dict>
-    </dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>사진 라이브러리를 사용할 권한이 필요합니다.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>위치 정보를 사용할 권한이 필요합니다.</string>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>54.79.61.80:3000</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>54.79.61.80:5000</key>
+			<dict>
+				<key>NSExceptionAllowsinsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>http://scalawox1.iptime.org:5555</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>We need your permission to use the camera</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your permission to access your location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>위치 정보를 사용할 권한이 필요합니다.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your permission to access your location even when the app is in the background</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your permission to access your location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need your permission to use the microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>사진 라이브러리를 사용할 권한이 필요합니다.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
