@@ -79,7 +79,8 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-
+    implementation('org.tensorflow:tensorflow-lite:2.9.0')
+    
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
