@@ -9,85 +9,86 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 24,
+    paddingHorizontal: 21 * width_ratio*0.95,
+
   },
   searchSection: {
-    marginTop: 24,
+    marginTop: 24 * height_ratio*0.9,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
-    marginBottom: 12,
+    marginBottom: 12 * height_ratio*0.9,
   },
   searchInputContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 4,
-    borderRadius: 24,
+    paddingHorizontal: 20 * width_ratio*0.95,
+    paddingVertical: 4 * height_ratio*0.9,
+    borderRadius: 24 * width_ratio*0.95,
     backgroundColor: '#f9f9f9',
   },
   input: {
     ...theme.fonts.Regular,
-    fontSize: 16,
+    fontSize: 16 * width_ratio*0.95,
     color: '#000',
   },
   searchIcon: {
-    marginRight: 8,
-    width: 24,
-    height: 24,
+    marginRight: 8 * width_ratio*0.95,
+    width: 24 * width_ratio*0.95,
+    height: 24 * height_ratio*0.9,
     justifyContent: 'center',
     alignItems: 'center',
     resizeMode: 'contain',
     tintColor: '#8E9098',
   },
   locationContainer: {
-    marginLeft: 4,
+    marginLeft: 4 * width_ratio*0.95,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
   locationText: {
-    fontSize: 14,
+    fontSize: 14 * width_ratio*0.95,
     color: '#333',
-    fontFamily: 'Pretendard-SemiBold'
+    fontFamily: 'Pretendard-SemiBold',
   },
   filtersection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 10 * width_ratio*0.95,
+    paddingVertical: 8 * height_ratio*0.9,
   },
   filterScrollView: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 10 * width_ratio*0.95,
   },
   filterChipsContainer: {
     flexDirection: 'row',
-    paddingVertical: 8,
-    paddingHorizontal: 2,
+    paddingVertical: 8 * height_ratio*0.9,
+    paddingHorizontal: 2 * width_ratio*0.95,
   },
   filterChip: {
     flexDirection: 'row',
     backgroundColor: '#F0F0F0',
-    borderRadius: 16,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginRight: 4,
-    padding: 3,
+    borderRadius: 16 * width_ratio*0.95,
+    paddingVertical: 6 * height_ratio*0.9,
+    paddingHorizontal: 12 * width_ratio*0.95,
+    marginRight: 4 * width_ratio*0.95,
+    padding: 3 * width_ratio*0.95,
   },
   filterChipText: {
-    fontSize: 14,
+    fontSize: 14 * width_ratio*0.95,
     color: '#333',
-    fontFamily: 'Pretendard-SemiBold'
+    fontFamily: 'Pretendard-SemiBold',
   },
   scrollView: {
     flex: 1,
   },
   section: {
     // backgroundColor: 'black',
-    marginTop: 18,
-    marginBottom: 12,
+    marginTop: 18 * height_ratio*0.9,
+    marginBottom: 12 * height_ratio*0.9,
     zIndex: 9000,
   },
   pickerWrapper: {
@@ -99,77 +100,79 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...theme.fonts.Medium,
     color: 'black',
-    fontSize: 16,
+    fontSize: 16 * width_ratio*0.95,
   },
   distancePicker: {
     color: 'black',
-    width: 120,
+    width: 120 * width_ratio*0.95,
   },
   gradePicker: {
     color: '#72777A',
-    width: 94,
-    marginLeft: 5,
+    width: 94 * width_ratio*0.95,
+    marginLeft: 5 * width_ratio*0.95,
   },
   dropdownContainer: {
-
+    // 여기에 추가적인 스타일이 있다면 동일하게 적용하세요.
   },
   dropdown: {
     borderColor: 'transparent',
-    borderWidth: 1,
-    borderRadius: 15,
+    borderWidth: 1 * width_ratio*0.95,
+    borderRadius: 15 * width_ratio*0.95,
   },
   dropdownList: {
     borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 15,
-    maxHeight: 200,
+    borderWidth: 1 * width_ratio*0.95,
+    borderRadius: 15 * width_ratio*0.95,
+    maxHeight: 200 * height_ratio*0.9,
   },
   dropdownList1: {
     borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 15,
-    maxHeight: 250,
+    borderWidth: 1 * width_ratio*0.95,
+    borderRadius: 15 * width_ratio*0.95,
+    maxHeight: 250 * height_ratio*0.9,
   },
   dropdownText: {
-    fontSize: 14,
+    fontSize: 14 * width_ratio*0.95,
     color: '#72777A',
   },
   arrowIcon: {
     tintColor: '#72777A',
   },
   card: {
-    padding: 20,
+    padding: 20 * width_ratio*0.95,
     backgroundColor: '#fafafa',
-    borderRadius: 13,
-    marginBottom: 10,
-    marginLeft: width_ratio * 5,
+    borderRadius: 13 * width_ratio*0.95,
+    marginBottom: 10 * height_ratio*0.9,
+    marginLeft: 10 * width_ratio,
+    width: "95%",
     position: 'relative',
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 8 * height_ratio*0.9,
   },
   grade: {
     ...theme.fonts.Medium,
-    fontSize: 12,
+    fontSize: 12 * width_ratio*0.95,
     backgroundColor: '#F0F5FF',
     borderColor: '#ADC6FF',
     textAlign: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    borderWidth: 1 * width_ratio*0.95,
+    borderRadius: 8 * width_ratio*0.95,
+    paddingHorizontal: 10 * width_ratio*0.95,
+    paddingVertical: 3 * height_ratio*0.9,
   },
   starIcon: {
-    width: 20,
-    height: 20,
+    marginRight: 5 * width_ratio*0.95,
+    width: 23 * width_ratio*0.95,
+    height: 23 * height_ratio*0.9,
   },
   hospitalName: {
     ...theme.fonts.SemiBold,
-    marginBottom: 6,
-    fontSize: 16,
+    marginBottom: 6 * height_ratio*0.9,
+    fontSize: 16 * width_ratio*0.95,
     color: '#000',
   },
   hospitalAddressContainer: {
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
   },
   hospitalTimeContainer: {
     flexDirection: 'row',
-    marginTop: 5,
+    marginTop: 5 * height_ratio*0.9,
   },
   hospitalTimeLabel: {
     color: '#888',
@@ -188,63 +191,63 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   locationImage: {
-    width: 20,
-    height: 20,
-    marginRight: 6,
+    width: 20 * width_ratio*0.95,
+    height: 20 * height_ratio*0.9,
+    marginRight: 6 * width_ratio*0.95,
   },
   hospitalAddress: {
     width: '90%',
     ...theme.fonts.Medium,
-    fontSize: width_ratio * 12,
+    fontSize: 12 * width_ratio*0.95,
     color: '#888',
   },
   phone: {
     ...theme.fonts.Regular,
-    fontSize: 13,
+    fontSize: 13 * width_ratio*0.95,
     color: '#666',
-    marginLeft: 3,
-    marginBottom: 2,
+    marginLeft: 3 * width_ratio*0.95,
+    marginBottom: 2 * height_ratio*0.9,
   },
   blankBox: {
     zIndex: 1,
   },
   filterButton: {
-    marginTop: 6,
-    width: 30, // 버튼의 가로 길이
-    height: 30, // 버튼의 세로 길이
+    marginTop: 6 * height_ratio*0.9,
+    width: 30 * width_ratio*0.95, // 버튼의 가로 길이
+    height: 30 * height_ratio*0.9, // 버튼의 세로 길이
     backgroundColor: '#F0F0F0', // 버튼 배경색
-    borderRadius: 25, // 둥근 버튼을 위해 반지름 설정
+    borderRadius: 25 * width_ratio*0.95, // 둥근 버튼을 위해 반지름 설정
     alignItems: 'flex-end', // 이미지 가운데 정렬
     justifyContent: 'flex-end', // 이미지 가운데 정렬
   },
   filterIcon: {
-    width: 40, // 이미지 너비
-    height: 40, // 이미지 높이
+    width: 43 * width_ratio*0.95, // 이미지 너비
+    height: 43 * height_ratio*0.9, // 이미지 높이
     resizeMode: 'contain',
   },
   filtersection: {
     backgroundColor: 'transparent',
-    marginLeft: -10,
+    marginLeft: -10 * width_ratio*0.95,
     flexDirection: 'row', // 가로 방향 배치
     justifyContent: 'space-between',
     alignItems: 'center', // 요소들을 세로로 중앙 정렬
-    paddingHorizontal: 10, // 필요 시 양쪽 패딩
+    paddingHorizontal: 10 * width_ratio*0.95, // 필요 시 양쪽 패딩
   },
   noHospitalText: {
     ...theme.fonts.Medium,
-    marginTop: 120,
-    fontSize: 16,
+    marginTop: 120 * height_ratio*0.9,
+    fontSize: 16 * width_ratio*0.95,
     color: '#888',
     textAlign: 'center',
   },
   placeholder: {
-    height: 50,
+    height: 50 * height_ratio*0.9,
     backgroundColor: 'transparent',
   },
-  phonecontainer:{
+  phonecontainer: {
     flexDirection: 'row',
     alignItems: 'center', // 이미지 가운데 정렬
-    marginTop: 5,
+    marginTop: 5 * height_ratio*0.9,
   },
 });
 

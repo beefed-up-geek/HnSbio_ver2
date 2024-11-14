@@ -7,20 +7,27 @@ import {
   Modal,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import Slider from '@react-native-community/slider';
+import theme from '../../theme';
+
+const width_ratio = Dimensions.get('screen').width / 390 * 0.95;
+const height_ratio = Dimensions.get('screen').height / 844* 0.95;
 
 const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
   const [localFilters, setLocalFilters] = useState(filters);
   const [isApplying, setIsApplying] = useState(false);
+
+  const distanceValues = [5, 10, 20, 50, 100, '전국'];
 
   useEffect(() => {
     // filters의 초기값이 배열이 아닌 경우 처리
     setLocalFilters(prev => ({
       ...filters,
       info: Array.isArray(filters.info) ? filters.info : filters.info ? [filters.info] : [],
-      grade: Array.isArray(filters.grade) ? filters.grade : filters.grade ? [filters.grade] : [],
+      rating: Array.isArray(filters.rating) ? filters.rating : filters.rating ? [filters.rating] : [],
     }));
   }, [filters]);
 
@@ -43,8 +50,8 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
   // 필터 초기화 핸들러
   const resetFilters = async () => {
     const reset = {
-      distance: 100,
-      grade: [],
+      distance: '전국',
+      rating: [],
       type: '모든 병원',
       info: [],
     };
@@ -80,15 +87,16 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
   const handleSingleFilterChange = (key, value) => {
     setLocalFilters(prev => ({
       ...prev,
-      [key]: prev[key] === value ? '모든 병원': value,
+      [key]: prev[key] === value ? '모든 병원' : value,
     }));
   };
 
   // 거리 필터 변경 핸들러
   const handleDistanceChange = value => {
+    const selectedDistance = distanceValues[value];
     setLocalFilters(prev => ({
       ...prev,
-      distance: value,
+      distance: selectedDistance,
     }));
   };
 
@@ -134,11 +142,11 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
           {/* 거리 설정 */}
           <Text style={styles.sectionTitle}>거리 설정</Text>
           <Slider
-            style={{width: '100%', height: 40}}
+            style={{width: '100%', height: 40 * height_ratio}}
             minimumValue={0}
-            maximumValue={100}
-            step={20}
-            value={localFilters.distance}
+            maximumValue={distanceValues.length - 1}
+            step={1}
+            value={distanceValues.indexOf(localFilters.distance)}
             onValueChange={handleDistanceChange}
             minimumTrackTintColor="#007AFF"
             maximumTrackTintColor="#D3D3D3"
@@ -147,25 +155,24 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
             disabled={isApplying}
           />
           <View style={styles.distanceLabels}>
-            <Text style={styles.labelText}>5km</Text>
-            <Text style={styles.labelText}>10km</Text>
-            <Text style={styles.labelText}>20km</Text>
-            <Text style={styles.labelText}>50km</Text>
-            <Text style={styles.labelText}>100km</Text>
-            <Text style={styles.labelText}>전국</Text>
+            {distanceValues.map((distance, index) => (
+              <Text key={index} style={styles.labelText}>
+                {distance === '전국' ? '전국' : `${distance}km`}
+              </Text>
+            ))}
           </View>
 
           {/* 혈액 적정성 평가 등급 (다중 선택) */}
           <Text style={styles.sectionTitle}>
             혈액 적정성 평가 등급(투석 병원)
           </Text>
-          <View style={styles.GradebuttonGroup}>
-            {['1등급', '2등급', '3등급', '4등급', '5등급'].map(grade => (
+          <View style={styles.RatingbuttonGroup}>
+            {['1', '2', '3', '4', '5'].map(rating => (
               <FilterButton
-                key={grade}
-                label={grade}
-                selected={localFilters.grade?.includes(grade)}
-                onPress={() => handleMultiFilterChange('grade', grade)}
+                key={rating}
+                label={`${rating}등급`}
+                selected={localFilters.rating?.includes(rating)}
+                onPress={() => handleMultiFilterChange('rating', rating)}
                 disabled={isApplying}
               />
             ))}
@@ -217,8 +224,7 @@ const FilterButton = ({label, selected, onPress, disabled}) => (
   </TouchableOpacity>
 );
 
-// styles는 동일하게 유지
-
+// 스타일 조정
 const styles = StyleSheet.create({
   absolute: {
     position: 'absolute',
@@ -233,97 +239,103 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '100%',
-    padding: 20,
+    padding: 20 * width_ratio,
     backgroundColor: 'white',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10 * width_ratio,
+    borderTopRightRadius: 10 * width_ratio,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
+    shadowOffset: {width: 0, height: -2 * height_ratio},
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 4 * width_ratio,
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 18 * width_ratio,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 15 * height_ratio,
     textAlign: 'center',
     color: '#000',
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginVertical: 10 * height_ratio,
     color: '#000',
   },
   buttonGroup: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    marginBottom: 10,
-    paddingHorizontal: 5,
+    marginBottom: 10 * height_ratio,
+    paddingHorizontal: 5 * width_ratio,
   },
-  GradebuttonGroup: {
+  RatingbuttonGroup: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 10 * height_ratio,
   },
   filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingVertical: 8 * height_ratio,
+    paddingHorizontal: 15 * width_ratio,
     backgroundColor: '#F0F0F0',
-    borderRadius: 20,
-    margin: 4,
+    borderRadius: 20 * width_ratio,
+    margin: 4 * width_ratio,
   },
   filterButtonText: {
     color: '#868990',
     fontFamily: 'Pretendard-Bold',
+    fontSize: 14 * width_ratio,
   },
   distanceLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    paddingHorizontal: 5 * width_ratio,
+    marginTop: 10 * height_ratio,
+    marginBottom: 10 * height_ratio,
   },
   labelText: {
+    marginTop: -7 * height_ratio,
     color: '#000',
+    fontSize: 15 * width_ratio,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 20 * height_ratio,
   },
   resetButton: {
-    padding: 10,
+    padding: 10 * width_ratio,
     backgroundColor: '#F0F0F0',
-    borderRadius: 5,
+    borderRadius: 5 * width_ratio,
     flex: 1,
-    marginRight: 10,
+    marginRight: 10 * width_ratio,
   },
   resetButtonText: {
     color: '#000',
     textAlign: 'center',
+    fontSize: 16 * width_ratio,
   },
   applyButton: {
-    padding: 10,
+    padding: 10 * width_ratio,
     backgroundColor: '#007AFF',
-    borderRadius: 5,
+    borderRadius: 5 * width_ratio,
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 10 * width_ratio,
   },
   applyButtonText: {
     color: '#FFF',
     textAlign: 'center',
+    fontSize: 16 * width_ratio,
   },
   selectedButton: {
     backgroundColor: '#E4EDFF',
-    borderColor: '#2F54EB'
+    borderColor: '#2F54EB',
   },
   selectedButtonText: {
     color: '#868990',
     fontFamily: 'Pretendard-Bold',
+    fontSize: 14 * width_ratio,
   },
   disabledButton: {
     opacity: 0.5,
@@ -332,6 +344,7 @@ const styles = StyleSheet.create({
     color: '#868990',
     fontFamily: 'Pretendard-Bold',
     opacity: 0.5,
+    fontSize: 14 * width_ratio,
   },
 });
 
