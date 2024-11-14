@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
         right: 20,
     },
     closeButtonText: {
-        fontSize: 18,
+        fontSize: 30 * height_ratio,
         color: '#888',
     },
 });
