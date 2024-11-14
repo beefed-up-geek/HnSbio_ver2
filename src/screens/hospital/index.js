@@ -347,6 +347,9 @@ const filterLabels = {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>병원 검색</Text>
+        </View>
       <View style={styles.searchSection}>
         <View style={styles.searchInputContainer}>
           <Image
@@ -525,10 +528,10 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
         <Text style={styles.hospitalAddress}>{hospital['주소']}</Text>
       </View>
       <TouchableOpacity onPress={handlePhonePress} style={styles.phonecontainer}>
-      <Icon name="phone" size={20} color="#5D5D62"/>
-        <Text style={styles.phone}>
-          {hospital['전화번호']} 전화걸기
-        </Text>
+        <Icon name="phone" size={20} color="#5D5D62"/>
+          <Text style={styles.phone}>
+            {hospital['전화번호']} 전화걸기
+          </Text>
       </TouchableOpacity>
     </View>
   );

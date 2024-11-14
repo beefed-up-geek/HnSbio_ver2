@@ -10,7 +10,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 21 * width_ratio*0.95,
-
+  },
+  headerContainer: {
+    height: 76 * height_ratio,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: -20 * height_ratio,
+  },
+  headerTitle: {
+    ...theme.fonts.SemiBold,
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
   },
   searchSection: {
     marginTop: 24 * height_ratio*0.9,
@@ -176,6 +187,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   hospitalAddressContainer: {
+    marginTop: 3 * height_ratio  ,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -198,15 +210,15 @@ const styles = StyleSheet.create({
   hospitalAddress: {
     width: '90%',
     ...theme.fonts.Medium,
-    fontSize: 12 * width_ratio*0.95,
+    fontSize: 13 * width_ratio*0.95,
     color: '#888',
   },
   phone: {
     ...theme.fonts.Regular,
     fontSize: 13 * width_ratio*0.95,
     color: '#666',
-    marginLeft: 3 * width_ratio*0.95,
-    marginBottom: 2 * height_ratio*0.9,
+    marginLeft: 5.8 * width_ratio,
+    marginBottom: 4 * height_ratio*0.9,
   },
   blankBox: {
     zIndex: 1,
@@ -247,7 +259,7 @@ const styles = StyleSheet.create({
   phonecontainer: {
     flexDirection: 'row',
     alignItems: 'center', // 이미지 가운데 정렬
-    marginTop: 5 * height_ratio*0.9,
+    marginTop: 9 * height_ratio*0.9,
   },
 });
 
