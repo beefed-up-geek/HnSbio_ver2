@@ -323,7 +323,6 @@ const MedicineScreen = () => {
             </View>
         </TouchableWithoutFeedback>
     );
-    
 };
 
 export default MedicineScreen;
