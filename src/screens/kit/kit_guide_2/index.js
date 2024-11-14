@@ -1,8 +1,8 @@
 // src/screens/kit/kit_guide_2.js
 
 import {useNavigation} from '@react-navigation/native';
-import theme from '../../theme'; // 개발 규칙: 폰트 적용
-import styles from './kit_guide_2_styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import theme from '../../../theme'; // 개발 규칙: 폰트 적용
+import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
@@ -63,7 +63,7 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ImageBackground
                 style={styles.headerIcon}
-                source={require('./assets/images/1f9e7f42-01c5-40ec-88d3-2a33f0b7f5aa.png')}
+                source={require('../assets/images/1f9e7f42-01c5-40ec-88d3-2a33f0b7f5aa.png')}
                 resizeMode="cover"
               />
             </TouchableOpacity>
@@ -73,7 +73,7 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
             <View style={styles.headerRightIconContainer}>
               <ImageBackground
                 style={styles.headerRightIcon}
-                source={require('./assets/images/719ef727-9a73-40d3-b526-193146ddccca.png')}
+                source={require('../assets/images/719ef727-9a73-40d3-b526-193146ddccca.png')}
                 resizeMode="cover"
               />
             </View>
@@ -82,12 +82,12 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
             {/* <View style={styles.bannerInner}>
               <ImageBackground
                 style={styles.bannerBackgroundImage}
-                source={require('./assets/images/150b862e-e74e-485a-a1f8-73dce2fa73f4.png')}
+                source={require('../assets/images/150b862e-e74e-485a-a1f8-73dce2fa73f4.png')}
                 resizeMode="cover"
               />
               <ImageBackground
                 style={styles.bannerForegroundImage}
-                source={require('./assets/images/0a9072ca-e17b-4750-ba0d-2659d1ab76d3.png')}
+                source={require('../assets/images/0a9072ca-e17b-4750-ba0d-2659d1ab76d3.png')}
                 resizeMode="cover"
               />
               <Text style={styles.bannerText} numberOfLines={1}>
@@ -98,7 +98,7 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
               <View style={styles.progressBarIcon}>
                 <ImageBackground
                   style={styles.progressBarIconImage}
-                  source={require('./assets/images/905cac4e-8da1-48c3-b6ab-6291d387aa69.png')}
+                  source={require('../assets/images/905cac4e-8da1-48c3-b6ab-6291d387aa69.png')}
                 />
               </View>
               <Text style={styles.progressBarText} numberOfLines={1}>
@@ -111,12 +111,12 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
               <View style={styles.progressBarPlayIcon}>
                 <ImageBackground
                   style={styles.progressBarPlayIconImage}
-                  source={require('./assets/images/babfae0e-3934-4e27-8cc0-b207c520f470.png')}
+                  source={require('../assets/images/babfae0e-3934-4e27-8cc0-b207c520f470.png')}
                 />
               </View>
             </View> */}
             <Video
-              source={require('../../../android/app/src/main/res/raw/video.mp4')} // 로컬 파일을 사용하려면 require('./path/to/video.mp4')
+              source={require('../../../../android/app/src/main/res/raw/video.mp4')} // 로컬 파일을 사용하려면 require('./path/to/video.mp4')
               style={styles.video}
               controls={true} // 컨트롤러 표시
             />

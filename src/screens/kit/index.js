@@ -16,7 +16,7 @@ import {BlurView} from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
-import styles from './index_styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 import {useState, useEffect} from 'react';
 import {Alert} from 'react-native';
 
@@ -162,7 +162,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               </View>
               <View style={styles.roundButtonContainer}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('kit_guide_1')}>
+                  onPress={() => navigation.navigate('NoTabs', {screen: 'kit_guide_1'})}>
                   <View style={styles.roundButton}>
                     <View style={styles.roundButtonInner}>
                       <ImageBackground
