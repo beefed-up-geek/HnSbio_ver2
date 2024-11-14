@@ -1,4 +1,5 @@
 // src\screen(구버전)\healthscreen\tabs\data.js
+// src\screen(구버전)\healthscreen\tabs\data.js
 // src/screen(구버전)/healthscreen/tabs/data.js
 
 /*

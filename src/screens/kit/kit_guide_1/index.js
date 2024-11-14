@@ -1,5 +1,4 @@
-// src/screens/kit/kit_guide_1.js
-
+// src\screens\kit\kit_guide_1\index.js
 import {useNavigation} from '@react-navigation/native';
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
@@ -59,7 +58,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ImageBackground
                 style={styles.headerLeftIcon}
-                source={require('./assets/images/2965bb04-fa93-4fc2-af21-da51b8a4fe33.png')}
+                source={require('../assets/images/2965bb04-fa93-4fc2-af21-da51b8a4fe33.png')}
                 resizeMode="cover"
               />
             </TouchableOpacity>
@@ -69,7 +68,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
             <View style={styles.headerRightIconWrapper}>
               <ImageBackground
                 style={styles.headerRightIcon}
-                source={require('./assets/images/ff5c89e1-1e02-48ca-a40a-324811996b44.png')}
+                source={require('../assets/images/ff5c89e1-1e02-48ca-a40a-324811996b44.png')}
                 resizeMode="cover"
               />
             </View>
@@ -83,7 +82,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.tipIconWrapper}>
                   <ImageBackground
                     style={styles.tipIcon}
-                    source={require('./assets/images/4c4569cb-5e5c-47bc-8d48-48e0b3e3d6f7.png')}
+                    source={require('../assets/images/4c4569cb-5e5c-47bc-8d48-48e0b3e3d6f7.png')}
                   />
                 </View>
                 <Text style={styles.tipText} numberOfLines={1}>
@@ -94,7 +93,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.tipIconWrapper}>
                   <ImageBackground
                     style={styles.tipIcon}
-                    source={require('./assets/images/c6a4ae25-be3c-457f-a4fe-568dd7bceca6.png')}
+                    source={require('../assets/images/c6a4ae25-be3c-457f-a4fe-568dd7bceca6.png')}
                   />
                 </View>
                 <Text style={styles.tipText} numberOfLines={1}>
@@ -105,7 +104,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.tipIconWrapper}>
                   <ImageBackground
                     style={styles.tipIcon}
-                    source={require('./assets/images/79cccc81-c921-4288-8914-4da2b2f4475c.png')}
+                    source={require('../assets/images/79cccc81-c921-4288-8914-4da2b2f4475c.png')}
                   />
                 </View>
                 <Text style={styles.tipText} numberOfLines={1}>
@@ -116,7 +115,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.tipIconWrapper}>
                   <ImageBackground
                     style={styles.tipIcon}
-                    source={require('./assets/images/44ed877c-47cd-4ce1-94b7-494684c8cac7.png')}
+                    source={require('../assets/images/44ed877c-47cd-4ce1-94b7-494684c8cac7.png')}
                   />
                 </View>
                 <Text style={styles.tipText} numberOfLines={1}>
@@ -127,7 +126,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.tipIconWrapper}>
                   <ImageBackground
                     style={styles.tipIcon}
-                    source={require('./assets/images/fd75ea69-03eb-47f1-82a0-721c3defcb73.png')}
+                    source={require('../assets/images/fd75ea69-03eb-47f1-82a0-721c3defcb73.png')}
                   />
                 </View>
                 <Text style={styles.tipText} numberOfLines={1}>
@@ -154,7 +153,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                   <View style={styles.footerIconImageWrapper}>
                     <ImageBackground
                       style={styles.footerIconImage}
-                      source={require('./assets/images/b86dfc01-3441-4689-8f2d-c7386a7d1669.png')}
+                      source={require('../assets/images/b86dfc01-3441-4689-8f2d-c7386a7d1669.png')}
                     />
                   </View>
                 </View>
@@ -163,7 +162,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.footerIconWrapper}>
                   <ImageBackground
                     style={styles.footerIconImage}
-                    source={require('./assets/images/5020e8c8-66ca-4247-9aa9-e67addbc6044.png')}
+                    source={require('../assets/images/5020e8c8-66ca-4247-9aa9-e67addbc6044.png')}
                   />
                 </View>
                 <Text style={styles.footerIconText} numberOfLines={1}>
@@ -174,27 +173,27 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
                 <View style={styles.footerIconImageWrapper}>
                   <ImageBackground
                     style={styles.footerIconImage}
-                    source={require('./assets/images/bce61a0e-da28-493b-b63b-a6fc6e15c776.png')}
+                    source={require('../assets/images/bce61a0e-da28-493b-b63b-a6fc6e15c776.png')}
                   />
                 </View>
               </View>
               <View style={styles.footerIconWrapper}>
                 <ImageBackground
                   style={styles.footerIconImage}
-                  source={require('./assets/images/d274c04b-d15c-4fdf-85ba-6a02b0e0cc10.png')}
+                  source={require('../assets/images/d274c04b-d15c-4fdf-85ba-6a02b0e0cc10.png')}
                 />
               </View>
               <View style={styles.footerIconWrapper}>
                 <ImageBackground
                   style={styles.footerIconImage}
-                  source={require('./assets/images/0facc259-9130-4b57-bb25-eedd26f6442b.png')}
+                  source={require('../assets/images/0facc259-9130-4b57-bb25-eedd26f6442b.png')}
                 />
               </View>
             </View>
           </View>
           <ImageBackground
             style={styles.footerImage}
-            source={require('./assets/images/a1b5eba3-e8ae-4071-9dec-cbebd3c9cdc4.png')}
+            source={require('../assets/images/a1b5eba3-e8ae-4071-9dec-cbebd3c9cdc4.png')}
             resizeMode="cover"
           />
         </View>

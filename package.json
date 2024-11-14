@@ -14,6 +14,7 @@
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/blur": "^4.4.0",
     "@react-native-community/datetimepicker": "^8.2.0",
+    "@react-native-community/slider": "^4.5.5",
     "@react-native-google-signin/google-signin": "^12.2.1",
     "@react-native-kakao/core": "^2.2.5",
     "@react-native-kakao/user": "^2.2.5",

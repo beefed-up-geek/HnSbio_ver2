@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   profileButton: {
-    marginBottom: 12 * height_ratio,
+    marginBottom: 4 * height_ratio,
     paddingRight: 24,
     flexDirection: 'row',
     alignItems: 'center',
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   characterImage: {
-    width: '90%',
-    height: 303 * height_ratio,
+    width: 270 * width_ratio,
+    height: 220.7 * height_ratio,
     resizeMode: 'contain',
   },
   lineWrapper: {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextCheckupText1: {
-    marginTop: 12,
+    marginTop: 4,
     marginLeft: 24,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    marginTop: 32 * height_ratio,
-    marginBottom: 32 * height_ratio,
+    marginTop: 20 * height_ratio,
+    marginBottom: 16 * height_ratio,
     gap: 4 * width_ratio,
   },
   button: {
@@ -89,54 +89,54 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-  resultsContainer: {
-    marginBottom: 36 * height_ratio,
-  },
-  pastResultGo: {
-    marginTop: 24 * height_ratio,
-    marginLeft: 28 * width_ratio,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 11 * height_ratio,
-  },
-  sectionTitle: {
-    ...theme.fonts.Medium,
-    fontSize: 16,
-    color: '#A2A1AD',
-  },
-  resultGoIcon: {
-    width: 16 * width_ratio,
-    height: 16 * width_ratio,
-  },
-  resultBoxContainer: {
-    paddingRight: 48,
-    marginLeft: 24 * width_ratio,
-    gap: 6,
-  },
-  resultBox: {
-    alignItems: 'center',
-    gap: 12 * height_ratio,
-    paddingHorizontal: 18 * width_ratio,
-    paddingVertical: 24 * height_ratio,
-    backgroundColor: 'white',
-    borderRadius: 18,
-  },
-  dateText: {
-    ...theme.fonts.Medium,
-    fontSize: 15 * width_ratio,
-    color: '#4A4A4F',
-  },
-  kitStatusImage: {
-    width: 68 * width_ratio,
-    height: 28 * width_ratio,
-  },
+  // resultsContainer: {
+  //   marginBottom: 36 * height_ratio,
+  // },
+  // pastResultGo: {
+  //   marginTop: 24 * height_ratio,
+  //   marginLeft: 28 * width_ratio,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   marginBottom: 11 * height_ratio,
+  // },
+  // sectionTitle: {
+  //   ...theme.fonts.Medium,
+  //   fontSize: 16,
+  //   color: '#A2A1AD',
+  // },
+  // resultGoIcon: {
+  //   width: 16 * width_ratio,
+  //   height: 16 * width_ratio,
+  // },
+  // resultBoxContainer: {
+  //   paddingRight: 48,
+  //   marginLeft: 24 * width_ratio,
+  //   gap: 6,
+  // },
+  // resultBox: {
+  //   alignItems: 'center',
+  //   gap: 12 * height_ratio,
+  //   paddingHorizontal: 18 * width_ratio,
+  //   paddingVertical: 24 * height_ratio,
+  //   backgroundColor: 'white',
+  //   borderRadius: 18,
+  // },
+  // dateText: {
+  //   ...theme.fonts.Medium,
+  //   fontSize: 15 * width_ratio,
+  //   color: '#4A4A4F',
+  // },
+  // kitStatusImage: {
+  //   width: 68 * width_ratio,
+  //   height: 28 * width_ratio,
+  // },
 
   roundedButtonBox: {
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
     marginHorizontal: 24 * width_ratio,
     paddingHorizontal: 22 * width_ratio,
-    paddingVertical: 28 * height_ratio,
+    paddingVertical: 24 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

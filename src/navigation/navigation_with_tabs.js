@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EventEmitter } from 'events';
 
 import styles from './navigation_with_tabs_styles';
 
@@ -31,6 +33,9 @@ import Medicine_specifics_screen from '../screens/medicine/medicine_specifics/in
 import Authentication_1_screen from '../screens/health_checkup/authentication_1/index';
 import Authentication_2_screen from '../screens/health_checkup/authentication_2/index';
 import Authentication_3_screen from '../screens/health_checkup/authentication_3/index';
+
+// Create global event emitter
+export const navigationEventEmitter = new EventEmitter();
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -59,7 +64,7 @@ const CustomHeader = ({title, leftIcon, onLeftPress, isHomeScreen}) => {
     <View
       style={[
         styles.headerContainer,
-        isHomeScreen && {backgroundColor: '#EBEFFE'}, // Apply background color on home screen
+        isHomeScreen && {backgroundColor: '#EBEFFE'},
       ]}>
       {isHomeScreen && (
         <TouchableOpacity
@@ -78,7 +83,7 @@ const stackScreenOptions = ({route, navigation}) => {
   const leftIcon = require('../images/hns.png');
 
   return {
-    headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
+    headerShown: false,
     header: props => {
       const title = props.options.title || route.name;
       return (
@@ -95,7 +100,11 @@ const stackScreenOptions = ({route, navigation}) => {
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen name="Home" component={Home_screen} options={{title: ' '}} />
+    <Stack.Screen 
+      name="Home" 
+      component={Home_screen}
+      options={{title: ' '}} 
+    />
   </Stack.Navigator>
 );
 
@@ -106,21 +115,6 @@ const KitStack = () => (
       component={Kit_screen}
       options={{title: '키트 검사'}}
     />
-    <Stack.Screen
-      name="kit_guide_1"
-      component={Kit_guide_1_screen}
-      options={{title: '소변 검사 안내'}}
-    />
-    <Stack.Screen
-      name="kit_guide_2"
-      component={Kit_guide_2_screen}
-      options={{title: '소변 검사 안내'}}
-    />
-    <Stack.Screen
-      name="kit_test"
-      component={Kit_test_screen}
-      options={{title: '소변 검사 안내'}}
-    />
   </Stack.Navigator>
 );
 
@@ -129,7 +123,7 @@ const HealthStack = () => (
     <Stack.Screen
       name="HealthCheckup"
       component={Health_checkup_screen}
-      options={{title: '건강 검진'}}
+      options={{title: '건강검진'}}
     />
   </Stack.Navigator>
 );
@@ -169,6 +163,7 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
+        unmountOnBlur: true
       }}
       tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen

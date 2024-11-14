@@ -1,4 +1,4 @@
-// src/screens/kit/index.js
+// src\screens\kit\index.js
 import React from 'react';
 import {
   View,
@@ -162,7 +162,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               </View>
               <View style={styles.roundButtonContainer}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('kit_guide_1')}>
+                  onPress={() => navigation.navigate('NoTabs', {screen: 'kit_guide_1'})}>
                   <View style={styles.roundButton}>
                     <View style={styles.roundButtonInner}>
                       <ImageBackground
