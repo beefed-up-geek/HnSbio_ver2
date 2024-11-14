@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import styles from './styles.js';
 
 const Medicine_specifics_screen = ({ route }) => {
     const navigation = useNavigation();
+
     const {
         name, englishName, efficacy, instruction, caution,
         sotrageInstruction,

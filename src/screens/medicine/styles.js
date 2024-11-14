@@ -169,13 +169,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 5,
-        width: 342,
+        width: 342 * width_ratio,
         alignSelf: 'center',
     },
     medicationName: {
         fontSize: 16,
         marginBottom: 12,
         ...theme.fonts.SemiBold,
+        color: '#505054',
     },
     ingredientsContainer: {
         flexDirection: 'row',
