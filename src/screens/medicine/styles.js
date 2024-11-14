@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#E9E9E9',
         paddingVertical: 12,
         height: 53 * height_ratio,
+        alignItems: 'center',
     },
     recentSearchTitle: {
         fontSize: 14 * height_ratio,
@@ -107,6 +108,7 @@ const styles = StyleSheet.create({
         color: '#5D5D62',
         marginLeft: 6,
         fontSize: 25 * height_ratio,
+        lineHeight: 28 * height_ratio,
     },
     tabsContainer: {
         flexDirection: 'row',
