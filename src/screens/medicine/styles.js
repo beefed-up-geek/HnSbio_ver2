@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     removeText: {
         color: '#5D5D62',
         marginLeft: 6,
-        fontSize: 25 * height_ratio,
+        fontSize: 12 * height_ratio,
         lineHeight: 28 * height_ratio,
     },
     tabsContainer: {

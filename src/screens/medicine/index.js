@@ -195,6 +195,7 @@ const MedicineScreen = () => {
                         <TextInput
                             style={styles.searchInput}
                             placeholder="약 이름을 검색해 주세요."
+                            placeholderTextColor={'#5D5D5D'}
                             value={searchText}
                             onChangeText={handleInputChange}
                             onSubmitEditing={() => {

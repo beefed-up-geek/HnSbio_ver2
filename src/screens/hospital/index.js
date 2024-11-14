@@ -349,7 +349,10 @@ const filterLabels = {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>병원 검색</Text>
+          
+          <View style={styles.headerBorder} /> 
         </View>
+        
       <View style={styles.searchSection}>
         <View style={styles.searchInputContainer}>
           <Image

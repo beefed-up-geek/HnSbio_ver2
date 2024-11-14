@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchSection: {
-    marginTop: 24 * height_ratio*0.9,
+    marginTop: 40 * height_ratio*0.9,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
@@ -270,6 +270,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', // 이미지 가운데 정렬
     marginTop: 9 * height_ratio*0.9,
+  },
+  headerBorder: {
+    height: 1,
+    backgroundColor: '#E9E9E9',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
   },
 });
 
