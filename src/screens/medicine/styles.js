@@ -81,9 +81,10 @@ const styles = StyleSheet.create({
         borderTopColor: '#E9E9E9',
         paddingVertical: 12,
         height: 53 * height_ratio,
+        alignItems: 'center',
     },
     recentSearchTitle: {
-        fontSize: 14,
+        fontSize: 14 * height_ratio,
         color: '#5D5D62',
         marginLeft: 23,
         marginRight: 7,
@@ -100,13 +101,14 @@ const styles = StyleSheet.create({
     },
     recentSearchText: {
         color: '#5D5D62',
-        fontSize: 12,
+        fontSize: 12 * height_ratio,
         ...theme.fonts.Medium,
     },
     removeText: {
         color: '#5D5D62',
         marginLeft: 6,
-        fontSize: 25,
+        fontSize: 25 * height_ratio,
+        lineHeight: 28 * height_ratio,
     },
     tabsContainer: {
         flexDirection: 'row',
@@ -169,13 +171,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 5,
-        width: 342,
+        width: 342 * width_ratio,
         alignSelf: 'center',
     },
     medicationName: {
         fontSize: 16,
         marginBottom: 12,
         ...theme.fonts.SemiBold,
+        color: '#505054',
     },
     ingredientsContainer: {
         flexDirection: 'row',
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
         right: 20,
     },
     closeButtonText: {
-        fontSize: 18,
+        fontSize: 30 * height_ratio,
         color: '#888',
     },
 });

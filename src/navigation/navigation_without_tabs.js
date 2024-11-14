@@ -136,7 +136,9 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="medicine_specifics"
         component={Medicine_specifics_screen}
-        options={{title: '의약품 상세정보'}}
+        options={{
+          title: '의약품 상세정보'
+        }}
       />
 
       <Stack.Screen

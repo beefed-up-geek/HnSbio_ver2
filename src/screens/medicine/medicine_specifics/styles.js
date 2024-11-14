@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#7596FF',
         width: 78 * width_ratio,
+        height: 34 * height_ratio,
         alignItems: 'center',
         ...theme.fonts.Medium,
         marginHorizontal: 6,  // 버튼 간격을 일정하게 설정
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         color: '#7596FF',
-        fontSize: 13 * height_ratio,
+        fontSize: 13,
         ...theme.fonts.Medium,
     },
     activeTabText: {

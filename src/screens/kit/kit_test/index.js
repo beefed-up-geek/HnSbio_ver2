@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {launchCamera} from 'react-native-image-picker';
-import { useNavigation } from '@react-navigation/native';
-import { Dimensions, Text, View, TouchableOpacity,  Image,} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {Dimensions, Text, View, TouchableOpacity, Image} from 'react-native';
 import theme from '../../../theme';
 import styles from './styles.js';
 import {RNCamera} from 'react-native-camera';
@@ -93,17 +93,6 @@ const Kit_test_screen = ({navigation}) => {
             if (status !== 'READY') return <View />;
             return (
               <View style={styles.overlayContainer}>
-                <View style={styles.header}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.headerIconContainer}>
-                    <Image
-                      style={styles.headerIcon}
-                      source={require('./assets/images/1141b64f-2035-4c5c-bcf5-2e5e9773938c.png')}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.headerText}>촬영하기</Text>
-                </View>
                 <View style={styles.instructionsContainer}>
                   <Text style={styles.instructionsText}>
                     카메라의 주황색 네모칸을 키트에 잘 맞춰 주세요. 자동으로
