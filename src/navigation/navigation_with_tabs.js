@@ -11,6 +11,7 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EventEmitter } from 'events';
 
 import styles from './navigation_with_tabs_styles';
 
@@ -31,6 +32,9 @@ import Medicine_specifics_screen from '../screens/medicine/medicine_specifics/in
 import Authentication_1_screen from '../screens/health_checkup/authentication_1/index';
 import Authentication_2_screen from '../screens/health_checkup/authentication_2/index';
 import Authentication_3_screen from '../screens/health_checkup/authentication_3/index';
+
+// Create global event emitter
+export const navigationEventEmitter = new EventEmitter();
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -93,20 +97,15 @@ const stackScreenOptions = ({route, navigation}) => {
   };
 };
 
-const HomeStack = ({ route }) => {
-  const { homeScreenData } = route.params || {};
-  
-  return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
-      <Stack.Screen 
-        name="Home" 
-        component={Home_screen}
-        initialParams={{ homeScreenData }}
-        options={{title: ' '}} 
-      />
-    </Stack.Navigator>
-  );
-};
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Screen 
+      name="Home" 
+      component={Home_screen}
+      options={{title: ' '}} 
+    />
+  </Stack.Navigator>
+);
 
 const KitStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
@@ -118,20 +117,15 @@ const KitStack = () => (
   </Stack.Navigator>
 );
 
-const HealthStack = ({ route }) => {
-  const { refreshHomeScreen } = route.params || {};
-  
-  return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
-      <Stack.Screen
-        name="HealthCheckup"
-        component={Health_checkup_screen}
-        initialParams={{ refreshHomeScreen }}
-        options={{title: '건강검진'}}
-      />
-    </Stack.Navigator>
-  );
-};
+const HealthStack = () => (
+  <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Screen
+      name="HealthCheckup"
+      component={Health_checkup_screen}
+      options={{title: '건강검진'}}
+    />
+  </Stack.Navigator>
+);
 
 const HospitalStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
@@ -154,22 +148,6 @@ const MedicineStack = () => (
 );
 
 const BottomNavigation = () => {
-  // refreshHomeScreen 함수를 BottomNavigation에서 관리
-  const [homeScreenData, setHomeScreenData] = useState(null);
-
-  // Home Stack에 ref로 전달할 함수
-  const refreshHomeScreen = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setHomeScreenData(parsedData); // 홈 스크린 데이터 업데이트
-      }
-    } catch (error) {
-      console.error('Error refreshing home screen data:', error);
-    }
-  };
-
   return (
     <Tab.Navigator
       screenOptions={{
@@ -184,12 +162,12 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
+        unmountOnBlur: true
       }}
       tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
-        initialParams={{ homeScreenData }}
         options={{title: '홈 화면'}}
       />
       <Tab.Screen
@@ -200,7 +178,6 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="HealthStack"
         component={HealthStack}
-        initialParams={{ refreshHomeScreen }}
         options={{title: '건강검진'}}
       />
       <Tab.Screen
