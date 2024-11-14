@@ -30,13 +30,6 @@ const Medicine_specifics_screen = ({ route }) => {
 
     return (
         <>
-            {/* 상단 헤더 */}
-            <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Image source={require('../../../images/back.png')} style={styles.backIcon} />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>의약품 정보</Text>
-            </View>
 
             <ScrollView style={styles.container}>
                 {/* 그라데이션 헤더 */}
