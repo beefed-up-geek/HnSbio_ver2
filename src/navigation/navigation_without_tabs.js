@@ -1,4 +1,4 @@
-// src/navigation/navigation_without_tabs.js
+// src\navigation\navigation_without_tabs.js
 import React from 'react';
 import {
   View,
@@ -26,12 +26,11 @@ import Kit_guide_1_screen from '../screens/kit/kit_guide_1';
 import Kit_guide_2_screen from '../screens/kit/kit_guide_2';
 import Kit_test_screen from '../screens/kit/kit_test';
 import Daily_check_screen from '../screens/home/daily_check';
-import Kidney_info_screen from '../screens/home/kidney_info';
 import My_profile_screen from '../screens/home/my_profile';
 import Manage_account_screen from '../screens/home/manage_account';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm';
 
-const CustomHeader = ({ title }) => {
+const CustomHeader = ({title}) => {
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -66,7 +65,7 @@ const CustomHeader = ({ title }) => {
 
 const Stack = createStackNavigator();
 
-const stackScreenOptions = ({ route, navigation }) => {
+const stackScreenOptions = ({route, navigation}) => {
   return {
     header: ({ options }) => {
       let title = options.title || route.name;
@@ -118,47 +117,43 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="authentication_1"
         component={Authentication_1_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="authentication_2"
         component={Authentication_2_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="authentication_3"
         component={Authentication_3_screen}
-        options={{ title: '내 건강검진 기록 불러오기' }}
+        options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
         name="medicine_specifics"
         component={Medicine_specifics_screen}
-        options={{ title: '의약품 상세정보' }}
+        options={{title: '의약품 상세정보'}}
       />
+      
       <Stack.Screen
         name="kit_guide_1"
         component={Kit_guide_1_screen}
-        options={{ title: '소변 검사 가이드' }}
+        options={{title: '소변 검사 가이드'}}
       />
       <Stack.Screen
         name="kit_guide_2"
         component={Kit_guide_2_screen}
-        options={{ title: '소변 검사 가이드' }}
+        options={{title: '소변 검사 가이드'}}
       />
       <Stack.Screen
         name="kit_test"
         component={Kit_test_screen}
-        options={{ title: '촬영하기' }}
+        options={{title: '촬영하기'}}
       />
       <Stack.Screen
         name="daily_check"
         component={Daily_check_screen}
-        options={{ title: '매일매일 건강 체크' }}
-      />
-      <Stack.Screen
-        name="kidney_info"
-        component={Kidney_info_screen}
-        options={{ title: '내 콩팥 건강' }}
+        options={{title: '매일매일 건강 체크'}}
       />
       <Stack.Screen
         name="my_profile"
@@ -173,7 +168,7 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="set_push_alarm"
         component={Set_push_alarm_screen}
-        options={{ title: '키트 검사 주기' }}
+        options={{title: '키트 검사 주기'}}
       />
       <Stack.Screen
         name="HealthCheckupSpecifics"

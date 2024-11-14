@@ -1,4 +1,4 @@
-// src/screens/health_checkup/authentication_3/index.js
+// src\screens\health_checkup\authentication_3\index.js
 import React, { useState } from 'react';
 import {
   View,
@@ -29,7 +29,7 @@ const Authentication_3_screen = () => {
     loginTypeLevel,
     selectedLabel,
     selectedImage,
-    fetchData
+    refreshHealthData
   } = route.params;
 
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -76,7 +76,7 @@ const Authentication_3_screen = () => {
           //Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
         } else {
           //Alert.alert('성공', '인증이 완료되었습니다.');
-          fetchData();
+          refreshHealthData();
           navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
         }
       } else {

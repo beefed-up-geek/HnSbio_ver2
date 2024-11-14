@@ -1,4 +1,4 @@
-// src/screens/health_checkup/authentication_1/index.js
+// src\screens\health_checkup\authentication_1\index.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { useNavigation, useRoute  } from '@react-navigation/native';
@@ -13,26 +13,18 @@ const Authentication_1_screen = () => {
   const [selectedValue, setSelectedValue] = useState(-1);
   const navigation = useNavigation();
   const route = useRoute(); // route를 사용하여 params 접근
-  const { fetchData } = route.params; // HealthScreen에서 전달된 fetchData 함수를 받음
+  const { refreshHealthData } = route.params; // HealthScreen에서 전달된 fetchData 함수를 받음
   
 
   const handleButtonPress = (index) => {
     setSelectedButtonIndex(index);
     setSelectedValue(index + 1); // 1~8 값 설정
-    // navigation.navigate('NoTabs', {
-    //   screen: 'Authentication2',
-    //   params: {
-    //     selectedValue: index + 1, 
-    //     selectedLabel: labels[index],
-    //     selectedImage: images[index], 
-    //     fetchData
-    //   },
-    // });
+    
     navigation.navigate('authentication_2', { 
       selectedValue: index + 1, 
       selectedLabel: labels[index],
       selectedImage: images[index], 
-      fetchData
+      refreshHealthData
     });
   };
 

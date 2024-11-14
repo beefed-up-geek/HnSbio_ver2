@@ -1,4 +1,4 @@
-// src/screen(구버전)/healthscreen/tabs/styles_tab.js
+// src\screen(구버전)\healthscreen\tabs\styles_tab.js
 import { StyleSheet } from 'react-native';
 import theme from '../../../theme';
 

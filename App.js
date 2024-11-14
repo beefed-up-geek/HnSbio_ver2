@@ -36,13 +36,13 @@ const App = () => {
               healthCheckup: parsedData.healthCheckup.map(item => ({
                 ...item,
                 resOriGinalData: item.resOriGinalData 
-                  ? `${item.resOriGinalData.substring(0, 5)}...` // 앞 5글자만 표시
+                  ? `${item.resOriGinalData.substring(0, 5)}...`
                   : item.resOriGinalData
               }))
             };
-            console.log('user: ', processedData);
+            console.log('user: ', JSON.stringify(processedData, null, 2));
           } else {
-            console.log('user: ', parsedData);
+            console.log('user: ', JSON.stringify(parsedData, null, 2));
           }
         } else {
           console.log('async-storage에 사용자 정보 없음...');

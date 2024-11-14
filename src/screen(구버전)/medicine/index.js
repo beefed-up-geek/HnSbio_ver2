@@ -1,4 +1,4 @@
-// src/screen(구버전)/medicine/index.js
+// src\screen(구버전)\medicine\index.js
 import React, {useState, useEffect} from 'react';
 import {
   View,

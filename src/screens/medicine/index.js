@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// src/screens/medicine/index.js
+
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TextInput, TouchableOpacity, FlatList, Alert, Keyboard, Modal, Image, ScrollView } from 'react-native';
 import styles from './styles.js';

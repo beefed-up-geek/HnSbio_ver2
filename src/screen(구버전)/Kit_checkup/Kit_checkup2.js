@@ -1,11 +1,4 @@
-// src/screen(구버전)/Kit_checkup/Kit_checkup2.js
-/**
- * Codia React Native App
- * https://codia.ai
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// src\screen(구버전)\Kit_checkup\Kit_checkup2.js
 import React from 'react';
 import {
   View,

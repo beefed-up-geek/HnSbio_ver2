@@ -1,5 +1,4 @@
-// src/screens/home/my_profile/styles.js
-
+// src\screens\home\my_profile\styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
@@ -97,6 +96,8 @@ const styles = StyleSheet.create({
     marginTop: 12 * height_ratio,
   },
   saveButton: {
+    marginTop: 12 * height_ratio,
+    alignSelf: 'center',
     width: '60%',
     backgroundColor: '#EBEFFE',
     borderRadius: 24,

@@ -1,4 +1,4 @@
-// src/pushnotification/index.js
+// src\pushnotification\index.js
 import React, { useEffect } from 'react';
 import { View, Button, PermissionsAndroid, Platform, Text } from 'react-native';
 import notifee from '@notifee/react-native';

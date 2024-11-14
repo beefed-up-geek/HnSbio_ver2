@@ -1,5 +1,5 @@
-// src/screens/health_checkup/index.js
-import React, { useEffect, useState, useRef } from 'react';
+// src\screens\health_checkup\index.js
+import React, { useEffect, useState, useRef,   useCallback } from 'react';
 import {
   Image,
   View,
@@ -9,7 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute,useFocusEffect  } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
@@ -20,12 +20,29 @@ const height_ratio = Dimensions.get('screen').height / 844;
 
 const Health_checkup_screen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
   const [userGender, setUserGender] = useState('');
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { refreshHomeScreen } = route.params || {};
 
+  const refreshHealthData = async () => {
+    const userData = await AsyncStorage.getItem('user');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      setProviderId(parsedData.providerId);
+      setUserGender(parsedData.gender);
+      if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+        setHealthCheckupData(parsedData.healthCheckup);
+        setAddingData(false);
+        refreshHomeScreen();
+      }
+    }
+  };
+  
   useEffect(() => {
     (async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -41,58 +58,37 @@ const Health_checkup_screen = () => {
     })();
   }, []);
 
-  const handleTap = async () => {
-    tapCount.current += 1;
+  useEffect(() => {
+      refreshHealthData();
+    }, [refreshKey]);
 
-    if (tapCount.current === 7) {
-      tapCount.current = 0;
-      if (addingData) {
-        try {
-          console.log('Fetching health checkup data from /healthCheckupDev API');
-          const response = await axios.post(
-            'http://54.79.61.80:5000/health_checkup/healthCheckupDev',
-            { providerId },
-          );
 
-          if (response.data && response.data.data) {
-            const healthCheckupData = response.data.data;
-            const userData = await AsyncStorage.getItem('user');
-            if (userData) {
-              const parsedUserData = JSON.parse(userData);
-              parsedUserData.healthCheckup = healthCheckupData;
-              await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-              console.log('User information updated successfully in AsyncStorage');
-              setHealthCheckupData(healthCheckupData);
-              setAddingData(false);
+    const loadHealthData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          setProviderId(parsedData.providerId);
+          setUserGender(parsedData.gender);
+          if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+            setHealthCheckupData(parsedData.healthCheckup);
+            setAddingData(false);
+            if (refreshHomeScreen) {
+              refreshHomeScreen();
             }
           }
-        } catch (error) {
-          console.error('Error fetching health checkup data:', error);
         }
-      } else {
-        try {
-          console.log('Removing health checkup data');
-          const response = await axios.post(
-            'http://54.79.61.80:5000/health_checkup/healthCheckupDevRemove',
-            { providerId },
-          );
-
-          if (response.data) {
-            const userData = await AsyncStorage.getItem('user');
-            if (userData) {
-              const parsedUserData = JSON.parse(userData);
-              delete parsedUserData.healthCheckup;
-              await AsyncStorage.setItem('user', JSON.stringify(parsedUserData));
-              setHealthCheckupData([]);
-              setAddingData(true);
-            }
-          }
-        } catch (error) {
-          console.error('Error removing health checkup data:', error);
-        }
+      } catch (error) {
+        console.error('Error loading health data:', error);
       }
-    }
-  };
+    };
+  
+    useFocusEffect(
+      useCallback(() => {
+        loadHealthData();
+      }, [])
+    );
+   
 
   const getHealthTags = (item) => {
     const healthTags = [];
@@ -217,15 +213,13 @@ const Health_checkup_screen = () => {
           <Text style={styles.headerTitle}>건강검진</Text>
         </View>
         <View style={styles.contentContainer}>
-          <TouchableOpacity onPress={handleTap}>
             <Text style={styles.recentRecordText}>최근 기록</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.refreshButton}
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'authentication_1',
-                params: { fetchData },
+                params: { refreshHealthData: loadHealthData  },
               })
             }
           >

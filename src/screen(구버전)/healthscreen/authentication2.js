@@ -1,4 +1,4 @@
-// src/screen(구버전)/healthscreen/authentication2.js
+// src\screen(구버전)\healthscreen\authentication2.js
 import React, { useState, useEffect } from 'react';
 import {
   View,

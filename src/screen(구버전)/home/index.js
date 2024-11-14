@@ -1,4 +1,4 @@
-// src/screen(구버전)/home/index.js
+// src\screen(구버전)\home\index.js
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {

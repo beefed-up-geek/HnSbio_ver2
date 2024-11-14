@@ -1,4 +1,4 @@
-// src/screens/login/login.js
+// src\screens\login\login.js
 import React from 'react';
 import {
   View,
@@ -150,7 +150,7 @@ const Login2 = () => {
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
         navigation.navigate('BottomNavigation');
       } catch (error) {
-        if (error.response && error.response.status === 404) {
+        if (error.response ) {
           navigation.navigate('GetUserInfo', {
             provider,
             providerId,
@@ -183,7 +183,7 @@ const Login2 = () => {
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
         navigation.navigate('BottomNavigation');
       } catch (error) {
-        if (error.response && error.response.status === 404) {
+        if (error.response ) {
           navigation.navigate('GetUserInfo', {
             provider,
             providerId,

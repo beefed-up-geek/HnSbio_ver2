@@ -1,3 +1,4 @@
+// src\screens\health_checkup\authentication_2\index.js
 import React, { useState, useEffect } from 'react';
 import {
  View,
@@ -39,7 +40,7 @@ const Authentication_2_screen = () => {
  const [loading, setLoading] = useState(false);
 
  const route = useRoute();
- const { selectedValue, selectedLabel, selectedImage, fetchData } = route.params;
+ const { selectedValue, selectedLabel, selectedImage, refreshHealthData } = route.params;
  const navigation = useNavigation();
 
  const [providerId, setProviderId] = useState(null);
@@ -180,7 +181,7 @@ const Authentication_2_screen = () => {
          loginTypeLevel: selectedValue.toString(),
          selectedLabel: selectedLabel,
          selectedImage: selectedImage,
-         fetchData,
+         refreshHealthData
        });
      } else {
        setBirthdateError(true);
@@ -199,7 +200,7 @@ const Authentication_2_screen = () => {
          loginTypeLevel: selectedValue.toString(),
          selectedLabel: selectedLabel,
          selectedImage: selectedImage,
-         fetchData,
+         refreshHealthData,
        });
      } else {
        console.error(error);
