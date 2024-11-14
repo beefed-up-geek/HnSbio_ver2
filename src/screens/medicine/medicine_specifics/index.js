@@ -1,3 +1,4 @@
+// src\screens\medicine\medicine_specifics\index.js
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';

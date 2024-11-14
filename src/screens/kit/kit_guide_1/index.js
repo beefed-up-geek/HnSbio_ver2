@@ -1,5 +1,4 @@
-// src/screens/kit/kit_guide_1.js
-
+// src\screens\kit\kit_guide_1\index.js
 import {useNavigation} from '@react-navigation/native';
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리

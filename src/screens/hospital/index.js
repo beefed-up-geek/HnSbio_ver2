@@ -1,3 +1,4 @@
+// src\screens\hospital\index.js
 import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,

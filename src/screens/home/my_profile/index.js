@@ -61,13 +61,8 @@ const My_profile_screen = () => {
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
           setKidneyStatus(user.chronic_kidney_disease || '');
-
-          // Set profile image from AsyncStorage if available
-          if (user.profile_image) {
-            setProfileImage(user.profile_image);
-          } else {
-            // If not, you can set a default image if necessary
-            setProfileImage(null);
+          if (user.profileImage) {
+            setProfileImage(user.profileImage);
           }
 
           // Handle underlying diseases
@@ -147,31 +142,7 @@ const My_profile_screen = () => {
       }
 
       const currentUser = JSON.parse(currentUserData);
-
-      // 만약 새로운 프로필 이미지를 선택했다면, uploadProfileImage API를 호출하여 업로드
-      let profileImageUrl = currentUser.profile_image;
-      if (profileImage && profileImage !== currentUser.profile_image) {
-        const formData = new FormData();
-        formData.append('providerId', currentUser.providerId);
-        formData.append('profileImage', {
-          uri: profileImage,
-          type: 'image/jpeg', // or image/png based on the selected image type
-          name: `profile_${currentUser.providerId}.jpg`,
-        });
-
-        const uploadResponse = await axios.put(
-          'http://54.79.61.80:5000/user_info/uploadProfileImage',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
-        );
-
-        profileImageUrl = uploadResponse.data.profile_image;
-      }
-
+  
       // 현재 화면에서 수정 가능한 필드만 업데이트
       const updatedUserData = {
         ...currentUser, // 기존 데이터를 모두 유지

@@ -1,4 +1,4 @@
-// src/screens/kit/index.js
+// src\screens\kit\index.js
 import React from 'react';
 import {
   View,

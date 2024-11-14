@@ -1,4 +1,5 @@
 // src\screens\login\firebaseConfig.js
+// src\screens\login\firebaseConfig.js
 // src/screens/login/firebaseConfig.js
 const firebaseConfig = {
   apiKey: 'AIzaSyC3nEdRkRTRMHyQjtWmdPIbb8wNaenUcXw',

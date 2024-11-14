@@ -1,3 +1,4 @@
+// src\screens\hospital\styles.js
 import {StyleSheet, Dimensions} from 'react-native';
 import theme from '../../theme';
 

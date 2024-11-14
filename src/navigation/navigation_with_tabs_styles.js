@@ -1,5 +1,4 @@
-// src/navigation/navigation_with_tabs_styles.js
-
+// src\navigation\navigation_with_tabs_styles.js
 import { StyleSheet } from 'react-native';
 import theme from '../theme';
 

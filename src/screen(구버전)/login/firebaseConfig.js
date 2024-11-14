@@ -1,4 +1,5 @@
 // src\screen(구버전)\login\firebaseConfig.js
+// src\screen(구버전)\login\firebaseConfig.js
 // src/screen(구버전)/login/firebaseConfig.js
 const firebaseConfig = {
   apiKey: 'AIzaSyC3nEdRkRTRMHyQjtWmdPIbb8wNaenUcXw',
