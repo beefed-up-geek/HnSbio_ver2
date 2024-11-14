@@ -1,13 +1,7 @@
 // src\navigation\navigation_without_tabs.js
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  BackHandler,
-} from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
 import {
   useNavigation,
   useFocusEffect,
@@ -49,9 +43,6 @@ const CustomHeader = ({title}) => {
       <TouchableOpacity
         onPress={handleBackPress}
         style={styles.leftButtonContainer}>
-      <TouchableOpacity
-        onPress={handleBackPress}
-        style={styles.leftButtonContainer}>
         <Image
           source={require('../images/back.png')}
           style={styles.leftButton}
@@ -70,10 +61,14 @@ const Stack = createStackNavigator();
 
 const stackScreenOptions = ({route, navigation}) => {
   return {
-    header: ({ options }) => {
+    header: ({options}) => {
       let title = options.title || route.name;
-      if (route.name === 'HealthCheckupSpecifics' && route.params?.healthCheckupResult) {
-        const { resCheckupYear, resCheckupDate } = route.params.healthCheckupResult;
+      if (
+        route.name === 'HealthCheckupSpecifics' &&
+        route.params?.healthCheckupResult
+      ) {
+        const {resCheckupYear, resCheckupDate} =
+          route.params.healthCheckupResult;
         if (resCheckupYear && resCheckupDate) {
           const year = resCheckupYear;
           const month = resCheckupDate.substring(0, 2);
@@ -165,12 +160,12 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="my_profile"
         component={My_profile_screen}
-        options={{ title: '내 프로필' }}
+        options={{title: '내 프로필'}}
       />
       <Stack.Screen
         name="manage_account"
         component={Manage_account_screen}
-        options={{ title: '내 계정 관리' }}
+        options={{title: '내 계정 관리'}}
       />
       <Stack.Screen
         name="set_push_alarm"
@@ -180,7 +175,7 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="HealthCheckupSpecifics"
         component={Health_checkup_specifics_screen}
-        options={{ title: '' }}
+        options={{title: ''}}
       />
     </Stack.Navigator>
   );
