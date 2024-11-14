@@ -181,8 +181,7 @@ const Authentication_2_screen = () => {
          loginTypeLevel: selectedValue.toString(),
          selectedLabel: selectedLabel,
          selectedImage: selectedImage,
-         refreshHealthData,
-         refreshHomeScreen
+         refreshHealthData
        });
      } else {
        setBirthdateError(true);
@@ -201,7 +200,7 @@ const Authentication_2_screen = () => {
          loginTypeLevel: selectedValue.toString(),
          selectedLabel: selectedLabel,
          selectedImage: selectedImage,
-         fetchData,
+         refreshHealthData,
        });
      } else {
        console.error(error);
