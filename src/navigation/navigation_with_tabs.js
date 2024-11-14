@@ -1,4 +1,3 @@
-// src\navigation\navigation_with_tabs.js
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from './navigation_with_tabs_styles';
 
@@ -59,7 +59,7 @@ const CustomHeader = ({title, leftIcon, onLeftPress, isHomeScreen}) => {
     <View
       style={[
         styles.headerContainer,
-        isHomeScreen && {backgroundColor: '#EBEFFE'}, // Apply background color on home screen
+        isHomeScreen && {backgroundColor: '#EBEFFE'},
       ]}>
       {isHomeScreen && (
         <TouchableOpacity
@@ -78,7 +78,7 @@ const stackScreenOptions = ({route, navigation}) => {
   const leftIcon = require('../images/hns.png');
 
   return {
-    headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
+    headerShown: false,
     header: props => {
       const title = props.options.title || route.name;
       return (
@@ -93,11 +93,20 @@ const stackScreenOptions = ({route, navigation}) => {
   };
 };
 
-const HomeStack = () => (
-  <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen name="Home" component={Home_screen} options={{title: ' '}} />
-  </Stack.Navigator>
-);
+const HomeStack = ({ route }) => {
+  const { homeScreenData } = route.params || {};
+  
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen 
+        name="Home" 
+        component={Home_screen}
+        initialParams={{ homeScreenData }}
+        options={{title: ' '}} 
+      />
+    </Stack.Navigator>
+  );
+};
 
 const KitStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
@@ -106,33 +115,23 @@ const KitStack = () => (
       component={Kit_screen}
       options={{title: '키트 검사'}}
     />
-    <Stack.Screen
-      name="kit_guide_1"
-      component={Kit_guide_1_screen}
-      options={{title: '소변 검사 안내'}}
-    />
-    <Stack.Screen
-      name="kit_guide_2"
-      component={Kit_guide_2_screen}
-      options={{title: '소변 검사 안내'}}
-    />
-    <Stack.Screen
-      name="kit_test"
-      component={Kit_test_screen}
-      options={{title: '소변 검사 안내'}}
-    />
   </Stack.Navigator>
 );
 
-const HealthStack = () => (
-  <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen
-      name="HealthCheckup"
-      component={Health_checkup_screen}
-      options={{title: '건강 검진'}}
-    />
-  </Stack.Navigator>
-);
+const HealthStack = ({ route }) => {
+  const { refreshHomeScreen } = route.params || {};
+  
+  return (
+    <Stack.Navigator screenOptions={stackScreenOptions}>
+      <Stack.Screen
+        name="HealthCheckup"
+        component={Health_checkup_screen}
+        initialParams={{ refreshHomeScreen }}
+        options={{title: '건강검진'}}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const HospitalStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
@@ -155,6 +154,22 @@ const MedicineStack = () => (
 );
 
 const BottomNavigation = () => {
+  // refreshHomeScreen 함수를 BottomNavigation에서 관리
+  const [homeScreenData, setHomeScreenData] = useState(null);
+
+  // Home Stack에 ref로 전달할 함수
+  const refreshHomeScreen = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setHomeScreenData(parsedData); // 홈 스크린 데이터 업데이트
+      }
+    } catch (error) {
+      console.error('Error refreshing home screen data:', error);
+    }
+  };
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -174,6 +189,7 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
+        initialParams={{ homeScreenData }}
         options={{title: '홈 화면'}}
       />
       <Tab.Screen
@@ -184,6 +200,7 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="HealthStack"
         component={HealthStack}
+        initialParams={{ refreshHomeScreen }}
         options={{title: '건강검진'}}
       />
       <Tab.Screen

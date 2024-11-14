@@ -24,7 +24,8 @@ const Authentication_1_screen = () => {
       selectedValue: index + 1, 
       selectedLabel: labels[index],
       selectedImage: images[index], 
-      refreshHealthData
+      refreshHealthData,
+      refreshHomeScreen
     });
   };
 

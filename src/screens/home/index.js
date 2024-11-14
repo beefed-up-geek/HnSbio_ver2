@@ -11,15 +11,13 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import {useNavigation, useFocusEffect,useRoute} from '@react-navigation/native';
 import DevButton from '../../components/devButton.js';
 import styles from './styles.js'; // 스타일 분리
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
-  const [checkCompletedToday, setCheckCompletedToday] = useState(false);
-
+  const route = useRoute();
   // 사용자 정보를 저장할 상태 변수들
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
@@ -38,6 +36,7 @@ const HomeScreen = () => {
   const [estimatedKidneyFunction, setEstimatedKidneyFunction] = useState(null);
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
 
+  const [checkCompletedToday, setCheckCompletedToday] = useState(false);
   // 신기능 단계에 따른 스타일 설정 함수
   const getKidneyFunctionStyle = functionValue => {
     if (functionValue >= 90) {
@@ -77,6 +76,54 @@ const HomeScreen = () => {
   };
 
   const characterOpacity = useState(new Animated.Value(1))[0];
+  // homeScreenData가 변경될 때마다 데이터 업데이트
+  useEffect(() => {
+    if (route.params?.homeScreenData) {
+      const data = route.params.homeScreenData;
+      setName(data.name);
+      setGender(data.gender);
+      setHeight(data.height);
+      setWeight(data.weight);
+      setBirthdate(data.birthdate);
+      setNickname(data.nickname);
+      setChronicKidneyDisease(data.chronic_kidney_disease);
+      setUnderlyingDisease(data.underlying_disease);
+
+      if (data.healthCheckup && data.healthCheckup.length > 0) {
+        const sortedHealthCheckup = data.healthCheckup.sort((a, b) => {
+          const dateA = new Date(
+            a.resCheckupYear,
+            a.resCheckupDate.substring(0, 2) - 1,
+            a.resCheckupDate.substring(2),
+          );
+          const dateB = new Date(
+            b.resCheckupYear,
+            b.resCheckupDate.substring(0, 2) - 1,
+            b.resCheckupDate.substring(2),
+          );
+          return dateB - dateA;
+        });
+
+        const latestCheckup = sortedHealthCheckup[0];
+        const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
+        if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
+          let estimatedFunction;
+          if (data.gender === 'male') {
+            estimatedFunction = (0.9 / serumCreatinine) * 100;
+          } else {
+            estimatedFunction = (0.7 / serumCreatinine) * 100;
+          }
+          setEstimatedKidneyFunction(Math.round(estimatedFunction));
+        }
+
+        const dateString = `${latestCheckup.resCheckupYear}.${latestCheckup.resCheckupDate.substring(
+          0,
+          2,
+        )}.${latestCheckup.resCheckupDate.substring(2)}`;
+        setLatestCheckupDate(dateString);
+      }
+    }
+  }, [route.params?.homeScreenData]);
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
@@ -93,7 +140,6 @@ const HomeScreen = () => {
         setChronicKidneyDisease(parsedData.chronic_kidney_disease);
         setUnderlyingDisease(parsedData.underlying_disease);
 
-        // 가장 최근의 resSerumCreatinine 값 가져오기
         if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
           const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
             const dateA = new Date(
@@ -140,9 +186,11 @@ const HomeScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
+      loadUserData();
       checkDailyCompletionStatus();
     }, []),
   );
+
 
   const checkDailyCompletionStatus = async () => {
     const today = new Date().toDateString(); // today's date as a string

@@ -182,6 +182,7 @@ const Authentication_2_screen = () => {
          selectedLabel: selectedLabel,
          selectedImage: selectedImage,
          refreshHealthData,
+         refreshHomeScreen
        });
      } else {
        setBirthdateError(true);

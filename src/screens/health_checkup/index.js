@@ -1,5 +1,5 @@
 // src\screens\health_checkup\index.js
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useFocusEffect,  useCallback } from 'react';
 import {
   Image,
   View,
@@ -9,7 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
@@ -20,12 +20,14 @@ const height_ratio = Dimensions.get('screen').height / 844;
 
 const Health_checkup_screen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
   const [userGender, setUserGender] = useState('');
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const { refreshHomeScreen } = route.params || {};
 
   const refreshHealthData = async () => {
     const userData = await AsyncStorage.getItem('user');
@@ -36,10 +38,11 @@ const Health_checkup_screen = () => {
       if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
         setHealthCheckupData(parsedData.healthCheckup);
         setAddingData(false);
+        refreshHomeScreen();
       }
     }
   };
-
+  
   useEffect(() => {
     (async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -58,6 +61,13 @@ const Health_checkup_screen = () => {
   useEffect(() => {
       refreshHealthData();
     }, [refreshKey]);
+
+
+    useFocusEffect(
+      useCallback(() => {
+        loadHealthData();
+      }, [])
+    );
 
   const getHealthTags = (item) => {
     const healthTags = [];
@@ -188,7 +198,7 @@ const Health_checkup_screen = () => {
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'authentication_1',
-                params: { refreshHealthData: () => setRefreshKey(prev => prev + 1) },
+                params: { refreshHealthData: loadHealthData, refreshHomeScreen  },
               })
             }
           >

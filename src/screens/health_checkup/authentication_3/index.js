@@ -29,7 +29,8 @@ const Authentication_3_screen = () => {
     loginTypeLevel,
     selectedLabel,
     selectedImage,
-    refreshHealthData
+    refreshHealthData,
+    refreshHomeScreen
   } = route.params;
 
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
@@ -76,7 +77,8 @@ const Authentication_3_screen = () => {
           //Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
         } else {
           //Alert.alert('성공', '인증이 완료되었습니다.');
-          refreshHealthData();;
+          refreshHomeScreen();
+          refreshHealthData();
           navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
         }
       } else {
