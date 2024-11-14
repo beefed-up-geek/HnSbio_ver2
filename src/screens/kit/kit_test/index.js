@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {launchCamera} from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { Dimensions, Text, View, TouchableOpacity } from 'react-native';
+import theme from '../../../theme';
 import styles from './styles.js';
 import {
   View,

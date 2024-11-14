@@ -3,14 +3,14 @@ import React from 'react';
 import { 
     View, 
     Text, 
-    ScrollView,
-    Dimensions,
-    TouchableOpacity,
-    Image,
-    SafeAreaView,
-    StatusBar,
-    Alert,
-    Modal,
+    ScrollView, 
+    Dimensions, 
+    TouchableOpacity, 
+    Image, 
+    SafeAreaView, 
+    StatusBar, 
+    Alert, 
+    Modal, 
 } from 'react-native';
 import theme from '../../../theme'; 
 const width_ratio = Dimensions.get('screen').width / 390;
