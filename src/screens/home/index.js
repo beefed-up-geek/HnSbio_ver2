@@ -128,10 +128,7 @@ const HomeScreen = () => {
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
-    console.log("홈 화면 갱신됨!");
-    setEstimatedKidneyFunction(null); 
-    setLatestCheckupDate(null);
-    setSerumCreatinine(null);
+    console.log("홈 화면 갱신!");
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
@@ -362,7 +359,7 @@ const HomeScreen = () => {
             </View>
           </ScrollView>
         </View> */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
             navigation.navigate('KitStack')
@@ -386,7 +383,7 @@ const HomeScreen = () => {
               styles.percentageContainer,
             ]}>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>

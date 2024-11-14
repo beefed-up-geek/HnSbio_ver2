@@ -14,7 +14,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import styles from './styles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import theme from '../../../theme';
+import theme from '../../../theme.js';
 
 const telecomOptions = [
  'SKT',

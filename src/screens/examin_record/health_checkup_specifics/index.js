@@ -29,7 +29,6 @@ import {
     AnemiaCard,
     LiverDiseaseCard
 } from './DiseaseMetricCards';
-import { dummy_pdf } from '../data';
 import theme from '../../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;

@@ -11,10 +11,12 @@ import {
 import styles from './navigation_without_tabs_styles';
 
 // Import your screen components
-import Health_checkup_specifics_screen from '../screens/health_checkup/health_checkup_specifics';
-import Authentication_1_screen from '../screens/health_checkup/authentication_1';
-import Authentication_2_screen from '../screens/health_checkup/authentication_2';
-import Authentication_3_screen from '../screens/health_checkup/authentication_3';
+import Health_checkup_specifics_screen from '../screens/examin_record/health_checkup_specifics';
+import Authentication_1_screen from '../screens/examin_record/authentication_1';
+import Authentication_2_screen from '../screens/examin_record/authentication_2';
+import Authentication_3_screen from '../screens/examin_record/authentication_3';
+import Blood_test_specifics_screen from '../screens/examin_record/blood_test_specifics';
+import Blood_test_input_screen from '../screens/examin_record/blood_test_input';
 import Medicine_specifics_screen from '../screens/medicine/medicine_specifics';
 import Kit_guide_1_screen from '../screens/kit/kit_guide_1';
 import Kit_guide_2_screen from '../screens/kit/kit_guide_2';
@@ -132,6 +134,16 @@ const NavigationWithoutTabs = () => {
         name="authentication_3"
         component={Authentication_3_screen}
         options={{title: '내 건강검진 기록 불러오기'}}
+      />
+      <Stack.Screen
+        name="blood_test_specifics"
+        component={Blood_test_specifics_screen}
+        options={{title: ''}}
+      />
+      <Stack.Screen
+        name="blood_test_input"
+        component={Blood_test_input_screen}
+        options={{title: '혈액검사 결과 기록'}}
       />
       <Stack.Screen
         name="medicine_specifics"

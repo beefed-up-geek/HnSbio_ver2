@@ -1,38 +1,37 @@
-// src\screens\home\set_push_alarm\index.js
-import React, {useState, useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity, Alert, Modal} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {Switch} from 'react-native-switch';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, Alert, Modal } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Switch } from 'react-native-switch';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
 import ModalComponent from '../../../components/ModalComponent';
-import styles from './styles.js'; // 스타일 불러오기 // 개발 규칙: stylesheet 분리
+import styles from './styles.js';
 
-const Set_push_alarm_screen = () => {
+const SetPushAlarmScreen = () => {
   const navigation = useNavigation();
 
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [repeatInterval, setRepeatInterval] = useState('28');
-  const [initialSettings, setInitialSettings] = useState({}); // 변경사항 유무 확인
+  const [initialSettings, setInitialSettings] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [modalVisible, setModalVisible] = useState({
     repeatInterval: false,
   });
-  const [confirmationModalVisible, setConfirmationModalVisible] =
-    useState(false); // 변경사항 저장 완료 모달
+  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [providerId, setProviderId] = useState('');
 
-  const formatDate = date => {
+  const formatDate = (date) => {
+    if (!date || !(date instanceof Date)) {
+      return '';
+    }
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   };
 
-  // 변경사항 유무 확인 함수
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
@@ -48,50 +47,25 @@ const Set_push_alarm_screen = () => {
         const parsedData = JSON.parse(userData);
         setProviderId(parsedData.providerId);
 
-        // 서버에서 알림 설정 가져오기
-        fetchPushNotificationSettings(parsedData.providerId);
-      }
-    };
-
-    const fetchPushNotificationSettings = async providerId => {
-      try {
-        const response = await axios.get(
-          `http://54.79.61.80:5000/user_info/getPushNotificationSettings?providerId=${providerId}`,
-        );
-
-        if (response.data) {
-          const {alarmEnabled, startDate, repeatInterval} = response.data;
-
-          // Ensure startDate is a Date object
-          const parsedStartDate = new Date(startDate);
-
-          setAlarmEnabled(alarmEnabled);
-          setStartDate(parsedStartDate);
-          setRepeatInterval(String(repeatInterval));
-
-          // 초기 설정값 설정
+        const localSettings = parsedData.pushNotificationSettings;
+        if (localSettings) {
+          setAlarmEnabled(localSettings.alarmEnabled);
+          setStartDate(new Date(localSettings.startDate) || new Date());
+          setRepeatInterval(localSettings.repeatInterval);
           setInitialSettings({
-            alarmEnabled,
-            startDate: parsedStartDate,
-            repeatInterval: String(repeatInterval),
+            alarmEnabled: localSettings.alarmEnabled,
+            startDate: new Date(localSettings.startDate) || new Date(),
+            repeatInterval: localSettings.repeatInterval,
           });
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.log('Default settings applied due to missing user data.');
-          setAlarmEnabled(false); // 디폴트 알림 설정을 "꺼짐"으로 설정
+        } else {
+          setAlarmEnabled(false);
           setStartDate(new Date());
           setRepeatInterval('28');
-
-          // Set initialSettings with default values
           setInitialSettings({
             alarmEnabled: false,
             startDate: new Date(),
             repeatInterval: '28',
           });
-        } else {
-          console.error('Error fetching push notification settings:', error);
-          Alert.alert('Error', '알림 설정을 불러오는 중 오류가 발생했습니다.');
         }
       }
     };
@@ -99,15 +73,10 @@ const Set_push_alarm_screen = () => {
     fetchUserData();
   }, []);
 
-  const toggleAlarm = () => setAlarmEnabled(previousState => !previousState);
+  const toggleAlarm = () => setAlarmEnabled((prev) => !prev);
 
-  const openModal = key => {
-    setModalVisible(prevState => ({...prevState, [key]: true}));
-  };
-
-  const closeModal = key => {
-    setModalVisible(prevState => ({...prevState, [key]: false}));
-  };
+  const openModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: true }));
+  const closeModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: false }));
 
   const savePushNotificationSettings = async () => {
     if (!providerId) {
@@ -116,23 +85,19 @@ const Set_push_alarm_screen = () => {
     }
 
     try {
-      const response = await axios.put(
-        'http://54.79.61.80:5000/user_info/updatePushNotificationSettings',
-        {
-          providerId,
-          alarmEnabled,
-          startDate: startDate.toISOString(),
-          repeatInterval: parseInt(repeatInterval),
-        },
-      );
-
       setConfirmationModalVisible(true);
-      // Ensure startDate is a Date object when updating initialSettings
-      setInitialSettings({
-        alarmEnabled,
-        startDate,
-        repeatInterval,
-      });
+      setInitialSettings({ alarmEnabled, startDate, repeatInterval });
+
+      await AsyncStorage.mergeItem(
+        'user',
+        JSON.stringify({
+          pushNotificationSettings: {
+            alarmEnabled,
+            startDate,
+            repeatInterval,
+          },
+        })
+      );
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
@@ -142,7 +107,7 @@ const Set_push_alarm_screen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.detailsContainer}>
-        {alarmEnabled !== null && ( // alarmEnabled가 null이 아닌 경우에만 렌더링
+        {alarmEnabled !== null && (
           <DetailRow
             icon={require('../../../images/home/set_push_alarm/알림.png')}
             label="알림"
@@ -187,7 +152,6 @@ const Set_push_alarm_screen = () => {
         )}
       </View>
 
-      {/* Date Picker */}
       {showDatePicker && (
         <DateTimePicker
           value={startDate}
@@ -202,7 +166,6 @@ const Set_push_alarm_screen = () => {
         />
       )}
 
-      {/* Modal for Repeat Interval */}
       <ModalComponent
         visible={modalVisible.repeatInterval}
         title="반복 주기 변경"
@@ -214,18 +177,17 @@ const Set_push_alarm_screen = () => {
         keyboardType="numeric"
       />
 
-      {/* Confirmation Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={confirmationModalVisible}
-        onRequestClose={() => setConfirmationModalVisible(false)}>
+        onRequestClose={() => setConfirmationModalVisible(false)}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalMessage}>알림 설정이 저장되었습니다.</Text>
             <View style={styles.modalButtonContainer}>
-              <TouchableOpacity
-                onPress={() => setConfirmationModalVisible(false)}>
+              <TouchableOpacity onPress={() => setConfirmationModalVisible(false)}>
                 <Image
                   source={require('../../../images/home/set_push_alarm/확인.png')}
                   style={styles.modalButtonImage}
@@ -236,7 +198,6 @@ const Set_push_alarm_screen = () => {
         </View>
       </Modal>
 
-      {/* Save Button */}
       <TouchableOpacity
         style={[
           styles.saveButton,
@@ -245,12 +206,14 @@ const Set_push_alarm_screen = () => {
           },
         ]}
         onPress={savePushNotificationSettings}
-        disabled={!hasChanges()}>
+        disabled={!hasChanges()}
+      >
         <Text
           style={[
             styles.saveButtonText,
-            {color: hasChanges() ? '#7596FF' : '#7F7F7F'},
-          ]}>
+            { color: hasChanges() ? '#7596FF' : '#7F7F7F' },
+          ]}
+        >
           변경사항 저장
         </Text>
       </TouchableOpacity>
@@ -258,7 +221,7 @@ const Set_push_alarm_screen = () => {
   );
 };
 
-const DetailRow = ({icon, label, value, last, onPress}) => (
+const DetailRow = ({ icon, label, value, last, onPress }) => (
   <View style={last ? styles.detailLastRow : styles.detailRow}>
     <View style={styles.labelContainer}>
       <Image source={icon} style={styles.icon} />
@@ -276,4 +239,4 @@ const DetailRow = ({icon, label, value, last, onPress}) => (
   </View>
 );
 
-export default Set_push_alarm_screen;
+export default SetPushAlarmScreen;

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TouchableOpacity } from 'react-native';
-import theme from '../../../theme';
+import theme from '../../../theme.js';
 import styles from './styles.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
