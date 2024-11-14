@@ -25,6 +25,20 @@ const Health_checkup_screen = () => {
   const [userGender, setUserGender] = useState('');
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refreshHealthData = async () => {
+    const userData = await AsyncStorage.getItem('user');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      setProviderId(parsedData.providerId);
+      setUserGender(parsedData.gender);
+      if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+        setHealthCheckupData(parsedData.healthCheckup);
+        setAddingData(false);
+      }
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -41,7 +55,9 @@ const Health_checkup_screen = () => {
     })();
   }, []);
 
-
+  useEffect(() => {
+      refreshHealthData();
+    }, [refreshKey]);
 
   const getHealthTags = (item) => {
     const healthTags = [];
@@ -172,7 +188,7 @@ const Health_checkup_screen = () => {
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'authentication_1',
-                params: { fetchData },
+                params: { refreshHealthData: () => setRefreshKey(prev => prev + 1) },
               })
             }
           >
