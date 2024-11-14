@@ -364,7 +364,6 @@ const filterLabels = {
           />
         </View>
       </View>
-
       <View style={styles.filtersection}>
         <ScrollView 
           horizontal 
@@ -390,6 +389,11 @@ const filterLabels = {
           />
         </TouchableOpacity>
       </View>
+      
+      <Image
+        source={require('./assets/background.png')} // 배경 이미지 경로
+        style={styles.backgroundImage}
+      />
 
       <FlatList
         data={hospitalData}

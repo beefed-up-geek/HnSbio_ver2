@@ -4,7 +4,7 @@ import theme from '../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -16,6 +16,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: -20 * height_ratio,
+  },
+  backgroundImage: {
+    position: 'absolute', // 절대 위치
+    top: - 58 * height_ratio,
+    right: 0 * width_ratio,
+    width: '150%',
+    height: '150%',
+    opacity: 0.5,
+    resizeMode: 'contain', // 이미지를 전체 화면에 맞게
+    zIndex: -1, // 다른 요소 뒤로 배치
   },
   headerTitle: {
     ...theme.fonts.SemiBold,
