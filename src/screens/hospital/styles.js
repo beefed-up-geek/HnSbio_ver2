@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 24 * width_ratio*0.95,
+    paddingHorizontal: 21 * width_ratio*0.95,
+
   },
   searchSection: {
     marginTop: 24 * height_ratio*0.9,
@@ -219,8 +220,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // 이미지 가운데 정렬
   },
   filterIcon: {
-    width: 40 * width_ratio*0.95, // 이미지 너비
-    height: 40 * height_ratio*0.9, // 이미지 높이
+    width: 43 * width_ratio*0.95, // 이미지 너비
+    height: 43 * height_ratio*0.9, // 이미지 높이
     resizeMode: 'contain',
   },
   filtersection: {
