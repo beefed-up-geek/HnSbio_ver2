@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         height: 53 * height_ratio,
     },
     recentSearchTitle: {
-        fontSize: 14,
+        fontSize: 14 * height_ratio,
         color: '#5D5D62',
         marginLeft: 23,
         marginRight: 7,
@@ -100,13 +100,13 @@ const styles = StyleSheet.create({
     },
     recentSearchText: {
         color: '#5D5D62',
-        fontSize: 12,
+        fontSize: 12 * height_ratio,
         ...theme.fonts.Medium,
     },
     removeText: {
         color: '#5D5D62',
         marginLeft: 6,
-        fontSize: 25,
+        fontSize: 25 * height_ratio,
     },
     tabsContainer: {
         flexDirection: 'row',
