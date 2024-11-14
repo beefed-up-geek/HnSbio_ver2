@@ -1,5 +1,5 @@
 // src\navigation\navigation_with_tabs_styles.js
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import theme from '../theme';
 
 const styles = StyleSheet.create({
@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     left: '50%',
-    transform: [{ translateX: -175 }],
+    transform: [{translateX: -175}],
     backgroundColor: 'transparent',
   },
   container: {

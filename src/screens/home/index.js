@@ -32,7 +32,8 @@ const HomeScreen = () => {
     hyperlipidemia: 0,
     retinal_complication: 0,
   });
-
+  const [latestBloodTest, setLatestBloodTest] = useState(null);
+  const [latestKitTest, setLatestKitTest] = useState(null);
   const [estimatedKidneyFunction, setEstimatedKidneyFunction] = useState(null);
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
 
@@ -127,6 +128,10 @@ const HomeScreen = () => {
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
+    console.log("홈 화면 갱신됨!");
+    setEstimatedKidneyFunction(null); 
+    setLatestCheckupDate(null);
+    setSerumCreatinine(null);
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
@@ -139,44 +144,58 @@ const HomeScreen = () => {
         setNickname(parsedData.nickname);
         setChronicKidneyDisease(parsedData.chronic_kidney_disease);
         setUnderlyingDisease(parsedData.underlying_disease);
-
+  
+        // Retrieve the latest health checkup
         if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
           const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
             const dateA = new Date(
               a.resCheckupYear,
               a.resCheckupDate.substring(0, 2) - 1,
-              a.resCheckupDate.substring(2),
+              a.resCheckupDate.substring(2)
             );
             const dateB = new Date(
               b.resCheckupYear,
               b.resCheckupDate.substring(0, 2) - 1,
-              b.resCheckupDate.substring(2),
+              b.resCheckupDate.substring(2)
             );
             return dateB - dateA;
           });
-
+  
           const latestCheckup = sortedHealthCheckup[0];
           const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
           if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
             let estimatedFunction;
             if (parsedData.gender === 'male') {
-              estimatedFunction = (0.9 / serumCreatinine) * 100;
+              estimatedFunction = serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
             } else {
-              estimatedFunction = (0.7 / serumCreatinine) * 100;
+              estimatedFunction = serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
             }
             setEstimatedKidneyFunction(Math.round(estimatedFunction));
           } else {
             setEstimatedKidneyFunction(null);
           }
-
-          // 날짜 문자열 형식화
-          const dateString = `${
-            latestCheckup.resCheckupYear
-          }.${latestCheckup.resCheckupDate.substring(
+  
+          const dateString = `${latestCheckup.resCheckupYear}.${latestCheckup.resCheckupDate.substring(
             0,
-            2,
+            2
           )}.${latestCheckup.resCheckupDate.substring(2)}`;
           setLatestCheckupDate(dateString);
+        }
+  
+        // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
+        if (parsedData.kit_result && parsedData.kit_result.length > 0) {
+          const sortedKitResults = parsedData.kit_result.sort(
+            (a, b) => new Date(b.datetime) - new Date(a.datetime)
+          );
+          setLatestKitTest(sortedKitResults[0]);
+        }
+  
+        // 가장 최근 혈액검사 결과를 latestBloodTest 변수로 설정
+        if (parsedData.blood_test_result && parsedData.blood_test_result.length > 0) {
+          const sortedBloodTests = parsedData.blood_test_result.sort(
+            (a, b) => new Date(b.date) - new Date(a.date)
+          );
+          setLatestBloodTest(sortedBloodTests[0]);
         }
       }
     } catch (error) {
@@ -184,6 +203,7 @@ const HomeScreen = () => {
     }
   };
 
+  
   useFocusEffect(
     useCallback(() => {
       loadUserData();
@@ -217,7 +237,7 @@ const HomeScreen = () => {
       end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}>
       <View style={styles.logoContainer}>
-            <DevButton />
+            <DevButton loadUserData={loadUserData} />
         </View>
       <ScrollView
         contentContainerStyle={styles.container}
@@ -342,11 +362,35 @@ const HomeScreen = () => {
             </View>
           </ScrollView>
         </View> */}
-
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
-            navigation.navigate('BottomNavigation', {screen: 'HealthStack'})
+            navigation.navigate('KitStack')
+          }>
+          <View style={styles.titleContainer}>
+            <Image
+              source={require('../../images/home/body.png')}
+              style={styles.bodyImage}
+            />
+            <View style={styles.titleLines}>
+              <Text style={styles.boxText}>콩팥 진단 키트 컨테이너</Text>
+              <View style={styles.subLines}>
+                <Text style={styles.boxSubTextDark}>
+                콩팥 진단키트 컨테이너
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.percentageContainer,
+            ]}>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.roundedButtonBox}
+          onPress={() =>
+            navigation.navigate('NoTabs', {screen: 'kidney_info'})
           }>
           <View style={styles.titleContainer}>
             <Image
