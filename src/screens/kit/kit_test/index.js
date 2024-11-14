@@ -1,29 +1,97 @@
-import React, {useState} from 'react';
-import {launchCamera} from 'react-native-image-picker';
-import {useNavigation} from '@react-navigation/native';
-import {Dimensions, Text, View, TouchableOpacity, Image} from 'react-native';
-import theme from '../../../theme';
-import styles from './styles.js';
-import {RNCamera} from 'react-native-camera';
-import {onDisplayNotification} from '../../../pushnotification';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Alert, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
+import { useNavigation } from '@react-navigation/native';
+import { onDisplayNotification } from '../../../pushnotification';
 import axios from 'axios';
+import styles from './styles';
 
-const Kit_test_screen = ({navigation}) => {
-  const [photo, setPhoto] = useState(null);
+const KitTestScreen = ({ navigation }) => {
+  const { KitClassifierModule } = NativeModules;
+  const [photoUri, setPhotoUri] = useState(null);
+  const [classificationData, setClassificationData] = useState([]);
+  const [cameraPermission, setCameraPermission] = useState(false);
+  const device = useCameraDevice('back');
+  const camera = useRef(null);
+  const startTimeRef = useRef(null);
 
-  const takePicture = async camera => {
-    try {
-      const options = {quality: 0.5, base64: true};
-      const data = await camera.takePictureAsync(options);
-      setPhoto(data.uri);
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const cameraStatus = await Camera.requestCameraPermission();
+      const microphoneStatus = await Camera.requestMicrophonePermission();
 
-      sendToAPI(data.uri);
-    } catch (error) {
-      console.error(error);
+      if (cameraStatus === 'granted' && microphoneStatus === 'granted') {
+        setCameraPermission(true);
+      } else {
+        Alert.alert('권한 필요', '카메라 및 마이크 권한이 필요합니다.');
+      }
+    };
+    requestPermissions();
+  }, []);
+
+  const handleReset = () => {
+    setPhotoUri(null);
+    setClassificationData([]);
+  };
+
+  const takePhoto = async () => {
+    if (camera.current && device) {
+      try {
+        startTimeRef.current = new Date().getTime();
+
+        const photo = await camera.current.takePhoto({
+          quality: 0.8,
+          skipMetadata: true,
+        });
+        setPhotoUri(photo.path);
+        classifyImage(photo.path);
+      } catch (error) {
+        console.error('사진 촬영 오류:', error);
+      }
+    } else {
+      console.warn('카메라 권한이 필요합니다.');
     }
   };
 
-  const sendToAPI = async photoUri => {
+  const classifyImage = async (uri) => {
+    try {
+      const imageUri = 'file://' + uri;
+      const result = await KitClassifierModule.classifyKit(imageUri);
+
+      // 종료 시간 기록 및 경과 시간 계산
+      const endTime = new Date().getTime();
+      const elapsed = endTime - startTimeRef.current;
+      console.log(`인식 시간: ${(elapsed / 1000).toFixed(2)} 초`);
+
+      const isKit = result.isKit;
+
+      if (isKit) {
+        // 분류 결과를 저장하고 API 호출
+        setClassificationData(formatClassificationData(result));
+        sendToAPI(imageUri);
+      } else {
+        Alert.alert('결과', '키트를 인식하지 못했습니다. 다시 촬영해주세요.', [
+          { text: '확인', onPress: handleReset },
+        ]);
+      }
+    } catch (error) {
+      console.error('이미지 처리 오류:', error);
+    }
+  };
+
+  const formatClassificationData = (result) => {
+    const { isKit, ...scores } = result; // isKit을 제외한 분류 결과
+    const sortedResult = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const topResults = sortedResult.map(([label, percentage]) => ({
+      label,
+      percentage: Math.floor(percentage * 100), // 퍼센트로 변환
+    }));
+
+    return topResults;
+  };
+
+  const sendToAPI = async (photoUri) => {
     try {
       const formData = new FormData();
       formData.append('file', {
@@ -52,8 +120,9 @@ const Kit_test_screen = ({navigation}) => {
         askToRetakeOrProceed(photoUri, '정상');
       }
 
+      // 5분 후 푸시 알림
       setTimeout(() => {
-        onDisplayNotification(); // PushNotification에서 푸시 알림 함수 호출
+        onDisplayNotification();
       }, 300000);
     } catch (error) {
       console.error('API 호출 중 오류:', error);
@@ -68,54 +137,44 @@ const Kit_test_screen = ({navigation}) => {
       [
         {
           text: '다시 찍기',
-          onPress: () => setPhoto(null),
+          onPress: handleReset,
         },
         {
           text: '진행하기',
-          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+          onPress: () => navigation.navigate('Kit', { photo: photoUri, status }),
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
   return (
-    <View style={{flex: 1}}>
-      {!photo ? (
-        <RNCamera
-          style={{flex: 1}}
-          type={RNCamera.Constants.Type.back}
-          captureAudio={false}
-          ref={ref => {
-            this.camera = ref;
-          }}>
-          {({camera, status}) => {
-            if (status !== 'READY') return <View />;
-            return (
-              <View style={styles.overlayContainer}>
-                <View style={styles.instructionsContainer}>
-                  <Text style={styles.instructionsText}>
-                    카메라의 주황색 네모칸을 키트에 잘 맞춰 주세요. 자동으로
-                    촬영됩니다.
-                  </Text>
-                </View>
-                <View style={styles.squareContainer}>
-                  <View style={styles.orangeSquare} />
-                </View>
-                <TouchableOpacity
-                  onPress={() => takePicture(camera)}
-                  style={styles.captureButton}>
-                  <Text style={styles.captureButtonText}>촬영하기</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        </RNCamera>
+    <View style={styles.container}>
+      {photoUri ? (
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: 'file://' + photoUri }} style={styles.image} />
+          <TouchableOpacity style={styles.backButton} onPress={handleReset}>
+            <Text style={styles.backButtonText}>다시 촬영하기</Text>
+          </TouchableOpacity>
+        </View>
+      ) : cameraPermission && device ? (
+        <View style={styles.cameraContainer}>
+          <Camera
+            ref={camera}
+            style={styles.camera}
+            device={device}
+            isActive={true}
+            photo={true}
+          />
+          <TouchableOpacity style={styles.captureButton} onPress={takePhoto}>
+            <Text style={styles.captureButtonText}>촬영하기</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
-        <Image source={{uri: photo}} style={{flex: 1}} />
+        <Text>카메라 권한이 필요합니다.</Text>
       )}
     </View>
   );
 };
 
-export default Kit_test_screen;
+export default KitTestScreen;
