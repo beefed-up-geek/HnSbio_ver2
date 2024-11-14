@@ -29,6 +29,7 @@ import Daily_check_screen from '../screens/home/daily_check';
 import My_profile_screen from '../screens/home/my_profile';
 import Manage_account_screen from '../screens/home/manage_account';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm';
+import Kidney_info_screen from '../screens/home/kidney_info'
 
 const CustomHeader = ({title}) => {
   const navigation = useNavigation();
@@ -169,6 +170,11 @@ const NavigationWithoutTabs = () => {
         name="set_push_alarm"
         component={Set_push_alarm_screen}
         options={{title: '키트 검사 주기'}}
+      />
+      <Stack.Screen
+        name="kidney_info"
+        component={Kidney_info_screen}
+        options={{title: '나의 콩팥 점수'}}
       />
       <Stack.Screen
         name="HealthCheckupSpecifics"
