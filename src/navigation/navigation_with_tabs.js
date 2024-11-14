@@ -143,7 +143,12 @@ const MedicineStack = () => (
     <Stack.Screen
       name="Medicine"
       component={Medicine_screen}
-      options={{ title: '의약품 검색' }}
+      options={{ title: '약 검색' }}
+    />
+    <Stack.Screen
+      name="MedicineDetailScreen"
+      component={Medicine_specifics_screen}
+      options={{ title: '의약품 정보' }}
     />
   </Stack.Navigator>
 );
