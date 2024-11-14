@@ -124,6 +124,22 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
             ))}
           </View>
 
+          {/* 혈액 적정성 평가 등급 (다중 선택) */}
+          <Text style={styles.sectionTitle}>
+            혈액 적정성 평가 등급(투석 병원)
+          </Text>
+          <View style={styles.RatingbuttonGroup}>
+            {['1', '2', '3', '4', '5'].map(rating => (
+              <FilterButton
+                key={rating}
+                label={`${rating}등급`}
+                selected={localFilters.rating?.includes(rating)}
+                onPress={() => handleMultiFilterChange('rating', rating)}
+                disabled={isApplying}
+              />
+            ))}
+          </View>
+
           {/* 병원 정보 (다중 선택) */}
           <Text style={styles.sectionTitle}>병원 정보</Text>
           <View style={styles.buttonGroup}>
@@ -158,22 +174,6 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
               <Text key={index} style={styles.labelText}>
                 {distance === '전국' ? '전국' : `${distance}km`}
               </Text>
-            ))}
-          </View>
-
-          {/* 혈액 적정성 평가 등급 (다중 선택) */}
-          <Text style={styles.sectionTitle}>
-            혈액 적정성 평가 등급(투석 병원)
-          </Text>
-          <View style={styles.RatingbuttonGroup}>
-            {['1', '2', '3', '4', '5'].map(rating => (
-              <FilterButton
-                key={rating}
-                label={`${rating}등급`}
-                selected={localFilters.rating?.includes(rating)}
-                onPress={() => handleMultiFilterChange('rating', rating)}
-                disabled={isApplying}
-              />
             ))}
           </View>
 
@@ -258,7 +258,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16 * width_ratio,
     fontWeight: 'bold',
-    marginVertical: 10 * height_ratio,
+    marginTop: 10 * height_ratio,
+    marginBottom: 10 * height_ratio,
     color: '#000',
   },
   buttonGroup: {
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 5 * width_ratio,
     marginTop: 10 * height_ratio,
-    marginBottom: 10 * height_ratio,
+    marginBottom: 15 * height_ratio,
   },
   labelText: {
     marginTop: -7 * height_ratio,
