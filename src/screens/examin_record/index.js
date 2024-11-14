@@ -1,3 +1,4 @@
+// src/screens/examin_record/index.js
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Image,
@@ -11,6 +12,7 @@ import {
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import LinearGradient from 'react-native-linear-gradient';
 import theme from '../../theme.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
@@ -40,7 +42,7 @@ const Examin_record_screen = () => {
       refreshHomeScreen && refreshHomeScreen();
     }
   };
-  
+
   useEffect(() => {
     refreshHealthData();
   }, [refreshKey]);
@@ -51,29 +53,68 @@ const Examin_record_screen = () => {
     }, [])
   );
 
-  const renderBloodTestCard = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardType}>혈액 검사</Text>
-        <Text style={styles.cardDate}>{item.date}</Text>
-      </View>
-      <View style={styles.cardContent}>
-        <Text style={styles.bloodTestText}>BUN: {item.BUN}</Text>
-        <Text style={styles.bloodTestText}>Creatinine: {item.creatinine}</Text>
-        <Text style={styles.bloodTestText}>GFR: {item.GFR}</Text>
-      </View>
-    </View>
-  );
+  const renderBloodTestCard = ({ item }) => {
+    const abnormalLabels = [];
+  
+    const addAbnormalLabel = (value, type) => {
+      let isOutOfRange = false;
+  
+      if (type === "BUN") {
+        isOutOfRange = value < 7 || value > 20;
+      } else if (type === "Creatinine") {
+        if (userGender === "male") isOutOfRange = value < 0.6 || value > 1.2;
+        else if (userGender === "female") isOutOfRange = value < 0.5 || value > 1.1;
+      } else if (type === "GFR") {
+        isOutOfRange = value < 90;
+      }
+  
+      if (isOutOfRange) {
+        abnormalLabels.push(
+          <View key={type} style={styles.abnormalTag}>
+            <Text style={styles.abnormalTagText}>
+              {type}: {value}
+            </Text>
+          </View>
+        );
+      }
+    };
+  
+    addAbnormalLabel(item.BUN, "BUN");
+    addAbnormalLabel(item.creatinine, "Creatinine");
+    addAbnormalLabel(item.GFR, "GFR");
+  
+    const displayDate = item.date.substring(5, 10);
+  
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          navigation.navigate('NoTabs', {
+            screen: 'blood_test_specifics',
+            params: { bloodTestResult: item },
+          })
+        }
+      >
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardType}>{displayDate} 검사 결과</Text>
+          <View style={styles.cardHeaderRight}>
+            <Text style={styles.moreText}>더보기</Text>
+            <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
+          </View>
+        </View>
+        <View style={styles.cardContent}>
+          {abnormalLabels.length > 0 ? (
+            <View style={styles.tagsContainer}>{abnormalLabels}</View>
+          ) : (
+            <Text style={styles.normalText}>모든 항목이 정상입니다</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderHealthCheckupCard = ({ item }) => {
     const healthTags = getHealthTags(item);
-
-    const formatDate = (year, date) => {
-      if (!year || !date) return '';
-      const month = date.substring(0, 2);
-      const day = date.substring(2);
-      return `${year}/${month}/${day}`;
-    };
 
     return (
       <TouchableOpacity
@@ -86,23 +127,17 @@ const Examin_record_screen = () => {
         }
       >
         <View style={styles.cardHeader}>
-          <View style={styles.cardHeaderLeft}>
-            <Text style={styles.cardType}>일반건강검진</Text>
-            <Text style={styles.cardDate}>
-              {formatDate(item.resCheckupYear, item.resCheckupDate)}
-            </Text>
-          </View>
+          <Text style={styles.cardType}>{item.resCheckupYear} 검진 결과</Text>
           <View style={styles.cardHeaderRight}>
             <Text style={styles.moreText}>더보기</Text>
             <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
           </View>
         </View>
-  
         <View style={styles.cardContent}>
           <View style={styles.tagsContainer}>
             {healthTags.map((tag, index) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
+              <View key={index} style={styles.abnormalTag}>
+                <Text style={styles.abnormalTagText}>{tag}</Text>
               </View>
             ))}
           </View>
@@ -154,80 +189,105 @@ const Examin_record_screen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.fixedHeaderContainer}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>나의 검진 기록</Text>
-        </View>
-      </View>
-      <View style={styles.contentWrapper}>
-        {/* 혈액 검사 기록 상단 1/3 */}
-        <View style={styles.bloodTestContainer}>
-          <Text style={styles.sectionTitle}>혈액 검사 기록</Text>
-          {(!bloodTestData || bloodTestData.length === 0) ? (
-            <View style={styles.noDataContainer}>
-              <Image
-                source={require('../../images/health_screen/document.png')}
-                style={styles.noDataImage}
-              />
-              <Text style={styles.noDataText}>데이터가 없어요</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={bloodTestData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderBloodTestCard}
-              ListFooterComponent={<View style={styles.footerMargin} />}
-            />
-          )}
-        </View>
-
-        {/* 건강검진 기록 하단 2/3 */}
-        <View style={styles.healthCheckupContainer}>
-          <View style={styles.healthCheckupHeader}>
-            <Text style={styles.sectionTitle}>건강검진 기록</Text>
-            <TouchableOpacity
-              style={styles.refreshButton}
-              onPress={() =>
-                navigation.navigate('NoTabs', {
-                  screen: 'authentication_1',
-                  params: { refreshHealthData: refreshHealthData },
-                })
-              }
-            >
-              <FontAwesome5 name="redo" size={20 * width_ratio} color="#8EAFF6" />
-              <Text style={styles.buttonText}>건강검진정보 불러오기</Text>
-            </TouchableOpacity>
+    <LinearGradient
+      colors={['#EBEFFE', '#B7C8FF']}
+      start={{x: 0, y: 0.54}}
+      end={{x: 0, y: 1.2}}
+      style={styles.gradient}
+    >
+      <View style={styles.container}>
+        <View style={styles.fixedHeaderContainer}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>나의 검진 기록</Text>
+            <View style={styles.headerBorder} /> 
           </View>
-          {(!healthCheckupData || healthCheckupData.length === 0) ? (
-            <View style={styles.noDataContainer}>
-              <Image
-                source={require('../../images/health_screen/document.png')}
-                style={styles.noDataImage}
-              />
-              <Text style={styles.noDataText}>데이터가 없어요</Text>
+        </View>
+        <View style={styles.contentWrapper}>
+          <View style={styles.bloodTestContainer}>
+            <View style={styles.bloodTestHeader}>
+              <Text style={styles.sectionTitle}>혈액 검사 기록</Text>
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() =>
+                  navigation.navigate('NoTabs', {
+                    screen: 'blood_test_input',
+                    params: { refreshHealthData: refreshHealthData },
+                  })
+                }
+              >
+                <FontAwesome5 name="plus" size={17 * width_ratio} color="#8EAFF6" />
+                <Text style={styles.buttonText}>새로운 검사결과 기록</Text>
+              </TouchableOpacity>
             </View>
-          ) : (
-            <FlatList
-              data={healthCheckupData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderHealthCheckupCard}
-              ListFooterComponent={<View style={styles.footerMargin} />}
-            />
-          )}
+            <Text style={styles.infoText}>혈액검사를 기록하면 분석을 제공해드려요!</Text>
+            {(!bloodTestData || bloodTestData.length === 0) ? (
+              <View style={styles.noDataContainer}>
+                <Image
+                  source={require('../../images/health_screen/document.png')}
+                  style={styles.noDataImage}
+                />
+                <Text style={styles.noDataText}>데이터가 없어요</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={bloodTestData}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderBloodTestCard}
+                ListFooterComponent={<View style={styles.footerMargin} />}
+              />
+            )}
+          </View>
+
+          <View style={styles.healthCheckupContainer}>
+            <View style={styles.healthCheckupHeader}>
+              <Text style={styles.sectionTitle}>건강검진 기록</Text>
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() =>
+                  navigation.navigate('NoTabs', {
+                    screen: 'authentication_1',
+                    params: { refreshHealthData: refreshHealthData },
+                  })
+                }
+              >
+                <FontAwesome5 name="redo" size={17 * width_ratio} color="#8EAFF6" />
+                <Text style={styles.buttonText}>건강검진정보 불러오기</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.infoText}>건강검진을 불러오면 분석을 제공해드려요!</Text>
+            {(!healthCheckupData || healthCheckupData.length === 0) ? (
+              <View style={styles.noDataContainer}>
+                <Image
+                  source={require('../../images/health_screen/document.png')}
+                  style={styles.noDataImage}
+                />
+                <Text style={styles.noDataText}>데이터가 없어요</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={healthCheckupData}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderHealthCheckupCard}
+                ListFooterComponent={<View style={styles.footerMargin} />}
+              />
+            )}
+          </View>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F4F5FB',
+    backgroundColor: 'transparent',
   },
   fixedHeaderContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     zIndex: 1,
     position: 'absolute',
     top: 0,
@@ -245,6 +305,13 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
+  headerBorder: {
+    height: 1,
+    backgroundColor: '#E9E9E9',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+  },
   contentWrapper: {
     flex: 1,
     marginTop: 100 * height_ratio,
@@ -252,17 +319,24 @@ const styles = StyleSheet.create({
     paddingBottom: 20 * height_ratio,
   },
   bloodTestContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 12 * width_ratio,
+    flex: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20 * width_ratio,
     padding: 20 * width_ratio,
     marginBottom: 10 * height_ratio,
+
   },
   healthCheckupContainer: {
-    flex: 2,
-    backgroundColor: '#fff',
-    borderRadius: 12 * width_ratio,
+    flex: 3,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20 * width_ratio,
     padding: 20 * width_ratio,
+  },
+  bloodTestHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10 * height_ratio,
   },
   healthCheckupHeader: {
     flexDirection: 'row',
@@ -273,7 +347,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...theme.fonts.Bold,
     fontSize: 18,
-    color: '#333',
+    color: '#7596FF',
+  },
+  infoText: {
+    fontSize: 12,
+    color: '#72777A',
+    marginBottom: 10 * height_ratio,
   },
   refreshButton: {
     flexDirection: 'row',
@@ -285,19 +364,16 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: 5 * width_ratio,
     ...theme.fonts.Medium,
-    fontSize: 14,
+    fontSize: 12,
     color: '#4a4a4f',
   },
   card: {
     backgroundColor: '#fff',
     marginBottom: 10 * height_ratio,
-    padding: 20 * width_ratio,
-    borderRadius: 12 * width_ratio,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    padding: 16 * width_ratio,
+    borderRadius: 25 * width_ratio,
+    borderWidth: 1,
+    borderColor: '#DADADA',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -305,38 +381,46 @@ const styles = StyleSheet.create({
   },
   cardType: {
     ...theme.fonts.Bold,
-    fontSize: 18 * width_ratio,
+    fontSize: 16 * width_ratio,
     color: '#333',
   },
-  cardDate: {
-    ...theme.fonts.Regular,
-    fontSize: 14 * width_ratio,
+  cardHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  moreText: {
+    ...theme.fonts.Medium,
+    fontSize: 12 * width_ratio,
     color: '#828282',
+    marginRight: 4 * width_ratio,
   },
   cardContent: {
-    marginTop: 10 * height_ratio,
+    marginTop: 8 * height_ratio,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8 * width_ratio,
+    gap: 6 * width_ratio,
   },
-  tag: {
+  abnormalTag: {
     backgroundColor: '#FEE7E7',
-    borderRadius: 12 * width_ratio,
-    paddingHorizontal: 12 * width_ratio,
-    paddingVertical: 6 * height_ratio,
+    borderRadius: 10 * width_ratio,
+    paddingHorizontal: 10 * width_ratio,
+    paddingVertical: 5 * height_ratio,
     borderWidth: 1,
     borderColor: '#FF6B6B',
   },
-  tagText: {
+  abnormalTagText: {
     ...theme.fonts.Medium,
-    fontSize: 12 * width_ratio,
+    fontSize: 10 * width_ratio,
     color: '#FF6B6B',
   },
-  bloodTestText: {
-    fontSize: 14 * width_ratio,
+  normalText: {
+    fontSize: 12 * width_ratio,
     color: '#333',
+  },
+  footerMargin: {
+    height: 100 * height_ratio,
   },
   noDataContainer: {
     alignItems: 'center',
@@ -356,9 +440,6 @@ const styles = StyleSheet.create({
     ...theme.fonts.Medium,
     fontSize: 16 * width_ratio,
     color: '#555',
-  },
-  footerMargin: {
-    height: 100 * height_ratio,
   },
 });
 

@@ -135,6 +135,16 @@ const NavigationWithoutTabs = () => {
         options={{title: '내 건강검진 기록 불러오기'}}
       />
       <Stack.Screen
+        name="blood_test_specifics"
+        component={Blood_test_specifics_screen}
+        options={{title: ''}}
+      />
+      <Stack.Screen
+        name="blood_test_input"
+        component={Blood_test_input_screen}
+        options={{title: '혈액검사 결과 기록'}}
+      />
+      <Stack.Screen
         name="medicine_specifics"
         component={Medicine_specifics_screen}
         options={{title: '의약품 상세정보'}}
