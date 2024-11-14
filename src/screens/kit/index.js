@@ -133,6 +133,13 @@ const Kit_screen = ({onPress, navigation, route}) => {
   };
 
   return (
+    <>
+    <View style={styles.fixedHeaderContainer}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>키트 검사</Text>
+          <View style={styles.headerBorder} /> 
+        </View>
+    </View>
     <SafeAreaView>
       <ScrollView
         scrollEnabled={true}
@@ -192,6 +199,8 @@ const Kit_screen = ({onPress, navigation, route}) => {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </>
+    
   );
 };
 

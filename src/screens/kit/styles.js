@@ -797,6 +797,32 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     marginLeft: 121,
   },
+  headerBorder: {
+    height: 1,
+    backgroundColor: '#E9E9E9',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+  },
+  fixedHeaderContainer: {
+    backgroundColor: '#FFFFFF',
+    zIndex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  headerContainer: {
+    height: 76 * height_ratio,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    ...theme.fonts.SemiBold,
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
+  },
 });
 
 export default styles;
