@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 
   // CustomHeader 스타일
   headerContainer: {
-    height: 50, // 아이콘 크기에 맞게 헤더 높이 설정
+    height: 76, // 아이콘 크기에 맞게 헤더 높이 설정
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
