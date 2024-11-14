@@ -1,5 +1,4 @@
-// src\screens\health_checkup\index.js
-import React, { useEffect, useState, useRef,   useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Image,
   View,
@@ -9,16 +8,15 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, useRoute,useFocusEffect  } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 import theme from '../../theme.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
 
-const Health_checkup_screen = () => {
+const Examin_record_screen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [providerId, setProviderId] = useState('');
@@ -38,85 +36,29 @@ const Health_checkup_screen = () => {
       if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
         setHealthCheckupData(parsedData.healthCheckup);
         setAddingData(false);
-        refreshHomeScreen();
+        refreshHomeScreen && refreshHomeScreen();
       }
     }
   };
   
   useEffect(() => {
-    (async () => {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setProviderId(parsedData.providerId);
-        setUserGender(parsedData.gender);
-        if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
-          setHealthCheckupData(parsedData.healthCheckup);
-          setAddingData(false);
-        }
-      }
-    })();
-  }, []);
+    refreshHealthData();
+  }, [refreshKey]);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
       refreshHealthData();
-    }, [refreshKey]);
-
-
-    const loadHealthData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('user');
-        if (userData) {
-          const parsedData = JSON.parse(userData);
-          setProviderId(parsedData.providerId);
-          setUserGender(parsedData.gender);
-          if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
-            setHealthCheckupData(parsedData.healthCheckup);
-            setAddingData(false);
-            if (refreshHomeScreen) {
-              refreshHomeScreen();
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error loading health data:', error);
-      }
-    };
-  
-    useFocusEffect(
-      useCallback(() => {
-        loadHealthData();
-      }, [])
-    );
-   
+    }, [])
+  );
 
   const getHealthTags = (item) => {
     const healthTags = [];
-    
-    // 혈압 파싱
     const [systolic, diastolic] = (item.resBloodPressure || '0/0').split('/').map(Number);
 
-    // 신장질환
-    if (item.resUrinaryProtein === "양성") {
-      healthTags.push("신장질환");
-    }
-    
-    // 만성신장질환
-    if (parseFloat(item.resSerumCreatinine) > 1.6 || parseFloat(item.resGFR) > 83) {
-      healthTags.push("만성신장질환");
-    }
-    
-    // 고혈압
-    if (systolic > 120 || diastolic > 80) {
-      healthTags.push("고혈압");
-    }
-    
-    // 당뇨
-    if (parseInt(item.resFastingBloodSuger) >= 100) {
-      healthTags.push("당뇨");
-    }
-    
-    // 이상지질혈증
+    if (item.resUrinaryProtein === "양성") healthTags.push("신장질환");
+    if (parseFloat(item.resSerumCreatinine) > 1.6 || parseFloat(item.resGFR) > 83) healthTags.push("만성신장질환");
+    if (systolic > 120 || diastolic > 80) healthTags.push("고혈압");
+    if (parseInt(item.resFastingBloodSuger) >= 100) healthTags.push("당뇨");
     if (
       (item.resTotalCholesterol && parseInt(item.resTotalCholesterol) >= 200) ||
       (item.resHDLCholesterol && parseInt(item.resHDLCholesterol) <= 60) ||
@@ -125,7 +67,6 @@ const Health_checkup_screen = () => {
       healthTags.push("이상지질혈증");
     }
     
-    // 비만도
     const bmi = parseFloat(item.resBMI);
     if (bmi >= 30) {
       healthTags.push("비만");
@@ -133,14 +74,12 @@ const Health_checkup_screen = () => {
       healthTags.push("과체중");
     }
     
-    // 빈혈
     const hemoglobin = parseFloat(item.resHemoglobin);
     if ((userGender === 'male' && hemoglobin <= 13) || 
         (userGender === 'female' && hemoglobin <= 12)) {
       healthTags.push("빈혈");
     }
     
-    // 간장질환
     if (
       (item.resAST && parseInt(item.resAST) >= 40) ||
       (item.resALT && parseInt(item.resALT) >= 35) ||
@@ -156,16 +95,14 @@ const Health_checkup_screen = () => {
 
   const renderHealthCheckupCard = ({ item }) => {
     const healthTags = getHealthTags(item);
-  
-    // 날짜 포맷팅 함수
+
     const formatDate = (year, date) => {
       if (!year || !date) return '';
-      // date가 4자리 문자열이라고 가정 (예: "0415")
       const month = date.substring(0, 2);
       const day = date.substring(2);
       return `${year}/${month}/${day}`;
     };
-  
+
     return (
       <TouchableOpacity
         style={styles.card}
@@ -202,24 +139,20 @@ const Health_checkup_screen = () => {
     );
   };
 
-  const fetchData = async () => {
-    await useEffect();
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.fixedHeaderContainer}>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>건강검진</Text>
+          <Text style={styles.headerTitle}>나의 검진 기록</Text>
         </View>
         <View style={styles.contentContainer}>
-            <Text style={styles.recentRecordText}>최근 기록</Text>
+          <Text style={styles.recentRecordText}>최근 기록</Text>
           <TouchableOpacity
             style={styles.refreshButton}
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'authentication_1',
-                params: { refreshHealthData: loadHealthData  },
+                params: { refreshHealthData: refreshHealthData },
               })
             }
           >
@@ -399,4 +332,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Health_checkup_screen;
+export default Examin_record_screen;

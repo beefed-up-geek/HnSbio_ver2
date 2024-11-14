@@ -17,8 +17,8 @@ import { EventEmitter } from 'events';
 import styles from './navigation_with_tabs_styles';
 
 // Import your screen components
-import Health_checkup_specifics_screen from '../screens/health_checkup/health_checkup_specifics/index';
-import Health_checkup_screen from '../screens/health_checkup/index';
+import Health_checkup_specifics_screen from '../screens/examin_record/health_checkup_specifics/index';
+import Examin_record_screen from '../screens/examin_record/index';
 import Daily_check_screen from '../screens/home/daily_check/index';
 import Home_screen from '../screens/home/index';
 import My_profile_screen from '../screens/home/my_profile/index';
@@ -30,9 +30,9 @@ import Kit_guide_2_screen from '../screens/kit/kit_guide_2/index';
 import Kit_test_screen from '../screens/kit/kit_test/index';
 import Medicine_screen from '../screens/medicine/index';
 import Medicine_specifics_screen from '../screens/medicine/medicine_specifics/index';
-import Authentication_1_screen from '../screens/health_checkup/authentication_1/index';
-import Authentication_2_screen from '../screens/health_checkup/authentication_2/index';
-import Authentication_3_screen from '../screens/health_checkup/authentication_3/index';
+import Authentication_1_screen from '../screens/examin_record/authentication_1/index';
+import Authentication_2_screen from '../screens/examin_record/authentication_2/index';
+import Authentication_3_screen from '../screens/examin_record/authentication_3/index';
 
 // Create global event emitter
 export const navigationEventEmitter = new EventEmitter();
@@ -121,9 +121,9 @@ const KitStack = () => (
 const HealthStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
     <Stack.Screen
-      name="HealthCheckup"
-      component={Health_checkup_screen}
-      options={{title: '건강검진'}}
+      name="Examin_record"
+      component={Examin_record_screen}
+      options={{title: '나의 검진 기록'}}
     />
   </Stack.Navigator>
 );
@@ -144,11 +144,6 @@ const MedicineStack = () => (
       name="Medicine"
       component={Medicine_screen}
       options={{ title: '약 검색' }}
-    />
-    <Stack.Screen
-      name="MedicineDetailScreen"
-      component={Medicine_specifics_screen}
-      options={{ title: '의약품 정보' }}
     />
   </Stack.Navigator>
 );
@@ -185,12 +180,12 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="HealthStack"
         component={HealthStack}
-        options={{title: '건강검진'}}
+        options={{title: '검진 기록'}}
       />
       <Tab.Screen
         name="HospitalStack"
         component={HospitalStack}
-        options={{title: '병원찾기'}}
+        options={{title: '병원 찾기'}}
       />
       <Tab.Screen
         name="MedicineStack"
