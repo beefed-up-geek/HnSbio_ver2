@@ -47,15 +47,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   characterImage: {
-<<<<<<< Updated upstream
-    width: '90%', 
-    height: 303 * height_ratio,
-    resizeMode: 'contain', 
-=======
     width: 270 * width_ratio,
     height: 220.7 * height_ratio,
     resizeMode: 'contain',
->>>>>>> Stashed changes
   },
   lineWrapper: {
     gap: 8,
@@ -85,15 +79,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-<<<<<<< Updated upstream
-    marginTop: 32 * height_ratio,
-    marginBottom: 32 * height_ratio,
-    gap: 4 * width_ratio, 
-=======
     marginTop: 20 * height_ratio,
     marginBottom: 16 * height_ratio,
     gap: 4 * width_ratio,
->>>>>>> Stashed changes
   },
   button: {
     height: 54 * height_ratio,
@@ -148,10 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 24 * width_ratio,
     marginHorizontal: 24 * width_ratio,
     paddingHorizontal: 22 * width_ratio,
-<<<<<<< Updated upstream
-=======
     paddingVertical: 24 * height_ratio,
->>>>>>> Stashed changes
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
