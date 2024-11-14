@@ -27,7 +27,7 @@ export default function Hospital_Screen({navigation}) {
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
     distance: 100,
-    grade: [],
+    rating: [],
     type: '모든 병원',
     info: [],
   });
@@ -142,12 +142,11 @@ export default function Hospital_Screen({navigation}) {
           hospitalName: searchQuery,
           user_latitude: latitude,
           user_longitude: longitude,
-          hospitalStatus: hospitalStatus,
           limit: ITEMS_PER_PAGE,
           offset: (page - 1) * ITEMS_PER_PAGE,
           filters: {
             distance: filters.distance,
-            grade: filters.grade,
+            rating: filters.rating,
             type: filters.type,
             info: filters.info,
           },
@@ -196,10 +195,12 @@ export default function Hospital_Screen({navigation}) {
   };
 
   const applyFilters = () => {
-    setPage(1);
-    fetchHospitalData();
-    closeFilter();
+    setPage(1); // 페이지를 초기화합니다.
+    setHospitalData([]); // 기존 병원 데이터를 초기화합니다.
+    fetchHospitalData(); // 새로운 데이터를 불러옵니다.
+    closeFilter(); // 필터 모달을 닫습니다.
   };
+  
 
   const generateUniqueId = (hospital, index) => {
     // Use hospital name and phone number to generate a unique ID
@@ -312,8 +313,8 @@ export default function Hospital_Screen({navigation}) {
     }
     
     // 등급 필터
-    if (filters.grade && filters.grade.length > 0) {
-      newActiveFilters.push(...filters.grade);
+    if (filters.rating && filters.rating.length > 0) {
+      newActiveFilters.push(...filters.rating);
     }
     
     setActiveFilters(newActiveFilters);
@@ -321,10 +322,27 @@ export default function Hospital_Screen({navigation}) {
 
   // FilterModal onApply 수정
   const handleFilterApply = (newFilters) => {
-    setFilters(newFilters);
-    updateActiveFilters(newFilters);
-    fetchHospitalData();
-  };
+  setFilters(newFilters); // 새로운 필터를 저장합니다.
+  setPage(1); // 페이지를 초기화합니다.
+  setHospitalData([]); // 기존 병원 데이터를 초기화합니다.
+  updateActiveFilters(newFilters); // 활성화된 필터 목록 업데이트
+  fetchHospitalData(); // 필터를 적용하여 데이터를 다시 가져옵니다.
+};
+
+const filterLabels = {
+  '1': '1등급',
+  '2': '2등급',
+  '3': '3등급',
+  '4': '4등급',
+  '5': '5등급',
+  '5km': '5km 이내',
+  '10km': '10km 이내',
+  '20km': '20km 이내',
+  '50km': '50km 이내',
+  '100km': '100km 이내',
+  '전국': '전국',
+  // 필요한 다른 필터들도 여기에 추가할 수 있습니다.
+};
 
   return (
     <View style={styles.container}>
@@ -356,7 +374,7 @@ export default function Hospital_Screen({navigation}) {
             </View>
             {activeFilters.map((filter, index) => (
               <View key={index} style={styles.filterChip}>
-                <Text style={styles.filterChipText}>{filter}</Text>
+                <Text style={styles.filterChipText}>{filterLabels[filter] || filter}</Text>
               </View>
             ))}
           </View>
