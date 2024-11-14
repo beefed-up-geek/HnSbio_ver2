@@ -145,13 +145,16 @@ const MedicineScreen = () => {
     const renderMedication = ({ item }) => (
         <TouchableOpacity
             activeOpacity={0.95}
-            onPress={() => navigation.navigate('MedicineDetailScreen', {
-                name: item.name,
-                englishName: item.englishName,
-                efficacy: item.efficacy,
-                instruction: item.instruction,
-                caution: item.caution,
-                sotrageInstruction: item.sotrageInstruction,
+            onPress={() => navigation.navigate('NoTabs', {
+                screen: 'medicine_specifics', 
+                params : {
+                    name: item.name,
+                    englishName: item.englishName,
+                    efficacy: item.efficacy,
+                    instruction: item.instruction,
+                    caution: item.caution,
+                    sotrageInstruction: item.sotrageInstruction,
+                }
             })}
         >
             <View style={styles.medicationItem}>
