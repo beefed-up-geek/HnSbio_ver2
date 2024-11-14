@@ -37,6 +37,7 @@ const HomeScreen = () => {
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
 
   const [checkCompletedToday, setCheckCompletedToday] = useState(false);
+  
   // 신기능 단계에 따른 스타일 설정 함수
   const getKidneyFunctionStyle = functionValue => {
     if (functionValue >= 90) {
@@ -160,8 +161,14 @@ const HomeScreen = () => {
           if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
             let estimatedFunction;
             if (parsedData.gender === 'male') {
-              estimatedFunction = (0.9 / serumCreatinine) * 100;
-            } else {
+              if (serumCreatinine < 0.9) {
+                estimatedFunction = 100
+              }
+              else {
+                estimatedFunction = (0.9 / serumCreatinine) * 100;
+              }
+            } 
+            else {
               estimatedFunction = (0.7 / serumCreatinine) * 100;
             }
             setEstimatedKidneyFunction(Math.round(estimatedFunction));
