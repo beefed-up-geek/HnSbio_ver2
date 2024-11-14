@@ -136,5 +136,3 @@ const Kit_test_screen = ({navigation}) => {
 };
 
 export default Kit_test_screen;
-
-export default Kit_test_screen;
