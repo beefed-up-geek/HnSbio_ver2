@@ -83,8 +83,8 @@ const stackScreenOptions = ({route, navigation}) => {
   const leftIcon = require('../images/hns.png');
 
   return {
-    headerShown: false,
-    header: props => {
+    headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
+    header: (props) => {
       const title = props.options.title || route.name;
       return (
         <CustomHeader
@@ -143,10 +143,16 @@ const MedicineStack = () => (
     <Stack.Screen
       name="Medicine"
       component={Medicine_screen}
-      options={{title: '의약품 검색'}}
+      options={{ title: '약 검색' }}
+    />
+    <Stack.Screen
+      name="MedicineDetailScreen"
+      component={Medicine_specifics_screen}
+      options={{ title: '의약품 정보' }}
     />
   </Stack.Navigator>
 );
+
 
 const BottomNavigation = () => {
   return (
