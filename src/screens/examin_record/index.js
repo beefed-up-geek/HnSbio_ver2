@@ -21,6 +21,7 @@ const Examin_record_screen = () => {
   const route = useRoute();
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
+  const [bloodTestData, setBloodTestData] = useState([]);
   const [userGender, setUserGender] = useState('');
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
@@ -33,11 +34,10 @@ const Examin_record_screen = () => {
       const parsedData = JSON.parse(userData);
       setProviderId(parsedData.providerId);
       setUserGender(parsedData.gender);
-      if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
-        setHealthCheckupData(parsedData.healthCheckup);
-        setAddingData(false);
-        refreshHomeScreen && refreshHomeScreen();
-      }
+      setHealthCheckupData(parsedData.healthCheckup || []);
+      setBloodTestData(parsedData.blood_test_result || []);
+      setAddingData(false);
+      refreshHomeScreen && refreshHomeScreen();
     }
   };
   
@@ -51,47 +51,19 @@ const Examin_record_screen = () => {
     }, [])
   );
 
-  const getHealthTags = (item) => {
-    const healthTags = [];
-    const [systolic, diastolic] = (item.resBloodPressure || '0/0').split('/').map(Number);
-
-    if (item.resUrinaryProtein === "양성") healthTags.push("신장질환");
-    if (parseFloat(item.resSerumCreatinine) > 1.6 || parseFloat(item.resGFR) > 83) healthTags.push("만성신장질환");
-    if (systolic > 120 || diastolic > 80) healthTags.push("고혈압");
-    if (parseInt(item.resFastingBloodSuger) >= 100) healthTags.push("당뇨");
-    if (
-      (item.resTotalCholesterol && parseInt(item.resTotalCholesterol) >= 200) ||
-      (item.resHDLCholesterol && parseInt(item.resHDLCholesterol) <= 60) ||
-      (item.resLDLCholesterol && parseInt(item.resLDLCholesterol) >= 130)
-    ) {
-      healthTags.push("이상지질혈증");
-    }
-    
-    const bmi = parseFloat(item.resBMI);
-    if (bmi >= 30) {
-      healthTags.push("비만");
-    } else if (bmi >= 23) {
-      healthTags.push("과체중");
-    }
-    
-    const hemoglobin = parseFloat(item.resHemoglobin);
-    if ((userGender === 'male' && hemoglobin <= 13) || 
-        (userGender === 'female' && hemoglobin <= 12)) {
-      healthTags.push("빈혈");
-    }
-    
-    if (
-      (item.resAST && parseInt(item.resAST) >= 40) ||
-      (item.resALT && parseInt(item.resALT) >= 35) ||
-      (item.resyGPT && 
-        ((userGender === 'male' && parseInt(item.resyGPT) >= 77) ||
-         (userGender === 'female' && parseInt(item.resyGPT) >= 45)))
-    ) {
-      healthTags.push("간장질환");
-    }
-
-    return healthTags;
-  };
+  const renderBloodTestCard = ({ item }) => (
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardType}>혈액 검사</Text>
+        <Text style={styles.cardDate}>{item.date}</Text>
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={styles.bloodTestText}>BUN: {item.BUN}</Text>
+        <Text style={styles.bloodTestText}>Creatinine: {item.creatinine}</Text>
+        <Text style={styles.bloodTestText}>GFR: {item.GFR}</Text>
+      </View>
+    </View>
+  );
 
   const renderHealthCheckupCard = ({ item }) => {
     const healthTags = getHealthTags(item);
@@ -139,45 +111,111 @@ const Examin_record_screen = () => {
     );
   };
 
+  const getHealthTags = (item) => {
+    const healthTags = [];
+    const [systolic, diastolic] = (item.resBloodPressure || '0/0').split('/').map(Number);
+
+    if (item.resUrinaryProtein === "양성") healthTags.push("신장질환");
+    if (parseFloat(item.resSerumCreatinine) > 1.6 || parseFloat(item.resGFR) > 83) healthTags.push("만성신장질환");
+    if (systolic > 120 || diastolic > 80) healthTags.push("고혈압");
+    if (parseInt(item.resFastingBloodSuger) >= 100) healthTags.push("당뇨");
+    if (
+      (item.resTotalCholesterol && parseInt(item.resTotalCholesterol) >= 200) ||
+      (item.resHDLCholesterol && parseInt(item.resHDLCholesterol) <= 60) ||
+      (item.resLDLCholesterol && parseInt(item.resLDLCholesterol) >= 130)
+    ) {
+      healthTags.push("이상지질혈증");
+    }
+    
+    const bmi = parseFloat(item.resBMI);
+    if (bmi >= 30) {
+      healthTags.push("비만");
+    } else if (bmi >= 23) {
+      healthTags.push("과체중");
+    }
+    
+    const hemoglobin = parseFloat(item.resHemoglobin);
+    if ((userGender === 'male' && hemoglobin <= 13) || 
+        (userGender === 'female' && hemoglobin <= 12)) {
+      healthTags.push("빈혈");
+    }
+    
+    if (
+      (item.resAST && parseInt(item.resAST) >= 40) ||
+      (item.resALT && parseInt(item.resALT) >= 35) ||
+      (item.resyGPT && 
+        ((userGender === 'male' && parseInt(item.resyGPT) >= 77) ||
+         (userGender === 'female' && parseInt(item.resyGPT) >= 45)))
+    ) {
+      healthTags.push("간장질환");
+    }
+
+    return healthTags;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.fixedHeaderContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>나의 검진 기록</Text>
         </View>
-        <View style={styles.contentContainer}>
-          <Text style={styles.recentRecordText}>최근 기록</Text>
-          <TouchableOpacity
-            style={styles.refreshButton}
-            onPress={() =>
-              navigation.navigate('NoTabs', {
-                screen: 'authentication_1',
-                params: { refreshHealthData: refreshHealthData },
-              })
-            }
-          >
-            <FontAwesome5 name="redo" size={20 * width_ratio} color="#8EAFF6" />
-            <Text style={styles.buttonText}>건강검진정보 불러오기</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <View style={styles.contentWrapper}>
-        {(!healthCheckupData || healthCheckupData.length === 0) ? (
-          <View style={styles.noDataContainer}>
-            <Image
-              source={require('../../images/health_screen/document.png')}
-              style={styles.noDataImage}
+        {/* 혈액 검사 기록 상단 1/3 */}
+        <View style={styles.bloodTestContainer}>
+          <Text style={styles.sectionTitle}>혈액 검사 기록</Text>
+          {(!bloodTestData || bloodTestData.length === 0) ? (
+            <View style={styles.noDataContainer}>
+              <Image
+                source={require('../../images/health_screen/document.png')}
+                style={styles.noDataImage}
+              />
+              <Text style={styles.noDataText}>데이터가 없어요</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={bloodTestData}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderBloodTestCard}
+              ListFooterComponent={<View style={styles.footerMargin} />}
             />
-            <Text style={styles.noDataText}>데이터가 없어요</Text>
+          )}
+        </View>
+
+        {/* 건강검진 기록 하단 2/3 */}
+        <View style={styles.healthCheckupContainer}>
+          <View style={styles.healthCheckupHeader}>
+            <Text style={styles.sectionTitle}>건강검진 기록</Text>
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={() =>
+                navigation.navigate('NoTabs', {
+                  screen: 'authentication_1',
+                  params: { refreshHealthData: refreshHealthData },
+                })
+              }
+            >
+              <FontAwesome5 name="redo" size={20 * width_ratio} color="#8EAFF6" />
+              <Text style={styles.buttonText}>건강검진정보 불러오기</Text>
+            </TouchableOpacity>
           </View>
-        ) : (
-          <FlatList
-            data={healthCheckupData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderHealthCheckupCard}
-            ListFooterComponent={<View style={styles.footerMargin} />}
-          />
-        )}
+          {(!healthCheckupData || healthCheckupData.length === 0) ? (
+            <View style={styles.noDataContainer}>
+              <Image
+                source={require('../../images/health_screen/document.png')}
+                style={styles.noDataImage}
+              />
+              <Text style={styles.noDataText}>데이터가 없어요</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={healthCheckupData}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderHealthCheckupCard}
+              ListFooterComponent={<View style={styles.footerMargin} />}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -207,22 +245,35 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
-  contentContainer: {
+  contentWrapper: {
+    flex: 1,
+    marginTop: 100 * height_ratio,
+    paddingHorizontal: 20 * width_ratio,
+    paddingBottom: 20 * height_ratio,
+  },
+  bloodTestContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12 * width_ratio,
+    padding: 20 * width_ratio,
+    marginBottom: 10 * height_ratio,
+  },
+  healthCheckupContainer: {
+    flex: 2,
+    backgroundColor: '#fff',
+    borderRadius: 12 * width_ratio,
+    padding: 20 * width_ratio,
+  },
+  healthCheckupHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20 * width_ratio,
-    paddingTop: 10 * height_ratio,
-    backgroundColor: '#F4F5FB',
+    marginBottom: 10 * height_ratio,
   },
-  recentRecordText: {
+  sectionTitle: {
     ...theme.fonts.Bold,
-    paddingLeft: 10,
-    paddingTop: 10,
     fontSize: 18,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 20 * height_ratio,
+    color: '#333',
   },
   refreshButton: {
     flexDirection: 'row',
@@ -230,7 +281,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EFFD',
     padding: 10 * width_ratio,
     borderRadius: 20 * width_ratio,
-    height: 44,
   },
   buttonText: {
     marginLeft: 5 * width_ratio,
@@ -238,17 +288,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4a4a4f',
   },
-  contentWrapper: {
-    paddingTop: 160 * height_ratio,
-    paddingBottom: 20 * height_ratio,
-  },
   card: {
     backgroundColor: '#fff',
-    marginHorizontal: 20 * width_ratio,
     marginBottom: 10 * height_ratio,
     padding: 20 * width_ratio,
     borderRadius: 12 * width_ratio,
-    height: 168 * height_ratio,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -258,35 +302,19 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  cardHeaderLeft: {
-    flex: 1,
   },
   cardType: {
     ...theme.fonts.Bold,
     fontSize: 18 * width_ratio,
     color: '#333',
-    marginBottom: 4 * height_ratio,
   },
   cardDate: {
     ...theme.fonts.Regular,
     fontSize: 14 * width_ratio,
     color: '#828282',
   },
-  cardHeaderRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  moreText: {
-    ...theme.fonts.Medium,
-    fontSize: 14 * width_ratio,
-    color: '#828282',
-    marginRight: 4 * width_ratio,
-  },
   cardContent: {
-    flex: 1,
-    marginTop: 16 * height_ratio,
+    marginTop: 10 * height_ratio,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -306,6 +334,10 @@ const styles = StyleSheet.create({
     fontSize: 12 * width_ratio,
     color: '#FF6B6B',
   },
+  bloodTestText: {
+    fontSize: 14 * width_ratio,
+    color: '#333',
+  },
   noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -319,8 +351,6 @@ const styles = StyleSheet.create({
     height: 90 * width_ratio,
     marginBottom: 10 * height_ratio,
     resizeMode: 'contain',
-    maxWidth: '100%',
-    maxHeight: '100%',
   },
   noDataText: {
     ...theme.fonts.Medium,
