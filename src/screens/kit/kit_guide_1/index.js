@@ -54,25 +54,6 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
         scrollEnabled={true}
         contentInsetAdjustmentBehavior="automatic">
         <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ImageBackground
-                style={styles.headerLeftIcon}
-                source={require('../assets/images/2965bb04-fa93-4fc2-af21-da51b8a4fe33.png')}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              소변 검사 가이드
-            </Text>
-            <View style={styles.headerRightIconWrapper}>
-              <ImageBackground
-                style={styles.headerRightIcon}
-                source={require('../assets/images/ff5c89e1-1e02-48ca-a40a-324811996b44.png')}
-                resizeMode="cover"
-              />
-            </View>
-          </View>
           <View style={styles.mainContent}>
             <Text style={styles.mainContentTitle} numberOfLines={1}>
               검사하기 전에 참고하세요!
