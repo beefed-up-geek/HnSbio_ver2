@@ -25,11 +25,10 @@ const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: �
 
 const Kit_screen = ({onPress, navigation, route}) => {
   const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // 월은 0부터 시작하므로 +1 필요
-    const date = today.getDate();
-    return `${year}년 ${month}월 ${date}일`;
+    if (results.length === 0) {
+      return '아직 검사하지 않음';
+    }
+    return results[0].date;
   };
 
   const getCurrentDateTime = () => {
@@ -134,73 +133,76 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
   return (
     <>
-    <View style={styles.fixedHeaderContainer}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>키트 검사</Text>
-          <View style={styles.headerBorder} /> 
-        </View>
-    </View>
-    <SafeAreaView>
-      <ScrollView
-        scrollEnabled={true}
-        contentInsetAdjustmentBehavior="automatic">
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
-            <View style={styles.topRow} />
-            <View style={styles.secondRow} />
-            <View style={styles.cardContainer}>
-              <ImageBackground
-                style={styles.profileImage}
-                source={require('./assets/images/35dfdd72ec7b06088f1aa32a7f0e4db35347eabf.png')}
-                resizeMode="cover"
-              />
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.cardHeaderText}>
-                      키트 검사하러 가기
-                    </Text>
-                  </View>
-                  <View style={styles.cardDate}>
-                    <Text style={styles.cardDateText}>최근 검사한 날짜</Text>
-                    <Text style={styles.cardDateText}>{getCurrentDate()}</Text>
-                  </View>
-                </View>
+      <SafeAreaView>
+        <ScrollView
+          scrollEnabled={true}
+          contentInsetAdjustmentBehavior="automatic">
+          <View style={styles.container}>
+            <View style={styles.fixedHeaderContainer}>
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerTitle}>키트 검사</Text>
+                <View style={styles.headerBorder} />
               </View>
-              <View style={styles.roundButtonContainer}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('NoTabs', {screen: 'kit_guide_1'})}>
-                  <View style={styles.roundButton}>
-                    <View style={styles.roundButtonInner}>
-                      <ImageBackground
-                        style={styles.roundButtonImage}
-                        source={require('./assets/images/ad153a78-1510-497d-8dad-61ee25759ee6.png')}
-                        resizeMode="cover"
-                      />
+            </View>
+            <View style={styles.innerContainer}>
+              <View style={styles.topRow} />
+              <View style={styles.secondRow} />
+              <View style={styles.cardContainer}>
+                <ImageBackground
+                  style={styles.profileImage}
+                  source={require('./assets/images/35dfdd72ec7b06088f1aa32a7f0e4db35347eabf.png')}
+                  resizeMode="cover"
+                />
+                <View style={styles.card}>
+                  <View style={styles.cardContent}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardHeaderText}>
+                        키트 검사하러 가기
+                      </Text>
+                    </View>
+                    <View style={styles.cardDate}>
+                      <Text style={styles.cardDateText}>최근 검사한 날짜</Text>
+                      <Text style={styles.cardDateText}>
+                        {getCurrentDate()}
+                      </Text>
                     </View>
                   </View>
+                </View>
+                <View style={styles.roundButtonContainer}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
+                    }>
+                    <View style={styles.roundButton}>
+                      <View style={styles.roundButtonInner}>
+                        <ImageBackground
+                          style={styles.roundButtonImage}
+                          source={require('./assets/images/ad153a78-1510-497d-8dad-61ee25759ee6.png')}
+                          resizeMode="cover"
+                        />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                  style={styles.storeButton}
+                  onPress={handleKitPurchase}>
+                  <Image
+                    style={styles.linkIcon}
+                    source={require('./assets/images/1bd18327-449a-421c-a713-db8473a9045a.png')}
+                  />
+                  <Text style={styles.linkText}>스토어 바로가기</Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.storeButton}
-                onPress={handleKitPurchase}>
-                <Image
-                  style={styles.linkIcon}
-                  source={require('./assets/images/1bd18327-449a-421c-a713-db8473a9045a.png')}
-                />
-                <Text style={styles.linkText}>스토어 바로가기</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.resultsContainer}>
-              <Text style={styles.resultsTitle}>검사 결과</Text>
-              {renderResults()}
+              <View style={styles.resultsContainer}>
+                <Text style={styles.resultsTitle}>검사 결과</Text>
+                {renderResults()}
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
     </>
-    
   );
 };
 

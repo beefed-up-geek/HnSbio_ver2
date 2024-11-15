@@ -807,7 +807,7 @@ const styles = StyleSheet.create({
   fixedHeaderContainer: {
     backgroundColor: '#FFFFFF',
     zIndex: 1,
-    position: 'absolute',
+    position: 'relative',
     top: 0,
     left: 0,
     right: 0,

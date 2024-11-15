@@ -12,7 +12,7 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { EventEmitter } from 'events';
+import {EventEmitter} from 'events';
 
 import styles from './navigation_with_tabs_styles';
 
@@ -84,7 +84,7 @@ const stackScreenOptions = ({route, navigation}) => {
 
   return {
     headerShown: false, // 이 부분 주석 해제하면 헤더 없어짐====================================
-    header: (props) => {
+    header: props => {
       const title = props.options.title || route.name;
       return (
         <CustomHeader
@@ -100,11 +100,7 @@ const stackScreenOptions = ({route, navigation}) => {
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
-    <Stack.Screen 
-      name="Home" 
-      component={Home_screen}
-      options={{title: ' '}} 
-    />
+    <Stack.Screen name="Home" component={Home_screen} options={{title: ' '}} />
   </Stack.Navigator>
 );
 
@@ -143,11 +139,10 @@ const MedicineStack = () => (
     <Stack.Screen
       name="Medicine"
       component={Medicine_screen}
-      options={{ title: '약 검색' }}
+      options={{title: '약 검색'}}
     />
   </Stack.Navigator>
 );
-
 
 const BottomNavigation = () => {
   return (
@@ -164,7 +159,7 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
-        unmountOnBlur: true
+        unmountOnBlur: true,
       }}
       tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen
