@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Alert, Platform } from 'react-native';
-import { NativeModules } from 'react-native';
-import { Camera, useCameraDevice } from 'react-native-vision-camera';
-import { useNavigation } from '@react-navigation/native';
-import { onDisplayNotification } from '../../../pushnotification';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
+import {NativeModules} from 'react-native';
+import {Camera, useCameraDevice} from 'react-native-vision-camera';
+import {useNavigation} from '@react-navigation/native';
+import {onDisplayNotification} from '../../../pushnotification';
 import axios from 'axios';
 import styles from './styles';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage 임포트
 
-const KitTestScreen = ({ navigation }) => {
-  const { KitClassifierModule } = NativeModules;
+const KitTestScreen = ({navigation}) => {
+  const {KitClassifierModule} = NativeModules;
   const [photoUri, setPhotoUri] = useState(null);
   const [classificationData, setClassificationData] = useState([]);
   const [cameraPermission, setCameraPermission] = useState(false);
@@ -19,12 +20,11 @@ const KitTestScreen = ({ navigation }) => {
   useEffect(() => {
     const requestPermissions = async () => {
       const cameraStatus = await Camera.requestCameraPermission();
-      const microphoneStatus = await Camera.requestMicrophonePermission();
 
-      if (cameraStatus === 'granted' && microphoneStatus === 'granted') {
+      if (cameraStatus === 'authorized' || cameraStatus === 'granted') {
         setCameraPermission(true);
       } else {
-        Alert.alert('권한 필요', '카메라 및 마이크 권한이 필요합니다.');
+        Alert.alert('권한 필요', '카메라 권한이 필요합니다.');
       }
     };
     requestPermissions();
@@ -54,7 +54,7 @@ const KitTestScreen = ({ navigation }) => {
     }
   };
 
-  const classifyImage = async (uri) => {
+  const classifyImage = async uri => {
     try {
       const imageUri = 'file://' + uri;
       const result = await KitClassifierModule.classifyKit(imageUri);
@@ -66,32 +66,39 @@ const KitTestScreen = ({ navigation }) => {
 
       const isKit = result.isKit;
 
-      if (isKit) {
-        // 분류 결과를 저장하고 API 호출
-        setClassificationData(formatClassificationData(result));
-        sendToAPI(imageUri);
-      } else {
-        Alert.alert('결과', '키트를 인식하지 못했습니다. 다시 촬영해주세요.', [
-          { text: '확인', onPress: handleReset },
-        ]);
-      }
+      // 키트 인식 여부와 상관없이 진행 여부를 묻기
+      Alert.alert(
+        '결과',
+        isKit
+          ? '키트를 인식했습니다. 진행하시겠습니까?'
+          : '키트를 인식하지 못했습니다. 다시 촬영하거나 진행을 선택하세요.',
+        [
+          {
+            text: '다시 찍기',
+            onPress: handleReset,
+          },
+          {
+            text: '진행하기',
+            onPress: () => {
+              if (isKit) {
+                // 키트 인식 성공 시 API 호출
+                sendToAPI(imageUri);
+              } else {
+                // 키트 인식 실패 시 결과를 저장하고 이동
+                saveResultToStorage(imageUri, '미확인');
+                navigation.navigate('Kit', {photo: imageUri, status: '미확인'});
+              }
+            },
+          },
+        ],
+        {cancelable: false},
+      );
     } catch (error) {
       console.error('이미지 처리 오류:', error);
     }
   };
 
-  const formatClassificationData = (result) => {
-    const { isKit, ...scores } = result; // isKit을 제외한 분류 결과
-    const sortedResult = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-    const topResults = sortedResult.map(([label, percentage]) => ({
-      label,
-      percentage: Math.floor(percentage * 100), // 퍼센트로 변환
-    }));
-
-    return topResults;
-  };
-
-  const sendToAPI = async (photoUri) => {
+  const sendToAPI = async photoUri => {
     try {
       const formData = new FormData();
       formData.append('file', {
@@ -111,14 +118,17 @@ const KitTestScreen = ({ navigation }) => {
       );
 
       const result = response.data.inference.result;
+      const status = result === 'positive' ? '비정상' : '정상';
 
-      if (result === 'positive') {
-        Alert.alert('검사 결과', '결과가 비정상입니다.');
-        askToRetakeOrProceed(photoUri, '비정상');
-      } else {
-        Alert.alert('검사 결과', '결과가 정상입니다.');
-        askToRetakeOrProceed(photoUri, '정상');
-      }
+      // 결과 저장
+      await saveResultToStorage(photoUri, status);
+
+      Alert.alert('검사 결과', `결과가 ${status}입니다.`, [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+        },
+      ]);
 
       // 5분 후 푸시 알림
       setTimeout(() => {
@@ -130,29 +140,28 @@ const KitTestScreen = ({ navigation }) => {
     }
   };
 
-  const askToRetakeOrProceed = (photoUri, status) => {
-    Alert.alert(
-      '사진 촬영 완료',
-      '사진을 재촬영하겠습니까? 아니면 진행하겠습니까?',
-      [
-        {
-          text: '다시 찍기',
-          onPress: handleReset,
-        },
-        {
-          text: '진행하기',
-          onPress: () => navigation.navigate('Kit', { photo: photoUri, status }),
-        },
-      ],
-      { cancelable: false },
-    );
+  // AsyncStorage에 결과 저장
+  const saveResultToStorage = async (photoUri, status) => {
+    try {
+      const newResult = {
+        photo: photoUri,
+        status,
+        date: new Date().toISOString(),
+      };
+      const existingResults = await AsyncStorage.getItem('@kit_results');
+      const results = existingResults ? JSON.parse(existingResults) : [];
+      results.unshift(newResult); // 새로운 결과를 맨 앞에 추가
+      await AsyncStorage.setItem('@kit_results', JSON.stringify(results));
+    } catch (error) {
+      console.error('결과 저장 중 오류:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
       {photoUri ? (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: 'file://' + photoUri }} style={styles.image} />
+          <Image source={{uri: 'file://' + photoUri}} style={styles.image} />
           <TouchableOpacity style={styles.backButton} onPress={handleReset}>
             <Text style={styles.backButtonText}>다시 촬영하기</Text>
           </TouchableOpacity>

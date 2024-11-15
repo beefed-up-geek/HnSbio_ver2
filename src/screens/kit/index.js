@@ -31,6 +31,8 @@ const Kit_screen = ({onPress, navigation, route}) => {
     return results[0].date;
   };
 
+  const [results, setResults] = useState([]);
+
   const getCurrentDateTime = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -44,16 +46,13 @@ const Kit_screen = ({onPress, navigation, route}) => {
   const handleKitPurchase = () => {
     Linking.openURL('https://hnsbiolab.com/device');
   };
-  const [results, setResults] = useState([
-    // 여기에 실제 검사 결과를 넣을 수 있음
-  ]);
 
   useEffect(() => {
     loadResults();
     if (route.params) {
-      const {status} = route.params;
+      const {status, photo} = route.params;
       const formattedDate = getCurrentDateTime();
-      const newResult = {date: formattedDate, status};
+      const newResult = {date: formattedDate, status, photo};
       const updatedResults = [newResult, ...results];
       setResults(updatedResults);
       saveResults(updatedResults); // 결과 저장
@@ -78,7 +77,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
         setResults(JSON.parse(jsonResults));
       }
     } catch (error) {
-      console.error('Failed to load results:', error);
+      console.error('결과 불러오기 중 오류:', error);
     }
   };
 
@@ -112,13 +111,16 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
     return results.map((result, index) => (
       <View key={index} style={styles.resultCard}>
+        <Image source={{uri: result.photo}} style={styles.resultImage} />
         <Text style={styles.resultDate}>{result.date}</Text>
         <Text
           style={[
             styles.resultStatus,
             result.status === '비정상'
               ? styles.statusAbnormal
-              : styles.statusNormal,
+              : result.status === '정상'
+              ? styles.statusNormal
+              : styles.statusUnknown, // 미확인 상태에 대한 스타일
           ]}>
           {result.status}
         </Text>

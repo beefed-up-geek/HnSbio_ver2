@@ -5,6 +5,65 @@ const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상�
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
 const styles = StyleSheet.create({
+  statusUnknown: {
+    color: '#FFA500', // 예시로 주황색 사용
+  },
+  resultCard: {
+    marginVertical: 10,
+    padding: 15,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    alignItems: 'center',
+  },
+
+  resultImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+  },
+
+  resultDate: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+
+  resultStatus: {
+    marginTop: 5,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  statusAbnormal: {
+    color: '#FF0000', // 빨간색
+  },
+
+  statusNormal: {
+    color: '#008000', // 초록색
+  },
+
+  statusUnknown: {
+    color: '#FFA500', // 주황색
+  },
+
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: '#FF4500',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+
+  deleteButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
   storeButton: {
     backgroundColor: 'white',
     flexDirection: 'row',
