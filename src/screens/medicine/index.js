@@ -290,7 +290,10 @@ const MedicineScreen = () => {
                             data={medications}
                             renderItem={renderMedication}
                             keyExtractor={(item) => item.id}
-                            contentContainerStyle={{ paddingTop: 16 }}
+                            contentContainerStyle={{ 
+                                paddingTop: 16,
+                                paddingBottom: 285,
+                             }}
                             onScroll={() => setSuggestions([])}
                         />
                     </View>

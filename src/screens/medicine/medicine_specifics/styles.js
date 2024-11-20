@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         color: '#7596FF',
-        fontSize: 13,
+        fontSize: 13 * width_ratio,
         ...theme.fonts.Medium,
     },
     activeTabText: {
