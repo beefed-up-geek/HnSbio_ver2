@@ -53,7 +53,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
     if (route.params) {
       const {status} = route.params;
       const formattedDate = getCurrentDateTime();
-      const newResult = {date: formattedDate, status};
+      const newResult = {date: formattedDate, status, photoUri: photo};
       const updatedResults = [newResult, ...results];
       setResults(updatedResults);
       saveResults(updatedResults); // 결과 저장

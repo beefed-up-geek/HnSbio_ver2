@@ -23,8 +23,11 @@
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-react-native": "^1.0.0",
     "axios": "^1.7.7",
     "cosmiconfig": "^9.0.0",
+    "expo-modules-core": "^2.0.4",
     "firebase": "^10.12.5",
     "https": "^1.0.0",
     "lottie-react-native": "^6.7.2",
@@ -70,7 +73,9 @@
     "react-native-video": "^6.4.3",
     "react-native-vision-camera": "^4.6.1",
     "react-native-webview": "^13.10.5",
-    "react-native-youtube-iframe": "^2.3.0"
+    "react-native-worklets-core": "^1.5.0",
+    "react-native-youtube-iframe": "^2.3.0",
+    "unimodules": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

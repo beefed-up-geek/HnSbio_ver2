@@ -175,6 +175,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#777777',
   },
+  proceedButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#4CAF50', // 초록색
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  proceedButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

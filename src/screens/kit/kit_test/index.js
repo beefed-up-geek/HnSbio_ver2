@@ -1,45 +1,65 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Alert, Platform } from 'react-native';
-import { NativeModules } from 'react-native';
-import { Camera, useCameraDevice } from 'react-native-vision-camera';
-import { useNavigation } from '@react-navigation/native';
-import { onDisplayNotification } from '../../../pushnotification';
-import axios from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
+import {Camera, useCameraDevice} from 'react-native-vision-camera';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
+import {bundleResourceIO} from '@tensorflow/tfjs-react-native';
+import ImageResizer from 'react-native-image-resizer'; // ImageManipulator 대체
 import styles from './styles';
+import RNFS from 'react-native-fs';
 
-const KitTestScreen = ({ navigation }) => {
-  const { KitClassifierModule } = NativeModules;
+const KitTestScreen = ({navigation}) => {
   const [photoUri, setPhotoUri] = useState(null);
   const [classificationData, setClassificationData] = useState([]);
   const [cameraPermission, setCameraPermission] = useState(false);
   const device = useCameraDevice('back');
   const camera = useRef(null);
-  const startTimeRef = useRef(null);
 
   useEffect(() => {
     const requestPermissions = async () => {
-      const cameraStatus = await Camera.requestCameraPermission();
-      const microphoneStatus = await Camera.requestMicrophonePermission();
-
-      if (cameraStatus === 'granted' && microphoneStatus === 'granted') {
-        setCameraPermission(true);
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ]);
+        if (
+          granted[PermissionsAndroid.PERMISSIONS.CAMERA] === 'granted' &&
+          granted[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] === 'granted'
+        ) {
+          setCameraPermission(true);
+        } else {
+          Alert.alert('권한 필요', '카메라 및 마이크 권한이 필요합니다.');
+        }
       } else {
-        Alert.alert('권한 필요', '카메라 및 마이크 권한이 필요합니다.');
+        const cameraStatus = await Camera.requestCameraPermission();
+        if (cameraStatus === 'granted') {
+          setCameraPermission(true);
+        } else {
+          Alert.alert('권한 필요', '카메라 권한이 필요합니다.');
+        }
       }
     };
-    requestPermissions();
-  }, []);
 
-  const handleReset = () => {
-    setPhotoUri(null);
-    setClassificationData([]);
-  };
+    const loadTensorFlow = async () => {
+      await tf.ready();
+      console.log('TensorFlow.js is ready!');
+    };
+
+    requestPermissions();
+    loadTensorFlow();
+  }, []);
 
   const takePhoto = async () => {
     if (camera.current && device) {
       try {
-        startTimeRef.current = new Date().getTime();
-
         const photo = await camera.current.takePhoto({
           quality: 0.8,
           skipMetadata: true,
@@ -54,106 +74,76 @@ const KitTestScreen = ({ navigation }) => {
     }
   };
 
-  const classifyImage = async (uri) => {
+  const loadModel = async () => {
+    const modelJson = RNFS.DocumentDirectoryPath + '/model.json';
+    const modelWeights = [
+      RNFS.DocumentDirectoryPath + '/group1-shard1of5.bin',
+      RNFS.DocumentDirectoryPath + '/group1-shard2of5.bin',
+      RNFS.DocumentDirectoryPath + '/group1-shard3of5.bin',
+      RNFS.DocumentDirectoryPath + '/group1-shard4of5.bin',
+      RNFS.DocumentDirectoryPath + '/group1-shard5of5.bin',
+    ];
+    const model = await tf.loadGraphModel(
+      bundleResourceIO(modelJson, modelWeights),
+    );
+    console.log('Model loaded successfully');
+    return model;
+  };
+
+  const processImage = async uri => {
     try {
-      const imageUri = 'file://' + uri;
-      const result = await KitClassifierModule.classifyKit(imageUri);
+      // 이미지 크기 조정
+      const resizedImage = await ImageResizer.createResizedImage(
+        uri,
+        150,
+        150,
+        'JPEG',
+        80,
+      );
 
-      // 종료 시간 기록 및 경과 시간 계산
-      const endTime = new Date().getTime();
-      const elapsed = endTime - startTimeRef.current;
-      console.log(`인식 시간: ${(elapsed / 1000).toFixed(2)} 초`);
+      // 이미지를 텐서로 변환
+      const img = await tf.react_native.decodeJpeg(
+        await tf.io.readFile(resizedImage.uri),
+      );
+      const imgTensor = img.div(255.0).expandDims(0); // 정규화 및 배치 차원 추가
+      return imgTensor;
+    } catch (error) {
+      console.error('이미지 처리 오류:', error);
+      throw error;
+    }
+  };
 
-      const isKit = result.isKit;
+  const classifyWithTensorFlow = async uri => {
+    const model = await loadModel();
+    const inputTensor = await processImage(uri);
+    const prediction = model.predict(inputTensor);
+    return prediction.arraySync();
+  };
+
+  const classifyImage = async uri => {
+    try {
+      const predictionArray = await classifyWithTensorFlow(uri);
+      const isKit = predictionArray[0] > 0.5;
 
       if (isKit) {
-        // 분류 결과를 저장하고 API 호출
-        setClassificationData(formatClassificationData(result));
-        sendToAPI(imageUri);
+        Alert.alert('결과', '키트를 인식했습니다.');
+        setClassificationData(predictionArray);
       } else {
-        Alert.alert('결과', '키트를 인식하지 못했습니다. 다시 촬영해주세요.', [
-          { text: '확인', onPress: handleReset },
-        ]);
+        Alert.alert('결과', '키트를 인식하지 못했습니다. 다시 촬영해주세요.');
       }
     } catch (error) {
       console.error('이미지 처리 오류:', error);
     }
   };
 
-  const formatClassificationData = (result) => {
-    const { isKit, ...scores } = result; // isKit을 제외한 분류 결과
-    const sortedResult = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-    const topResults = sortedResult.map(([label, percentage]) => ({
-      label,
-      percentage: Math.floor(percentage * 100), // 퍼센트로 변환
-    }));
-
-    return topResults;
-  };
-
-  const sendToAPI = async (photoUri) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', {
-        uri: photoUri,
-        type: 'image/jpeg',
-        name: 'photo.jpg',
-      });
-
-      const response = await axios.post(
-        'http://scalawox1.iptime.org:5555/predict/segment/v1/simple',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      );
-
-      const result = response.data.inference.result;
-
-      if (result === 'positive') {
-        Alert.alert('검사 결과', '결과가 비정상입니다.');
-        askToRetakeOrProceed(photoUri, '비정상');
-      } else {
-        Alert.alert('검사 결과', '결과가 정상입니다.');
-        askToRetakeOrProceed(photoUri, '정상');
-      }
-
-      // 5분 후 푸시 알림
-      setTimeout(() => {
-        onDisplayNotification();
-      }, 300000);
-    } catch (error) {
-      console.error('API 호출 중 오류:', error);
-      Alert.alert('오류', '사진 전송에 실패했습니다.');
-    }
-  };
-
-  const askToRetakeOrProceed = (photoUri, status) => {
-    Alert.alert(
-      '사진 촬영 완료',
-      '사진을 재촬영하겠습니까? 아니면 진행하겠습니까?',
-      [
-        {
-          text: '다시 찍기',
-          onPress: handleReset,
-        },
-        {
-          text: '진행하기',
-          onPress: () => navigation.navigate('Kit', { photo: photoUri, status }),
-        },
-      ],
-      { cancelable: false },
-    );
-  };
-
   return (
     <View style={styles.container}>
       {photoUri ? (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: 'file://' + photoUri }} style={styles.image} />
-          <TouchableOpacity style={styles.backButton} onPress={handleReset}>
+          <Image source={{uri: 'file://' + photoUri}} style={styles.image} />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setPhotoUri(null)}>
             <Text style={styles.backButtonText}>다시 촬영하기</Text>
           </TouchableOpacity>
         </View>

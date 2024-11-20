@@ -41,12 +41,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        /*
+        
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64" // TensorFlow.js 지원
         }
-        버그가 나서 잠깐 주석처리
-        */
+        
         missingDimensionStrategy 'react-native-camera', 'general'
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         manifestPlaceholders = [appAuthRedirectScheme: "sanhak2"]
@@ -74,6 +73,8 @@ android {
         pickFirst 'lib/x86_64/libc++_shared.so'
         pickFirst 'lib/armeabi-v7a/libc++_shared.so'
         pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst '**/libc.so'
+        pickFirst '**/libtensorflowlite_jni.so'
     }
 }
 
