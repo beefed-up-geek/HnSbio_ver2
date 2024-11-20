@@ -17,9 +17,8 @@ import styles from './styles.js'; // 스타일 분리
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
 
-const Examin_record_screen = () => {
+const Examin_record_screen = ({ route }) => {
   const navigation = useNavigation();
-  const route = useRoute();
   const [providerId, setProviderId] = useState('');
   const [healthCheckupData, setHealthCheckupData] = useState([]);
   const [bloodTestData, setBloodTestData] = useState([]);
@@ -93,14 +92,19 @@ const Examin_record_screen = () => {
         onPress={() =>
           navigation.navigate('NoTabs', {
             screen: 'blood_test_specifics',
-            params: { bloodTestResult: item },
+            params: { 
+              bloodTestResult: item,
+              userGender: userGender,
+              index: 0, // 위에서부터 몇 번째인지 전달
+              refreshHealthData: refreshHealthData, // 함수 전달
+              },
           })
         }
       >
         <View style={styles.cardHeader}>
           <Text style={styles.cardType}>{displayDate} 검사 결과</Text>
           <View style={styles.cardHeaderRight}>
-            <Text style={styles.moreText}>더보기</Text>
+            <Text style={styles.moreText}>수정하기</Text>
             <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
           </View>
         </View>

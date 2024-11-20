@@ -1,7 +1,7 @@
 // Blood_test_list_screen.js
 import React, { useState, useEffect } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Dimensions, Text, View, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Dimensions, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../../theme.js';
@@ -16,7 +16,7 @@ const Blood_test_list_screen = ({ route }) => {
   const [userGender, setUserGender] = useState('');
   const [bloodTestData, setBloodTestData] = useState([]);
 
-  // Define fetchUserData as a separate function
+  // 사용자 데이터 가져오기
   const fetchUserData = async () => {
     try {
       const userData = await AsyncStorage.getItem('user');
@@ -28,11 +28,9 @@ const Blood_test_list_screen = ({ route }) => {
     } catch (error) {
       console.error('Failed to fetch user data:', error);
     }
-    
-    refreshHealthData();
   };
 
-  // Fetch user data when component mounts
+  // 컴포넌트가 마운트될 때 사용자 데이터 가져오기
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -49,7 +47,7 @@ const Blood_test_list_screen = ({ route }) => {
     return false;
   };
 
-  const renderBloodTestCard = ({ item }) => {
+  const renderBloodTestCard = ({ item, index }) => {
     const abnormalLabels = [];
 
     const addAbnormalLabel = (value, type) => {
@@ -78,7 +76,9 @@ const Blood_test_list_screen = ({ route }) => {
             screen: 'blood_test_specifics',
             params: {
               bloodTestResult: item,
-              userGender: userGender, // Pass userGender if needed
+              userGender: userGender,
+              index: index, // 위에서부터 몇 번째인지 전달
+              refreshHealthData: refreshHealthData, // 함수 전달
             },
           })
         }
@@ -86,7 +86,7 @@ const Blood_test_list_screen = ({ route }) => {
         <View style={styles.cardHeader}>
           <Text style={styles.cardType}>{displayDate} 검사 결과</Text>
           <View style={styles.cardHeaderRight}>
-            <Text style={styles.moreText}>더보기</Text>
+            <Text style={styles.moreText}>수정하기</Text>
             <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
           </View>
         </View>
@@ -109,12 +109,11 @@ const Blood_test_list_screen = ({ route }) => {
       <FlatList
         data={bloodTestData}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={renderBloodTestCard}
+        renderItem={({ item, index }) => renderBloodTestCard({ item, index })}
         contentContainerStyle={styles.listContainer}
       />
     </View>
   );
 };
-
 
 export default Blood_test_list_screen;
