@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 5,
-        width: 342 * width_ratio,
+        width: 330 * width_ratio,
         alignSelf: 'center',
     },
     medicationName: {
