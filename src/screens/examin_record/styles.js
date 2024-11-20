@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
   noDataImage: {
     width: 90 * width_ratio,
     height: 90 * width_ratio,
-    marginBottom: 10 * height_ratio,
     resizeMode: 'contain',
   },
   noDataText: {
