@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: 330 * width_ratio,
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 35,
         backgroundColor: 'white',
         borderRadius: 16,
         alignItems: 'center',
@@ -239,6 +240,13 @@ const styles = StyleSheet.create({
         ...theme.fonts.Bold,
         marginBottom: 20,
         color: '#333',
+    },
+    icon: {
+        width: 58,
+        height: 24, 
+        resizeMode: 'contain', 
+        marginRight: 10, 
+        marginLeft: 5,
     },
     warningText: {
         fontSize: 14,
