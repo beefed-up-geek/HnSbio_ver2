@@ -70,8 +70,6 @@ const Blood_test_input_screen = ({ route }) => {
         providerId,
         ...newTestResult,
       });
-      
-    console.log("버튼 눌림");
       // Refresh data and navigate to the desired screen
       refreshHealthData();
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' }); // Replace with the actual screen name

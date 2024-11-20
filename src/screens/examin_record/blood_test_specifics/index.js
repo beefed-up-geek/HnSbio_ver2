@@ -16,4 +16,4 @@ const Blood_test_specifics_screen = () => {
     );
 };
 
-export default Blood_test_specifics_screen;
+export default Blood_test_specifics_screen; 
