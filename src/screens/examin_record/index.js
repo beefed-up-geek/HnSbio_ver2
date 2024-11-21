@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,6 +28,9 @@ const Examin_record_screen = ({ route }) => {
   const [addingData, setAddingData] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const { refreshHomeScreen } = route.params || {};
+
+  const [showAllBloodTests, setShowAllBloodTests] = useState(false);
+  const [showAllHealthCheckups, setShowAllHealthCheckups] = useState(false);
 
   const refreshHealthData = async () => {
     const userData = await AsyncStorage.getItem('user');
@@ -54,7 +58,7 @@ const Examin_record_screen = ({ route }) => {
   const isValueOutOfRange = (value, type) => {
     if (type === 'BUN') {
       return value < 7 || value > 20;
-    } else if (type === 'Creatinine') {
+    } else if (type === 'Creatinine' || type === '혈청크레아티닌') { // '혈청크레아티닌' 추가
       if (userGender === 'male') return value < 0.6 || value > 1.2;
       if (userGender === 'female') return value < 0.5 || value > 1.1;
     } else if (type === 'GFR') {
@@ -62,8 +66,9 @@ const Examin_record_screen = ({ route }) => {
     }
     return false;
   };
+  
 
-  const renderBloodTestCard = ({ item }) => {
+  const renderBloodTestCard = ({ item, index }) => {
     if (!item) return null;
 
     const abnormalLabels = [];
@@ -80,14 +85,15 @@ const Examin_record_screen = ({ route }) => {
       }
     };
 
-    addAbnormalLabel(item.BUN, 'BUN');
-    addAbnormalLabel(item.creatinine, 'Creatinine');
     addAbnormalLabel(item.GFR, 'GFR');
+    addAbnormalLabel(item.creatinine, '혈청크레아티닌');
+    addAbnormalLabel(item.BUN, 'BUN');
 
     const displayDate = item.date.substring(5, 10);
 
     return (
       <TouchableOpacity
+        key={index}
         style={styles.card}
         onPress={() =>
           navigation.navigate('NoTabs', {
@@ -95,7 +101,7 @@ const Examin_record_screen = ({ route }) => {
             params: { 
               bloodTestResult: item,
               userGender: userGender,
-              index: 0, // 위에서부터 몇 번째인지 전달
+              index: index, // 위에서부터 몇 번째인지 전달
               refreshHealthData: refreshHealthData, // 함수 전달
               },
           })
@@ -160,13 +166,14 @@ const Examin_record_screen = ({ route }) => {
     return healthTags;
   };
 
-  const renderHealthCheckupCard = ({ item }) => {
+  const renderHealthCheckupCard = ({ item, index }) => {
     if (!item) return null;
 
     const healthTags = getHealthTags(item);
 
     return (
       <TouchableOpacity
+        key={index}
         style={styles.card}
         onPress={() =>
           navigation.navigate('NoTabs', {
@@ -184,8 +191,8 @@ const Examin_record_screen = ({ route }) => {
         </View>
         <View style={styles.cardContent}>
           <View style={styles.tagsContainer}>
-            {healthTags.map((tag, index) => (
-              <View key={index} style={styles.abnormalTag}>
+            {healthTags.map((tag, idx) => (
+              <View key={idx} style={styles.abnormalTag}>
                 <Text style={styles.abnormalTagText}>{tag}</Text>
               </View>
             ))}
@@ -209,108 +216,116 @@ const Examin_record_screen = ({ route }) => {
             <View style={styles.headerBorder} />
           </View>
         </View>
-        <View style={styles.contentWrapper}>
-          {/* 혈액검사 섹션 */}
-          <View style={styles.bloodTestContainer}>
-            <View style={styles.bloodTestHeader}>
-              <Text style={styles.sectionTitle}>혈액 검사 기록</Text>
-              <TouchableOpacity
-                style={styles.refreshButton}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'blood_test_input',
-                    params: { refreshHealthData: refreshHealthData },
-                  })
-                }
-              >
-                <FontAwesome5 name="plus" size={17 * width_ratio} color="#8EAFF6" />
-                <Text style={styles.buttonText}>새로운 검사결과 기록</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity
-                style={styles.viewAllButtonInline}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'BloodTestList',
-                    params: { refreshHealthData: refreshHealthData },
-                  })
-                }
-              >
-                <Text style={styles.viewAllText}>전체 기록 보기</Text>
-                <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
-              </TouchableOpacity>
-            </View>
-            {(!bloodTestData || bloodTestData.length === 0) ? (
-              <View style={styles.noDataContainer}>
-                <Image
-                  source={require('../../images/health_screen/document.png')}
-                  style={styles.noDataImage}
-                />
-                <Text style={styles.noDataText}>데이터가 없어요</Text>
-                <Text style={styles.infoText}>혈액검사를 기록하면 분석을 제공해드려요!</Text>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={styles.contentWrapper}>
+            {/* 혈액검사 섹션 */}
+            <View style={styles.bloodTestContainer}>
+              <View style={styles.bloodTestHeader}>
+                <Text style={styles.sectionTitle}>혈액 검사 기록</Text>
+                <TouchableOpacity
+                  style={styles.refreshButton}
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {
+                      screen: 'blood_test_input',
+                      params: { refreshHealthData: refreshHealthData },
+                    })
+                  }
+                >
+                  <FontAwesome5 name="plus" size={17 * width_ratio} color="#8EAFF6" />
+                  <Text style={styles.buttonText}>새로운 검사결과 기록</Text>
+                </TouchableOpacity>
               </View>
-            ) : (
-              // 스크롤뷰를 제거하고 첫 번째 아이템만 표시
-              <View>
-                {renderBloodTestCard({ item: bloodTestData[0] })}
-              </View>
-            )}
-          </View>
+              {bloodTestData && bloodTestData.length > 0 && (
+                <View style={styles.actionButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.viewAllButtonInline}
+                    onPress={() => setShowAllBloodTests(!showAllBloodTests)}
+                  >
+                    <Text style={styles.viewAllText}>
+                      {showAllBloodTests ? '접기' : '전체 기록 보기'}
+                    </Text>
+                    <FontAwesome5
+                      name={showAllBloodTests ? 'chevron-up' : 'chevron-down'}
+                      size={12 * width_ratio}
+                      color="#828282"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              {(!bloodTestData || bloodTestData.length === 0) ? (
+                <View style={styles.noDataContainer}>
+                  <Image
+                    source={require('../../images/health_screen/document.png')}
+                    style={styles.noDataImage}
+                  />
+                  <Text style={styles.noDataText}>데이터가 없어요</Text>
+                  <Text style={styles.infoText}>혈액검사를 기록하면 분석을 제공해드려요!</Text>
+                </View>
+              ) : (
+                <View>
+                  { (showAllBloodTests ? bloodTestData : bloodTestData.slice(0,2)).map((item, index) =>
+                    renderBloodTestCard({ item, index })
+                  )}
+                </View>
+              )}
+            </View>
 
-          {/* 건강검진 섹션 */}
-          <View style={styles.healthCheckupContainer}>
-            <View style={styles.healthCheckupHeader}>
-              <Text style={styles.sectionTitle}>건강검진 기록</Text>
-              <TouchableOpacity
-                style={styles.refreshButton}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'authentication_1',
-                    params: { refreshHealthData: refreshHealthData },
-                  })
-                }
-              >
-                <FontAwesome5 name="redo" size={17 * width_ratio} color="#8EAFF6" />
-                <Text style={styles.buttonText}>건강검진 불러오기</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity
-                style={styles.viewAllButtonInline}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'HealthCheckupList',
-                    params: { healthCheckupData },
-                  })
-                }
-              >
-                <Text style={styles.viewAllText}>전체 기록 보기</Text>
-                <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
-              </TouchableOpacity>
-            </View>
-            {(!healthCheckupData || healthCheckupData.length === 0) ? (
-              <View style={styles.noDataContainer}>
-                <Image
-                  source={require('../../images/health_screen/document.png')}
-                  style={styles.noDataImage}
-                />
-                <Text style={styles.noDataText}>데이터가 없어요</Text>
-                <Text style={styles.infoText}>건강검진을 불러오면 분석을 제공해드려요!</Text>
+            {/* 건강검진 섹션 */}
+            <View style={styles.healthCheckupContainer}>
+              <View style={styles.healthCheckupHeader}>
+                <Text style={styles.sectionTitle}>건강검진 기록</Text>
+                <TouchableOpacity
+                  style={styles.refreshButton}
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {
+                      screen: 'authentication_1',
+                      params: { refreshHealthData: refreshHealthData },
+                    })
+                  }
+                >
+                  <FontAwesome5 name="redo" size={17 * width_ratio} color="#8EAFF6" />
+                  <Text style={styles.buttonText}>건강검진 불러오기</Text>
+                </TouchableOpacity>
               </View>
-            ) : (
-              // 스크롤뷰를 제거하고 첫 번째 아이템만 표시
-              <View>
-                {renderHealthCheckupCard({ item: healthCheckupData[0] })}
-              </View>
-            )}
+              {healthCheckupData && healthCheckupData.length > 0 && (
+                <View style={styles.actionButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.viewAllButtonInline}
+                    onPress={() => setShowAllHealthCheckups(!showAllHealthCheckups)}
+                  >
+                    <Text style={styles.viewAllText}>
+                      {showAllHealthCheckups ? '접기' : '전체 기록 보기'}
+                    </Text>
+                    <FontAwesome5
+                      name={showAllHealthCheckups ? 'chevron-up' : 'chevron-down'}
+                      size={12 * width_ratio}
+                      color="#828282"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              {(!healthCheckupData || healthCheckupData.length === 0) ? (
+                <View style={styles.noDataContainer}>
+                  <Image
+                    source={require('../../images/health_screen/document.png')}
+                    style={styles.noDataImage}
+                  />
+                  <Text style={styles.noDataText}>데이터가 없어요</Text>
+                  <Text style={styles.infoText}>건강검진을 불러오면 분석을 제공해드려요!</Text>
+                </View>
+              ) : (
+                <View>
+                  { (showAllHealthCheckups ? healthCheckupData : healthCheckupData.slice(0,2)).map((item, index) =>
+                    renderHealthCheckupCard({ item, index })
+                  )}
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </LinearGradient>
   );
-
 };
-
 
 export default Examin_record_screen;

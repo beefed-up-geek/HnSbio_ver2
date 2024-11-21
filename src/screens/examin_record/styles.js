@@ -1,4 +1,4 @@
-// src\screens\health_checkup\styles.js
+// src/screens/examin_record/styles.js
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 100 * height_ratio,
     paddingHorizontal: 20 * width_ratio,
+    paddingBottom: 20 * height_ratio,
+  },
+  scrollViewContent: {
     paddingBottom: 20 * height_ratio,
   },
   bloodTestContainer: {
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5 * height_ratio,
     borderWidth: 1,
     borderColor: '#FF6B6B',
+    marginBottom: 5 * height_ratio,
   },
   abnormalTagText: {
     ...theme.fonts.Medium,
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
   },
   actionButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     marginBottom: 10 * height_ratio,
   },
@@ -192,5 +196,5 @@ const styles = StyleSheet.create({
     borderRadius: 12 * width_ratio,
   },
 });
-  
+
 export default styles;

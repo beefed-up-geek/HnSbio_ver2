@@ -12,12 +12,10 @@ import styles from './navigation_without_tabs_styles';
 
 // Import your screen components
 import Health_checkup_specifics_screen from '../screens/examin_record/health_checkup_specifics';
-import Health_checkup_list_screen from '../screens/examin_record/health_checkup_list';
 import Authentication_1_screen from '../screens/examin_record/authentication_1';
 import Authentication_2_screen from '../screens/examin_record/authentication_2';
 import Authentication_3_screen from '../screens/examin_record/authentication_3';
 import Blood_test_specifics_screen from '../screens/examin_record/blood_test_specifics';
-import Blood_test_list_screen from '../screens/examin_record/blood_test_list';
 import Blood_test_input_screen from '../screens/examin_record/blood_test_input';
 import Medicine_specifics_screen from '../screens/medicine/medicine_specifics';
 import Kit_guide_1_screen from '../screens/kit/kit_guide_1';
@@ -204,16 +202,6 @@ const NavigationWithoutTabs = () => {
         name="classificationResult"
         component={ClassificationResult}
         options={{title: ''}}
-      />
-      <Stack.Screen
-        name="HealthCheckupList"
-        component={Health_checkup_list_screen}
-        options={{title: '전체 건강검진 내역'}}
-      />
-      <Stack.Screen
-        name="BloodTestList"
-        component={Blood_test_list_screen}
-        options={{title: '전체 혈액검사 내역'}}
       />
     </Stack.Navigator>
   );
