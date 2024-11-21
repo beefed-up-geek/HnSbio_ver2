@@ -115,14 +115,14 @@ const GetUnderlyingDiseaseInfo = () => {
   
     try {
       // register API 호출
-      const response = await axios.post('http://54.79.61.80:5000/login/register', userData, {
+      const response = await axios.post('http://54.79.61.80:5000/login/registerByBirthdateAndName', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
   
       // 응답에서 newUser 데이터를 AsyncStorage에 저장
-      const newUser = response.data.newUser;
+      const newUser = response.data.user;
       await AsyncStorage.setItem('user', JSON.stringify(newUser));
   
       setIsModalVisible(false); // Hide modal

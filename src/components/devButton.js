@@ -18,7 +18,7 @@ const DevButton = ({ loadUserData }) => {
   const handleButtonPress = async () => {
     const newCount = buttonPressCount + 1;
     setButtonPressCount(newCount);
-
+    console.log(newCount);
     let providerId = '';
     try {
       const userData = await AsyncStorage.getItem('user');
