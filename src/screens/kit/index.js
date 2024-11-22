@@ -51,7 +51,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
   useEffect(() => {
     loadResults();
     if (route.params) {
-      const {status} = route.params;
+      const {status, photo} = route.params;
       const formattedDate = getCurrentDateTime();
       const newResult = {date: formattedDate, status, photoUri: photo};
       const updatedResults = [newResult, ...results];

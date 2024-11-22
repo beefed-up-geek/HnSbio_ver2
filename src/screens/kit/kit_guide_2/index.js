@@ -4,6 +4,7 @@ import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 import React from 'react';
 import {
@@ -95,10 +96,11 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
                 />
               </View>
             </View> */}
-            <Video
-              source={require('../../../../android/app/src/main/res/raw/video.mp4')} // 로컬 파일을 사용하려면 require('./path/to/video.mp4')
-              style={styles.video}
-              controls={true} // 컨트롤러 표시
+            <YoutubePlayer
+              height={height * 0.4} // 비디오 높이 설정
+              width={width * 0.9} // 비디오 폭 설정
+              play={false} // 자동 재생 여부
+              videoId="TXT4Zj0K6X4" // YouTube 비디오 ID
             />
           </View>
           <View style={styles.instructions}>

@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   banner: {
     display: 'flex',
-    height: 207 * scaleHeight,
+    height: 260 * scaleHeight,
     paddingTop: 58 * scaleHeight,
     paddingRight: 78 * scaleWidth,
     paddingBottom: 58 * scaleHeight,
