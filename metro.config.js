@@ -6,6 +6,13 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
  *
  * @type {import('metro-config').MetroConfig}
  */
-const config = {};
+const customConfig = {
+  resolver: {
+    assetExts: ['bin'], // 기존 확장자 목록에 'bin' 추가
+  },
+};
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = (async () => {
+  const defaultConfig = await getDefaultConfig();
+  return mergeConfig(defaultConfig, customConfig);
+})();
