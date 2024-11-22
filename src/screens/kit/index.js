@@ -25,6 +25,10 @@ const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상�
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
 const Kit_screen = ({onPress, navigation, route}) => {
+  const [results, setResults] = useState([
+    // 여기에 실제 검사 결과를 넣을 수 있음
+  ]);
+
   const getCurrentDate = () => {
     if (results.length === 0) {
       return '아직 검사하지 않음';
@@ -32,7 +36,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
     return results[0].date;
   };
 
-  const normalizeResults = results => {
+  const normalizeResults = (results = []) => {
     return results.map(result => ({
       ...result,
       photoUri: result.photoUri || result.photo, // photoUri와 photo 통합
@@ -52,9 +56,6 @@ const Kit_screen = ({onPress, navigation, route}) => {
   const handleKitPurchase = () => {
     Linking.openURL('https://hnsbiolab.com/device');
   };
-  const [results, setResults] = useState([
-    // 여기에 실제 검사 결과를 넣을 수 있음
-  ]);
 
   useEffect(() => {
     loadResults();

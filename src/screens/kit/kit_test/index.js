@@ -147,8 +147,22 @@ const KitTestScreen = ({navigation}) => {
         throw new Error('Unexpected result value');
       }
     } catch (error) {
-      console.error('API 호출 중 오류:', error);
-      Alert.alert('오류', '사진 전송에 실패했습니다.');
+      if (error.response) {
+        // 서버 응답 오류
+        console.error('서버 응답 오류:', error.response.data);
+        Alert.alert(
+          '서버 오류',
+          error.response.data.responseDetails || '오류 발생',
+        );
+      } else if (error.request) {
+        // 요청이 전송되었지만 응답이 없음
+        console.error('요청 전송 오류:', error.request);
+        Alert.alert('네트워크 오류', '서버에 연결할 수 없습니다.');
+      } else {
+        // 요청 설정 오류
+        console.error('요청 설정 오류:', error.message);
+        Alert.alert('요청 오류', error.message);
+      }
     }
   };
 
