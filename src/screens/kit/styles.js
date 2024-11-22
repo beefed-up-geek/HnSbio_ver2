@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   resultStatus: {
     marginTop: 5,
     fontSize: 18,
-    fontWeight: 'bold',
+    ...theme.fonts.Medium,
   },
 
   statusAbnormal: {
@@ -221,14 +221,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 18,
-    fontWeight: '700',
     lineHeight: 27,
     color: '#353535',
     position: 'relative',
     textAlign: 'left',
     zIndex: 7,
+    ...theme.fonts.Bold,
   },
   cardDate: {
     width: '90%',
@@ -238,11 +237,10 @@ const styles = StyleSheet.create({
     zIndex: 8,
   },
   cardDateText: {
+    ...theme.fonts.Medium,
     height: 'auto',
     weight: '100%',
-    fontFamily: 'Pretendard Variable',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 18,
     color: '#545359',
     position: 'relative',
@@ -340,9 +338,7 @@ const styles = StyleSheet.create({
     height: 16,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 14,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#72777a',
     position: 'relative',
@@ -350,6 +346,7 @@ const styles = StyleSheet.create({
     marginLeft: '2%',
     marginTop: '0.6%',
     zIndex: 19,
+    ...theme.fonts.Medium,
   },
   cardIcon: {
     width: 16,
@@ -369,9 +366,7 @@ const styles = StyleSheet.create({
   },
   analysisTitle: {
     height: 21,
-    fontFamily: 'Pretendard Variable',
     fontSize: 18,
-    fontWeight: '600',
     lineHeight: 21,
     color: '#5d5d62',
     position: 'relative',
@@ -432,9 +427,7 @@ const styles = StyleSheet.create({
     width: 390 * width_ratio * 0.7,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 16,
-    fontWeight: '700',
     lineHeight: 20,
     color: '#5d5d62',
     position: 'relative',
@@ -483,9 +476,7 @@ const styles = StyleSheet.create({
     width: 390 * width_ratio * 0.7,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 14,
     color: '#72777a',
     position: 'relative',
@@ -494,13 +485,11 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     display: 'flex',
-    width: 326,
-    paddingTop: 30, // 기존 66에서 50으로 수정
+    width: 326 * width_ratio,
     paddingRight: 0,
-    paddingBottom: 60,
     paddingLeft: 0,
     gap: 18,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexShrink: 0,
     flexWrap: 'nowrap',
     position: 'relative',
@@ -511,14 +500,14 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 18,
-    fontWeight: '600',
     lineHeight: 21,
     color: '#5d5d62',
     position: 'relative',
     textAlign: 'left',
     zIndex: 32,
+    ...theme.fonts.SemiBold,
+    fontSize: 18,
   },
   resultCardsContainer: {
     display: 'flex',
@@ -566,9 +555,7 @@ const styles = StyleSheet.create({
     height: 24,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 16,
-    fontWeight: '700',
     lineHeight: 24,
     color: '#5d5d62',
     position: 'relative',
@@ -599,9 +586,7 @@ const styles = StyleSheet.create({
     height: 16,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 18,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#72777a',
     position: 'relative',
@@ -667,9 +652,7 @@ const styles = StyleSheet.create({
     height: 16,
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'Pretendard Variable',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#72777a',
     position: 'relative',
@@ -707,9 +690,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 16,
     flexShrink: 0,
-    fontFamily: 'DM Sans',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
     position: 'absolute',
     top: 9,
@@ -718,18 +699,14 @@ const styles = StyleSheet.create({
     zIndex: 62,
   },
   chartValueMainText: {
-    fontFamily: 'Pretendard Variable',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#303437',
     position: 'relative',
     textAlign: 'center',
   },
   chartValueUnitText: {
-    fontFamily: 'Pretendard Variable',
     fontSize: 10,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#303437',
     position: 'relative',
@@ -777,9 +754,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'DM Sans',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#72777a',
     position: 'relative',
@@ -820,9 +795,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'DM Sans',
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 16,
     color: '#72777a',
     position: 'relative',
@@ -837,9 +810,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexShrink: 0,
     flexBasis: 'auto',
-    fontFamily: 'DM Sans',
     fontSize: 12,
-    fontWeight: '700',
     lineHeight: 16,
     color: '#0070f0',
     position: 'relative',
@@ -892,17 +863,18 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   resultCard: {
-    flexDirection: 'row', // 가로 레이아웃
+    flexDirection: 'row', // 가로 정렬
+    justifyContent: 'space-between', // 요소를 양쪽 끝으로 배치
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 15,
-    marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3, // Android 그림자
+    width: 326 * width_ratio, // 카드 너비
   },
   resultImage: {
     width: 80, // 이미지 너비
@@ -912,15 +884,17 @@ const styles = StyleSheet.create({
   },
   resultDetails: {
     flex: 1, // 텍스트 영역 확장
+    marginRight: 10, // 삭제 버튼과의 간격
   },
   resultDate: {
     fontSize: 14,
     color: '#444',
     marginBottom: 5,
+    ...theme.fonts.Medium,
   },
   resultStatus: {
     fontSize: 16,
-    fontWeight: 'bold',
+    ...theme.fonts.Medium,
   },
   statusAbnormal: {
     color: '#ff5c5c', // 비정상 상태 색상
@@ -929,15 +903,15 @@ const styles = StyleSheet.create({
     color: '#4caf50', // 정상 상태 색상
   },
   deleteButton: {
-    marginLeft: 15, // 텍스트와 버튼 간격
     backgroundColor: '#f44336',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
+    alignItems: 'center',
   },
   deleteButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    ...theme.fonts.Medium,
   },
 });
 
