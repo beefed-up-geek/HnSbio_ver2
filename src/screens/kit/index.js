@@ -91,7 +91,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
         setResults(normalizedResults);
       }
     } catch (error) {
-      console.error('결과 불러오기 오류:', error);
+      console.error('Failed to load results:', error);
     }
   };
 
@@ -125,26 +125,16 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
     return results.map((result, index) => (
       <View key={index} style={styles.resultCard}>
-        {/* 검사 이미지 */}
-        {result.photoUri && (
-          <Image source={{uri: result.photoUri}} style={styles.resultImage} />
-        )}
-
-        {/* 검사 세부 정보 */}
-        <View style={styles.resultDetails}>
-          <Text style={styles.resultDate}>{result.date}</Text>
-          <Text
-            style={[
-              styles.resultStatus,
-              result.status === '비정상'
-                ? styles.statusAbnormal
-                : styles.statusNormal,
-            ]}>
-            {result.status}
-          </Text>
-        </View>
-
-        {/* 삭제 버튼 */}
+        <Text style={styles.resultDate}>{result.date}</Text>
+        <Text
+          style={[
+            styles.resultStatus,
+            result.status === '비정상'
+              ? styles.statusAbnormal
+              : styles.statusNormal,
+          ]}>
+          {result.status}
+        </Text>
         <TouchableOpacity
           onPress={() => confirmDelete(index)}
           style={styles.deleteButton}>
