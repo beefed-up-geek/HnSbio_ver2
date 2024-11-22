@@ -104,7 +104,7 @@ const KitTestScreen = ({navigation}) => {
       if (result === 'positive') {
         const status = '비정상';
         await saveResultToStorage(photoUri, status);
-        Alert.alert('키트 인식 완료', `결과가 ${status}입니다.`, [
+        Alert.alert('키트 인식 완료', `결과가 비정상입니다.`, [
           {
             text: '확인',
             onPress: () =>
@@ -114,7 +114,7 @@ const KitTestScreen = ({navigation}) => {
       } else if (result === 'negative') {
         const status = '정상';
         await saveResultToStorage(photoUri, status);
-        Alert.alert('키트 인식 완료', `결과가 ${status}입니다.`, [
+        Alert.alert('키트 인식 완료', `결과가 정상입니다.`, [
           {
             text: '확인',
             onPress: () =>
