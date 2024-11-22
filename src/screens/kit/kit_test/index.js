@@ -123,8 +123,8 @@ const KitTestScreen = ({navigation}) => {
         ]);
       } else if (result === 'none') {
         Alert.alert(
-          '키트를 사용 후 다시 시도해주세요',
-          '키트를 먼저 사용한 후 다시 촬영해주세요.',
+          '키트 인식 불가',
+          '키트를 인식할 수 없습니다. 흰 종이 위에서 선명하게 다시 촬영해주세요.',
           [
             {
               text: '확인',
@@ -135,7 +135,7 @@ const KitTestScreen = ({navigation}) => {
       } else if (result === 'unknown') {
         Alert.alert(
           '키트 확인 불가',
-          '키트를 확인할 수 없습니다. 다시 한 번 명확하게 촬영해주세요.',
+          '키트를 확인할 수 없습니다. 키트를 촬영해 주시기 바랍니다.',
           [
             {
               text: '확인',
