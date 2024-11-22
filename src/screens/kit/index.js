@@ -19,6 +19,7 @@ import theme from '../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 import {useState, useEffect} from 'react';
 import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
@@ -29,6 +30,13 @@ const Kit_screen = ({onPress, navigation, route}) => {
       return '아직 검사하지 않음';
     }
     return results[0].date;
+  };
+
+  const normalizeResults = results => {
+    return results.map(result => ({
+      ...result,
+      photoUri: result.photoUri || result.photo, // photoUri와 photo 통합
+    }));
   };
 
   const getCurrentDateTime = () => {
@@ -50,13 +58,17 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
   useEffect(() => {
     loadResults();
+
     if (route.params) {
-      const {status, photo} = route.params;
-      const formattedDate = getCurrentDateTime();
-      const newResult = {date: formattedDate, status, photoUri: photo};
-      const updatedResults = [newResult, ...results];
-      setResults(updatedResults);
-      saveResults(updatedResults); // 결과 저장
+      const {status, photo} = route.params; // 매개변수 추출
+      if (status && photo) {
+        // 안전한 조건 검사
+        const formattedDate = getCurrentDateTime();
+        const newResult = {date: formattedDate, status, photoUri: photo};
+        const updatedResults = [newResult, ...results];
+        setResults(updatedResults); // 새 결과 추가
+        saveResults(updatedResults); // AsyncStorage에 저장
+      }
     }
   }, [route.params]);
 
@@ -75,10 +87,13 @@ const Kit_screen = ({onPress, navigation, route}) => {
     try {
       const jsonResults = await AsyncStorage.getItem('@kit_results');
       if (jsonResults) {
-        setResults(JSON.parse(jsonResults));
+        const parsedResults = JSON.parse(jsonResults);
+        const normalizedResults = normalizeResults(parsedResults); // 데이터 표준화
+        console.log('정리된 데이터:', normalizedResults); // 디버깅 로그
+        setResults(normalizedResults);
       }
     } catch (error) {
-      console.error('Failed to load results:', error);
+      console.error('결과 불러오기 오류:', error);
     }
   };
 
@@ -112,16 +127,26 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
     return results.map((result, index) => (
       <View key={index} style={styles.resultCard}>
-        <Text style={styles.resultDate}>{result.date}</Text>
-        <Text
-          style={[
-            styles.resultStatus,
-            result.status === '비정상'
-              ? styles.statusAbnormal
-              : styles.statusNormal,
-          ]}>
-          {result.status}
-        </Text>
+        {/* 검사 이미지 */}
+        {result.photoUri && (
+          <Image source={{uri: result.photoUri}} style={styles.resultImage} />
+        )}
+
+        {/* 검사 세부 정보 */}
+        <View style={styles.resultDetails}>
+          <Text style={styles.resultDate}>{result.date}</Text>
+          <Text
+            style={[
+              styles.resultStatus,
+              result.status === '비정상'
+                ? styles.statusAbnormal
+                : styles.statusNormal,
+            ]}>
+            {result.status}
+          </Text>
+        </View>
+
+        {/* 삭제 버튼 */}
         <TouchableOpacity
           onPress={() => confirmDelete(index)}
           style={styles.deleteButton}>

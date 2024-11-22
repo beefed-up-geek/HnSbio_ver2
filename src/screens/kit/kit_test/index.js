@@ -72,9 +72,9 @@ const KitTestScreen = ({navigation}) => {
     try {
       const formData = new FormData();
       formData.append('file', {
-        uri: photoUri,
+        uri: `file://${photoUri}`,
         type: 'image/jpeg',
-        name: 'photo.jpg',
+        name: `photo_${Date.now()}.jpg`,
       });
 
       console.log('Sending FormData:', formData);
@@ -86,6 +86,7 @@ const KitTestScreen = ({navigation}) => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 10000, // 10초 대기
         },
       );
 
@@ -95,21 +96,56 @@ const KitTestScreen = ({navigation}) => {
         throw new Error(response.data.responseDetails || 'Unexpected error');
       }
 
-      const {result, mask, pkms} = response.data.inference;
+      const {result} = response.data.inference;
 
       console.log('Result:', result);
-      console.log('Mask (Base64):', mask);
-      console.log('PKMS:', pkms);
 
-      await saveResultToStorage(photoUri, result);
-
-      Alert.alert('검사 결과', `결과가 ${result}입니다.`, [
-        {
-          text: '확인',
-          onPress: () =>
-            navigation.navigate('Kit', {photo: photoUri, status: result}),
-        },
-      ]);
+      // 결과값에 따라 분기 처리
+      if (result === 'positive') {
+        const status = '비정상';
+        await saveResultToStorage(photoUri, status);
+        Alert.alert('키트 인식 완료', `결과가 ${status}입니다.`, [
+          {
+            text: '확인',
+            onPress: () =>
+              navigation.navigate('Kit', {photo: photoUri, status}),
+          },
+        ]);
+      } else if (result === 'negative') {
+        const status = '정상';
+        await saveResultToStorage(photoUri, status);
+        Alert.alert('키트 인식 완료', `결과가 ${status}입니다.`, [
+          {
+            text: '확인',
+            onPress: () =>
+              navigation.navigate('Kit', {photo: photoUri, status}),
+          },
+        ]);
+      } else if (result === 'none') {
+        Alert.alert(
+          '키트를 사용 후 다시 시도해주세요',
+          '키트를 먼저 사용한 후 다시 촬영해주세요.',
+          [
+            {
+              text: '확인',
+              onPress: () => navigation.goBack(),
+            },
+          ],
+        );
+      } else if (result === 'unknown') {
+        Alert.alert(
+          '키트 확인 불가',
+          '키트를 확인할 수 없습니다. 다시 한 번 명확하게 촬영해주세요.',
+          [
+            {
+              text: '확인',
+              onPress: () => setPhotoUri(null), // 처음 상태로 되돌림
+            },
+          ],
+        );
+      } else {
+        throw new Error('Unexpected result value');
+      }
     } catch (error) {
       console.error('API 호출 중 오류:', error);
       Alert.alert('오류', '사진 전송에 실패했습니다.');
@@ -127,6 +163,7 @@ const KitTestScreen = ({navigation}) => {
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);
       await AsyncStorage.setItem('@kit_results', JSON.stringify(results));
+      console.log('저장된 데이터:', results); // 디버깅용 로그
     } catch (error) {
       console.error('결과 저장 중 오류:', error);
     }

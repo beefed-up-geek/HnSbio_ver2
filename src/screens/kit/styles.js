@@ -823,6 +823,63 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#888',
+  },
+  resultCard: {
+    flexDirection: 'row', // 가로 레이아웃
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3, // Android 그림자
+  },
+  resultImage: {
+    width: 80, // 이미지 너비
+    height: 80, // 이미지 높이
+    borderRadius: 10,
+    marginRight: 15, // 이미지와 텍스트 간격
+  },
+  resultDetails: {
+    flex: 1, // 텍스트 영역 확장
+  },
+  resultDate: {
+    fontSize: 14,
+    color: '#444',
+    marginBottom: 5,
+  },
+  resultStatus: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  statusAbnormal: {
+    color: '#ff5c5c', // 비정상 상태 색상
+  },
+  statusNormal: {
+    color: '#4caf50', // 정상 상태 색상
+  },
+  deleteButton: {
+    marginLeft: 15, // 텍스트와 버튼 간격
+    backgroundColor: '#f44336',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
