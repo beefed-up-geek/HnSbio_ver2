@@ -134,9 +134,15 @@ const Kit_screen = ({onPress, navigation, route}) => {
             styles.resultStatus,
             result.status === '비정상'
               ? styles.statusAbnormal
-              : styles.statusNormal,
+              : result.status === '정상'
+              ? styles.statusNormal
+              : styles.statusUnknown,
           ]}>
-          {result.status}
+          {result.status === '비정상'
+            ? '양성'
+            : result.status === '정상'
+            ? '음성'
+            : '알 수 없음'}
         </Text>
         <TouchableOpacity
           onPress={() => confirmDelete(index)}

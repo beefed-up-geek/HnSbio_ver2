@@ -77,8 +77,6 @@ const KitTestScreen = ({navigation}) => {
         name: `photo_${Date.now()}.jpg`,
       });
 
-      console.log('Sending FormData:', formData);
-
       const response = await axios.post(
         'http://scalawox1.iptime.org:5555/predict/segment/v1/simple',
         formData,
@@ -90,76 +88,45 @@ const KitTestScreen = ({navigation}) => {
         },
       );
 
-      console.log('API Response:', response.data);
-
-      if (response.data.responseCode !== 200) {
-        throw new Error(response.data.responseDetails || 'Unexpected error');
-      }
-
       const {result} = response.data.inference;
 
-      console.log('Result:', result);
+      let status = null;
+      let message = null;
 
-      // 결과값에 따라 분기 처리
+      // 결과값에 따른 처리
       if (result === 'positive') {
-        const status = '비정상';
-        await saveResultToStorage(photoUri, status);
-        Alert.alert('키트 인식 완료', `결과가 양성입니다.`, [
-          {
-            text: '확인',
-            onPress: () =>
-              navigation.navigate('Kit', {photo: photoUri, status}),
-          },
-        ]);
+        status = '비정상';
+        message = '결과가 양성입니다.';
       } else if (result === 'negative') {
-        const status = '정상';
-        await saveResultToStorage(photoUri, status);
-        Alert.alert('키트 인식 완료', `결과가 음성입니다.`, [
-          {
-            text: '확인',
-            onPress: () =>
-              navigation.navigate('Kit', {photo: photoUri, status}),
-          },
-        ]);
-      } else if (result === 'none') {
-        Alert.alert(
-          '키트 인식 불가',
-          '키트를 인식할 수 없습니다. 흰 종이 위에서 선명하게 다시 촬영해주세요.',
-          [
-            {
-              text: '확인',
-              onPress: () => navigation.goBack(),
-            },
-          ],
-        );
-      } else if (result === 'unknown') {
-        Alert.alert(
-          '키트 확인 불가',
-          '키트를 확인할 수 없습니다. 키트를 촬영해 주시기 바랍니다.',
-          [
-            {
-              text: '확인',
-              onPress: () => setPhotoUri(null), // 처음 상태로 되돌림
-            },
-          ],
-        );
+        status = '정상';
+        message = '결과가 음성입니다.';
+      } else if (result === 'none' || result === 'unknown') {
+        status = '알 수 없음';
+        message = '키트를 인식하거나 확인할 수 없습니다. 다시 시도해 주세요.';
       } else {
         throw new Error('Unexpected result value');
       }
+
+      await saveResultToStorage(photoUri, status);
+
+      Alert.alert('키트 인식 완료', message, [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+        },
+      ]);
     } catch (error) {
+      // 오류 처리
       if (error.response) {
-        // 서버 응답 오류
         console.error('서버 응답 오류:', error.response.data);
         Alert.alert(
           '서버 오류',
           error.response.data.responseDetails || '오류 발생',
         );
       } else if (error.request) {
-        // 요청이 전송되었지만 응답이 없음
         console.error('요청 전송 오류:', error.request);
         Alert.alert('네트워크 오류', '서버에 연결할 수 없습니다.');
       } else {
-        // 요청 설정 오류
         console.error('요청 설정 오류:', error.message);
         Alert.alert('요청 오류', error.message);
       }
@@ -188,11 +155,6 @@ const KitTestScreen = ({navigation}) => {
       {photoUri ? (
         <View style={styles.imageContainer}>
           <Image source={{uri: 'file://' + photoUri}} style={styles.image} />
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => setPhotoUri(null)}>
-            <Text style={styles.backButtonText}>다시 촬영하기</Text>
-          </TouchableOpacity>
         </View>
       ) : cameraPermission && device ? (
         <View style={styles.cameraContainer}>
