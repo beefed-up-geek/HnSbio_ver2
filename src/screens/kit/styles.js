@@ -5,9 +5,6 @@ const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상�
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
 const styles = StyleSheet.create({
-  statusUnknown: {
-    color: '#FFA500', // 예시로 주황색 사용
-  },
   resultCard: {
     marginVertical: 10,
     padding: 15,
@@ -45,10 +42,6 @@ const styles = StyleSheet.create({
 
   statusNormal: {
     color: '#008000', // 초록색
-  },
-
-  statusUnknown: {
-    color: '#FFA500', // 주황색
   },
 
   deleteButton: {
@@ -915,7 +908,7 @@ const styles = StyleSheet.create({
   },
   statusUnknown: {
     color: 'gray',
-    fontWeight: 'bold',
+    ...theme.fonts.Medium,
   },
 });
 
