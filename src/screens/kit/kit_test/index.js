@@ -55,8 +55,8 @@ const KitTestScreen = ({navigation}) => {
     if (camera.current && device) {
       try {
         const photo = await camera.current.takePhoto({
-          quality: 0.8,
-          skipMetadata: true,
+          quality: 1.0,
+          skipMetadata: false,
         });
         setPhotoUri(photo.path);
         sendToAPI(photo.path);
@@ -84,7 +84,7 @@ const KitTestScreen = ({navigation}) => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-          timeout: 10000, // 10초 대기
+          timeout: 30000, // 10초 대기
         },
       );
 
@@ -150,6 +150,9 @@ const KitTestScreen = ({navigation}) => {
     }
   };
 
+  // 최적의 포맷과 해상도를 선택
+  const optimalFormat = device?.formats.sort((a, b) => b.photoWidth - a.photoWidth)[0];
+  
   return (
     <View style={styles.container}>
       {photoUri ? (
@@ -164,7 +167,9 @@ const KitTestScreen = ({navigation}) => {
             device={device}
             isActive={true}
             photo={true}
+            format={optimalFormat} // 최적의 포맷 적용
           />
+
           <TouchableOpacity style={styles.captureButton} onPress={takePhoto}>
             <Text style={styles.captureButtonText}>촬영하기</Text>
           </TouchableOpacity>
