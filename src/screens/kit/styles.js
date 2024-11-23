@@ -913,6 +913,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     ...theme.fonts.Medium,
   },
+  statusUnknown: {
+    color: 'gray',
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
