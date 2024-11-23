@@ -939,6 +939,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  statusUnknown: {
+    color: 'gray',
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
