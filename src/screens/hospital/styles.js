@@ -278,6 +278,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
+  distanceText: {
+    fontSize:15 * width_ratio*0.95,
+    color: '#55aaff',
+    ...theme.fonts.SemiBold,
+    marginBottom: 6*height_ratio,
+    marginLeft: 7*width_ratio,
+  },
+  hospitalInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', // 수직 정렬
+    justifyContent: 'flex-start', // 병원 이름과 거리 사이 간격 조정
+
+  },
+  
 });
 
 export default styles;

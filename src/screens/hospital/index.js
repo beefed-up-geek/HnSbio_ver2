@@ -286,13 +286,13 @@ export default function Hospital_Screen({navigation}) {
     );
   };
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <ActivityIndicator size="large" color="#0000ff" />
+  //     </View>
+  //   );
+  // }
 
   // 필터 적용 시 활성화된 필터 업데이트
   const updateActiveFilters = (filters) => {
@@ -345,59 +345,68 @@ const filterLabels = {
   // 필요한 다른 필터들도 여기에 추가할 수 있습니다.
 };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>병원 검색</Text>
-          
-          <View style={styles.headerBorder} /> 
-        </View>
-        
-      <View style={styles.searchSection}>
-        <View style={styles.searchInputContainer}>
-          <Image
-            source={require('../../images/hospital/search.png')}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="병원 이름을 검색하세요"
-            placeholderTextColor="#8E9098"
-            onChangeText={handleSearchQueryChange}
-          />
-        </View>
+return (
+  <View style={styles.container}>
+    {/* 항상 표시되는 헤더 */}
+    <View style={styles.headerContainer}>
+      <Text style={styles.headerTitle}>병원 검색</Text>
+      <View style={styles.headerBorder} />
+    </View>
+
+    {/* 항상 표시되는 검색 섹션 */}
+    <View style={styles.searchSection}>
+      <View style={styles.searchInputContainer}>
+        <Image
+          source={require('../../images/hospital/search.png')}
+          style={styles.searchIcon}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="병원 이름을 검색하세요"
+          placeholderTextColor="#8E9098"
+          onChangeText={handleSearchQueryChange}
+        />
       </View>
-      <View style={styles.filtersection}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterScrollView}
-        >
-          <View style={styles.filterChipsContainer}>
-            <View style={styles.filterChip}>
-              <Icon name="gps-fixed" size={20} color="#5D5D62" />
-              <Text style={styles.filterChipText}>{address}</Text>
-            </View>
-            {activeFilters.map((filter, index) => (
-              <View key={index} style={styles.filterChip}>
-                <Text style={styles.filterChipText}>{filterLabels[filter] || filter}</Text>
-              </View>
-            ))}
+    </View>
+
+    {/* 항상 표시되는 필터 섹션 */}
+    <View style={styles.filtersection}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterScrollView}
+      >
+        <View style={styles.filterChipsContainer}>
+          <View style={styles.filterChip}>
+            <Icon name="gps-fixed" size={20} color="#5D5D62" />
+            <Text style={styles.filterChipText}>{address}</Text>
           </View>
-        </ScrollView>
-        <TouchableOpacity onPress={openFilter} style={styles.filterButton}>
-          <Image
-            source={require('./assets/filter_icon.png')}
-            style={styles.filterIcon}
-          />
-        </TouchableOpacity>
-      </View>
-      
-      <Image
+          {activeFilters.map((filter, index) => (
+            <View key={index} style={styles.filterChip}>
+              <Text style={styles.filterChipText}>
+                {filterLabels[filter] || filter}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+      <TouchableOpacity onPress={openFilter} style={styles.filterButton}>
+        <Image
+          source={require('./assets/filter_icon.png')}
+          style={styles.filterIcon}
+        />
+      </TouchableOpacity>
+    </View>
+    <Image
         source={require('./assets/background.png')} // 배경 이미지 경로
         style={styles.backgroundImage}
       />
-
+    {/* 로딩 상태에 따라 병원 목록 렌더링 */}
+    {loading ? (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    ) : (
       <FlatList
         data={hospitalData}
         keyExtractor={item => item.id}
@@ -417,16 +426,18 @@ const filterLabels = {
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
       />
+    )}
 
-      <FilterModal
-        visible={isFilterVisible}
-        onClose={closeFilter}
-        filters={filters}
-        setFilters={setFilters}
-        onApply={handleFilterApply}
-      />
-    </View>
-  );
+    {/* 필터 모달 */}
+    <FilterModal
+      visible={isFilterVisible}
+      onClose={closeFilter}
+      filters={filters}
+      setFilters={setFilters}
+      onApply={handleFilterApply}
+    />
+  </View>
+);
 }
 
 function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
@@ -483,18 +494,15 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
 
   const handlePhonePress = async () => {
     try {
-      // 전화번호에서 특수문자 제거
       const cleanPhoneNumber = hospital['전화번호'].replace(/[^0-9]/g, '');
       const url = `tel:${cleanPhoneNumber}`;
-      
-      // 전화 앱을 열 수 있는지 확인
+
       const canOpen = await Linking.canOpenURL(url);
-      
+
       if (canOpen) {
         await Linking.openURL(url);
       } else {
         console.error('전화를 걸 수 없습니다');
-        // 여기에 사용자에게 알림을 보여줄 수 있습니다
       }
     } catch (error) {
       console.error('전화 연결 중 오류 발생:', error);
@@ -513,20 +521,26 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
           ]}>
           {hospital.rating ? `${hospital.rating}등급` : '등급 없음'}
         </Text>
+        
         <TouchableOpacity
           onPress={() => handleFavoritePress(hospital)}
           style={styles.favoriteButton}>
           <Image
             source={
               isFavorite
-                ? require('../../images/hospital/filledStar.png') // 즐겨찾기 상태일 때 꽉 찬 별 이미지
-                : require('../../images/hospital/emptyStar.png') // 즐겨찾기 상태가 아닐 때 빈 별 이미지
+                ? require('../../images/hospital/filledStar.png')
+                : require('../../images/hospital/emptyStar.png')
             }
             style={styles.starIcon}
           />
         </TouchableOpacity>
       </View>
-      <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
+      <View style={styles.hospitalInfoContainer}>
+        <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
+        <Text style={styles.distanceText}>
+          {hospital.distance.toFixed(1)}km
+        </Text>
+      </View>
       <View style={styles.hospitalAddressContainer}>
         <Image
           source={require('./assets/location.png')}
