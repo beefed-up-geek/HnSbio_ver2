@@ -111,23 +111,9 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>상세 필터</Text>
 
-          {/* 병원 종류 (단일 선택) */}
-          <Text style={styles.sectionTitle}>병원 종류</Text>
-          <View style={styles.buttonGroup}>
-            {['모든 병원', '투석 병원', '일반 병원'].map(type => (
-              <FilterButton
-                key={type}
-                label={type}
-                selected={localFilters.type === type}
-                onPress={() => handleSingleFilterChange('type', type)}
-                disabled={isApplying}
-              />
-            ))}
-          </View>
-
           {/* 혈액 적정성 평가 등급 (다중 선택) */}
           <Text style={styles.sectionTitle}>
-            혈액 적정성 평가 등급(투석 병원)
+            혈액 적정성 평가 등급
           </Text>
           <View style={styles.RatingbuttonGroup}>
             {['1', '2', '3', '4', '5'].map(rating => (
