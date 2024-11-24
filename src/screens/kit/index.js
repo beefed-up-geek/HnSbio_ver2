@@ -11,6 +11,7 @@ import {
   Linking,
   Image,
   Dimensions,
+  Alert,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,7 +20,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 import {useState, useEffect} from 'react';
-import {Alert} from 'react-native';
 
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
@@ -33,24 +33,38 @@ const Kit_screen = ({onPress, navigation, route}) => {
     if (results.length === 0) {
       return '아직 검사하지 않음';
     }
-    return results[0].date;
+    return results[0].dateDay; // 날짜만 표시
   };
 
+  const formatDateTime = isoDate => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+  };
+
+  const formatDate = isoDate => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}년 ${month}월 ${day}일`;
+  };
+
+  // 결과 데이터를 표준화하고 날짜를 포맷합니다.
   const normalizeResults = (results = []) => {
-    return results.map(result => ({
-      ...result,
-      photoUri: result.photoUri || result.photo, // photoUri와 photo 통합
-    }));
-  };
-
-  const getCurrentDateTime = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const date = today.getDate();
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
-    return `${year}년 ${month}월 ${date}일 ${hours}시 ${minutes}분`;
+    return results.map(result => {
+      const dateObj = new Date(result.date);
+      return {
+        ...result,
+        photoUri: result.photoUri || result.photo, // photoUri와 photo 통합
+        dateFormatted: formatDateTime(dateObj), // 년, 월, 일, 시, 분까지 표시
+        dateDay: formatDate(dateObj), // 년, 월, 일까지만 표시
+      };
+    });
   };
 
   const handleKitPurchase = () => {
@@ -64,8 +78,8 @@ const Kit_screen = ({onPress, navigation, route}) => {
       const {status, photo} = route.params; // 매개변수 추출
       if (status && photo) {
         // 안전한 조건 검사
-        const formattedDate = getCurrentDateTime();
-        const newResult = {date: formattedDate, status, photoUri: photo};
+        const isoDate = new Date().toISOString();
+        const newResult = {date: isoDate, status, photoUri: photo};
         const updatedResults = [newResult, ...results];
         setResults(updatedResults); // 새 결과 추가
         saveResults(updatedResults); // AsyncStorage에 저장
@@ -89,7 +103,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
       const jsonResults = await AsyncStorage.getItem('@kit_results');
       if (jsonResults) {
         const parsedResults = JSON.parse(jsonResults);
-        const normalizedResults = normalizeResults(parsedResults); // 데이터 표준화
+        const normalizedResults = normalizeResults(parsedResults); // 데이터 표준화 및 날짜 포맷
         console.log('정리된 데이터:', normalizedResults); // 디버깅 로그
         setResults(normalizedResults);
       }
@@ -128,7 +142,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
     return results.map((result, index) => (
       <View key={index} style={styles.resultCard}>
-        <Text style={styles.resultDate}>{result.date}</Text>
+        <Text style={styles.resultDate}>{result.dateFormatted}</Text>
         <Text
           style={[
             styles.resultStatus,
