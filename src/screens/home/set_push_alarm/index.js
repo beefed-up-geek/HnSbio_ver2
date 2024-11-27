@@ -78,6 +78,7 @@ const Set_push_alarm_screen = () => {
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
+          console.log(error.message)
           console.log('Default settings applied due to missing user data.');
           setAlarmEnabled(false); // 디폴트 알림 설정을 "꺼짐"으로 설정
           setStartDate(new Date());
