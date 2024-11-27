@@ -164,7 +164,7 @@ const Authentication_2_screen = () => {
      };
      console.log(request_data);
      const response = await axios.post(
-       'http://54.79.61.80:5000/health_checkup/step1',
+       'http://98.82.55.237/health_checkup/step1',
        request_data,
      );
      console.log(response.data);

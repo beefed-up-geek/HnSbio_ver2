@@ -27,7 +27,7 @@ const MedicineScreen = () => {
         }
 
         try {
-            const response = await fetch('http://54.79.61.80:5000/medicine/autocomplete', {
+            const response = await fetch('http://98.82.55.237/medicine/autocomplete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query })
@@ -90,7 +90,7 @@ const MedicineScreen = () => {
         addRecentSearch(searchQuery);
     
         try {
-            const response = await fetch('http://54.79.61.80:5000/medicine', {
+            const response = await fetch('http://98.82.55.237/medicine', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

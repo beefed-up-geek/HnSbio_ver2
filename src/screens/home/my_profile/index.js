@@ -164,7 +164,7 @@ const My_profile_screen = () => {
 
       // API 호출
       await axios.put(
-        'http://54.79.61.80:5000/user_info/updateUser',
+        'http://98.82.55.237/user_info/updateUser',
         updatedUserData,
         {
           headers: {

@@ -49,7 +49,7 @@ const Authentication_3_screen = () => {
       };
   
       const response = await axios.post(
-        'http://54.79.61.80:5000/health_checkup/step2',
+        'http://98.82.55.237/health_checkup/step2',
         request_data,
       );
   
