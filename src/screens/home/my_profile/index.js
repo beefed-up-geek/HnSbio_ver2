@@ -151,7 +151,7 @@ const My_profile_screen = () => {
         height,
         weight,
         chronic_kidney_disease: kidneyStatus,
-        profile_image: profileImageUrl,
+        profile_image: profileImage,
         underlying_disease: {
           hypertension: underlyingCondition.includes('고혈압') ? 1 : 0,
           diabetes: underlyingCondition.includes('당뇨') ? 1 : 0,
