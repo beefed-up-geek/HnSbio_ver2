@@ -190,39 +190,6 @@ const Login2 = () => {
         }
       }
     }
-  const handleAppleLogin = async () => {
-    const result = await loginWithApple();
-    if (result) {
-      const providerId = result.providerId;
-      const provider = 'apple';
-
-      try {
-        const response = await axios.post(
-          'http://98.82.55.237/login/login',
-          {
-            provider,
-            providerId,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        await AsyncStorage.setItem('user', JSON.stringify(response.data));
-        navigation.navigate('BottomNavigation');
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          navigation.navigate('GetUserInfo', {
-            provider,
-            providerId,
-          });
-        } else {
-          console.error('Apple Login error:', error);
-        }
-      }
-    }
-  };
   };
 
   const handleKakaoLogin = async () => {
@@ -280,7 +247,7 @@ const Login2 = () => {
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
         navigation.navigate('BottomNavigation');
       } catch (error) {
-        if (error.response && error.response.status === 404) {
+        if (error.response) {
           navigation.navigate('GetUserInfo', {
             provider,
             providerId,
@@ -408,3 +375,4 @@ const styles = StyleSheet.create({
 });
 
 export default Login2;
+
