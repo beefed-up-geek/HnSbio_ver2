@@ -3,26 +3,11 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 react {
-    /* Folders */
+    /* React Native 설정 (필요한 경우 주석 해제) */
     // root = file("../")
     // reactNativeDir = file("../node_modules/react-native")
     // codegenDir = file("../node_modules/@react-native/codegen")
     // cliFile = file("../node_modules/react-native/cli.js")
-
-    /* Variants */
-    // debuggableVariants = ["liteDebug", "prodDebug"]
-
-    /* Bundling */
-    // nodeExecutableAndArgs = ["node"]
-    // bundleCommand = "ram-bundle"
-    // bundleConfig = file(../rn-cli.config.js)
-    // bundleAssetName = "MyApplication.android.bundle"
-    // entryFile = file("../js/MyApplication.android.js")
-    // extraPackagerArgs = []
-
-    /* Hermes Commands */
-    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
-    // hermesFlags = ["-O", "-output-source-map"]
 }
 
 def enableProguardInReleaseBuilds = false
@@ -30,22 +15,22 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
+    ndkVersion "25.2.9519653" // 직접 명시
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.sanhak_2"
     defaultConfig {
         applicationId "com.sanhak_2"
-        minSdkVersion rootProject.ext.minSdkVersion // 업데이트된 부분
+        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        
+
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64" // TensorFlow.js 지원
         }
-        
+
         missingDimensionStrategy 'react-native-camera', 'general'
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         manifestPlaceholders = [appAuthRedirectScheme: "sanhak2"]
@@ -65,7 +50,7 @@ android {
         release {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     packagingOptions {

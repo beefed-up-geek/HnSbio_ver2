@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 23 // 23 이상!
         compileSdkVersion = 34 //31이상!
         targetSdkVersion = 34 //31이상!
-        ndkVersion =  "23.1.7779620"
+        ndkVersion = "25.2.9519653" //비전 카메라 라이브러리를 위해 업데이트....24/11/28
     }
     repositories {
         google()
