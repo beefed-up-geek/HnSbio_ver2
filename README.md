@@ -1,3 +1,5 @@
+[![Frontend CI](https://github.com/H-S-Biolab/front/actions/workflows/deploy.yml/badge.svg)](https://github.com/H-S-Biolab/front/actions/workflows/deploy.yml)
+
 <<<<<<< HEAD
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
