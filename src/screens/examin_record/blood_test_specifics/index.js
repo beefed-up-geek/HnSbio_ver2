@@ -117,7 +117,7 @@ const Blood_test_specifics_screen = () => {
       const originalDate = bloodTestResult.date; // 기존 날짜
 
       // 서버에 업데이트 요청
-      await axios.put('http://54.79.61.80:5000/blood_test/editBloodTestResult', {
+      await axios.put('http://98.82.55.237/blood_test/editBloodTestResult', {
         providerId,
         originalDate,
         ...updatedTestResult,
@@ -180,7 +180,7 @@ const Blood_test_specifics_screen = () => {
               const dateToDelete = bloodTestResult.date;
 
               // 서버에 삭제 요청
-              await axios.delete('http://54.79.61.80:5000/blood_test/deleteBloodTestResult', {
+              await axios.delete('http://98.82.55.237/blood_test/deleteBloodTestResult', {
                 data: {
                   providerId,
                   date: dateToDelete,

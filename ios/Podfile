@@ -1,5 +1,6 @@
-# Uncomment the next line to define a global platform for your project
-platform :ios, '15.0'  # 최소 iOS 버전을 13.0으로 설정
+platform :ios, '15.0'
+
+use_modular_headers!
 
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
@@ -7,27 +8,28 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'sanhak_2' do
   config = use_native_modules!
 
-  # naveridlogin-sdk-ios 추가
-  # pod 'naveridlogin-sdk-ios'
+  # Firebase 관련 Pods 추가
+  pod 'Firebase/Core', :modular_headers => true
+  pod 'Firebase/Auth', :modular_headers => true
+  pod 'Firebase/Database', :modular_headers => true
 
+  # React Native 설정
   use_react_native!(
     :path => config[:reactNativePath],
     :app_path => "#{Pod::Config.instance.installation_root}/..",
-    :hermes_enabled => false
+    :hermes_enabled => false,
   )
 
+  # 테스트 타겟
   target 'sanhak_2Tests' do
     inherit! :complete
     # Pods for testing
   end
 
-  # Enables Flipper.
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable these next few lines.
-  # use_flipper!()
-
+  # post_install 단계에서 Flipper 설정 추가
   post_install do |installer|
     react_native_post_install(installer)
+    flipper_post_install(installer) # Flipper 초기화
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

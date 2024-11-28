@@ -10,6 +10,7 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import ImageResizer from 'react-native-image-resizer';
 import {useNavigation} from '@react-navigation/native';
 import * as ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -49,23 +50,25 @@ const My_profile_screen = () => {
         const userData = await AsyncStorage.getItem('user');
         if (userData != null) {
           const user = JSON.parse(userData);
+  
+          // 사용자 데이터 설정
           setProviderId(user.providerId || '');
           setName(user.name || '');
           setGenderAsync(user.gender || '');
           setNickname(user.nickname || '');
-          if (user.birthdate) {
-            setBirthdate(user.birthdate);
-          }
+          setBirthdate(user.birthdate || '');
           setCreatedAt(user.createdAt || '');
           setHeight(user.height || '');
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
           setKidneyStatus(user.chronic_kidney_disease || '');
-          if (user.profileImage) {
-            setProfileImage(user.profileImage);
+  
+          // 프로필 이미지 설정
+          if (user.profile_image) {
+            setProfileImage(user.profile_image);
           }
-
-          // Handle underlying diseases
+  
+          // 기저질환 데이터 설정
           const underlyingDiseases = [];
           if (user.underlying_disease) {
             const diseaseMap = {
@@ -81,8 +84,8 @@ const My_profile_screen = () => {
             });
           }
           setUnderlyingCondition(underlyingDiseases);
-
-          // 변경사항 여부 확인을 위한 현재상태 초기화
+  
+          // 초기 상태 저장
           setInitialSettings({
             nickname: user.nickname || '',
             birthdate: user.birthdate || '',
@@ -97,9 +100,10 @@ const My_profile_screen = () => {
         console.log('Error loading user data', error);
       }
     };
-
+  
     loadUserData();
   }, []);
+  
 
   // 변경사항 여부 확인 함수
   const hasChanges = () => {
@@ -116,11 +120,25 @@ const My_profile_screen = () => {
   };
 
   const handleChooseProfilePicture = async () => {
-    const options = {mediaType: 'photo', includeBase64: false};
-    ImagePicker.launchImageLibrary(options, response => {
+    const options = { mediaType: 'photo', includeBase64: false };
+    ImagePicker.launchImageLibrary(options, async response => {
       if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        setProfileImage(uri);
+        const file = response.assets[0];
+  
+        try {
+          // 이미지를 리사이즈하여 가로 해상도를 512로 조정
+          const resizedImage = await ImageResizer.createResizedImage(
+            file.uri,
+            512, // 가로 해상도를 512로 설정
+            file.height / (file.width / 512), // 비율 유지
+            'JPEG', // 포맷 설정
+            80 // 퀄리티 설정
+          );
+          setProfileImage(resizedImage.uri); // 리사이즈된 이미지의 URI를 상태에 저장
+        } catch (error) {
+          console.error('이미지 리사이즈 중 오류 발생:', error);
+          Alert.alert('오류', '이미지를 처리할 수 없습니다.');
+        }
       }
     });
   };
@@ -140,10 +158,8 @@ const My_profile_screen = () => {
       if (!currentUserData) {
         throw new Error('현재 사용자 데이터를 찾을 수 없습니다.');
       }
-
-      const currentUser = JSON.parse(currentUserData);
   
-      // 현재 화면에서 수정 가능한 필드만 업데이트
+      const currentUser = JSON.parse(currentUserData);
       const updatedUserData = {
         ...currentUser, // 기존 데이터를 모두 유지
         nickname,
@@ -151,32 +167,60 @@ const My_profile_screen = () => {
         height,
         weight,
         chronic_kidney_disease: kidneyStatus,
-        profile_image: profileImageUrl,
         underlying_disease: {
           hypertension: underlyingCondition.includes('고혈압') ? 1 : 0,
           diabetes: underlyingCondition.includes('당뇨') ? 1 : 0,
           hyperlipidemia: underlyingCondition.includes('고지혈증') ? 1 : 0,
-          retinal_complication: underlyingCondition.includes('망막합병증')
-            ? 1
-            : 0,
+          retinal_complication: underlyingCondition.includes('망막합병증') ? 1 : 0,
         },
       };
-
-      // API 호출
+  
+      // 프로필 이미지가 변경되었는지 확인
+      if (profileImage && profileImage !== currentUser.profile_image) {
+        const formData = new FormData();
+        formData.append('profileImage', {
+          uri: profileImage,
+          type: 'image/jpeg', // 파일 타입
+          name: `profile_${providerId}.jpg`, // 파일 이름
+        });
+        formData.append('providerId', providerId);
+  
+        try {
+          // 프로필 이미지 업로드 API 호출
+          const apiResponse = await axios.put(
+            'http://98.82.55.237/user_info/uploadProfileImage',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+  
+          // API에서 반환된 이미지 URL 저장
+          updatedUserData.profile_image = apiResponse.data.profileImage;
+        } catch (error) {
+          console.log('프로필 이미지 업로드 중 오류 발생:', error);
+          Alert.alert('오류', '프로필 이미지 저장에 실패했습니다.');
+          return;
+        }
+      }
+  
+      // 사용자 정보 업데이트 API 호출
       await axios.put(
-        'http://54.79.61.80:5000/user_info/updateUser',
+        'http://98.82.55.237/user_info/updateUser',
         updatedUserData,
         {
           headers: {
             'Content-Type': 'application/json',
           },
-        },
+        }
       );
-
+  
       // AsyncStorage 업데이트
       await AsyncStorage.setItem('user', JSON.stringify(updatedUserData));
       Alert.alert('알림', '변경사항이 저장되었습니다.');
-
+  
       // 변경사항 저장 후 초기상태 업데이트
       setInitialSettings({
         nickname,
@@ -184,14 +228,15 @@ const My_profile_screen = () => {
         height,
         weight,
         kidneyStatus,
-        profileImage,
+        profileImage: updatedUserData.profile_image,
         underlyingCondition,
       });
     } catch (error) {
-      console.log('Error saving user data', error);
+      console.log('사용자 데이터 저장 중 오류 발생:', error);
       Alert.alert('오류', '변경사항 저장에 실패하였습니다.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

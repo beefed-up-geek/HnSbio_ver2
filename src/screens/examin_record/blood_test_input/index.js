@@ -142,7 +142,7 @@ const Blood_test_input_screen = ({ route }) => {
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
       // API 호출
-      await axios.put('http://54.79.61.80:5000/blood_test/addBloodTestResult', {
+      await axios.put('http://98.82.55.237/blood_test/addBloodTestResult', {
         providerId,
         ...newTestResult,
       });

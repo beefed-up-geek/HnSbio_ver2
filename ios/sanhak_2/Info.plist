@@ -82,7 +82,7 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
-			<key>54.79.61.80:5000</key>
+			<key>98.82.55.237</key>
 			<dict>
 				<key>NSExceptionAllowsinsecureHTTPLoads</key>
 				<true/>

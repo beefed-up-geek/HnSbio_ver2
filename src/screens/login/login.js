@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
+  Platform
 } from 'react-native';
 import theme from '../../theme';
 import LinearGradient from 'react-native-linear-gradient';
@@ -16,12 +17,14 @@ import splashImage from '../../images/login/splash2.png';
 import naverIcon from '../../images/login/naver.png';
 import kakaoIcon from '../../images/login/kakao.png';
 import googleIcon from '../../images/login/google.png';
+import appleIcon from '../../images/login/apple.png';
 import { login as kakaoLogin, me as getKakaoProfile } from '@react-native-kakao/user';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -91,6 +94,33 @@ async function loginWithKakao() {
   return null;
 }
 
+// Apple 로그인 함수
+async function loginWithApple() {
+  if (Platform.OS !== 'ios') {
+    console.log('Apple Login is only available on iOS.');
+    return null;
+  }
+  if (!appleAuth.isSupported) {
+    console.log('Apple Login is not supported on this device.');
+    return null;
+  }
+  try {
+    const response = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+
+    const { user, identityToken } = response;
+    if (user && identityToken) {
+      return { providerId: user };
+    }
+  } catch (error) {
+    console.error('Apple login error:', error);
+  }
+
+  return null;
+}
+
 const Login2 = () => {
   const navigation = useNavigation();
 
@@ -102,7 +132,7 @@ const Login2 = () => {
 
       try {
         const response = await axios.post(
-          'http://54.79.61.80:5000/login/login',
+          'http://98.82.55.237/login/login',
           {
             provider,
             providerId,
@@ -136,7 +166,7 @@ const Login2 = () => {
 
       try {
         const response = await axios.post(
-          'http://54.79.61.80:5000/login/login',
+          'http://98.82.55.237/login/login',
           {
             provider,
             providerId,
@@ -169,7 +199,7 @@ const Login2 = () => {
       const provider = 'kakao';
       try {
         const response = await axios.post(
-          'http://54.79.61.80:5000/login/login',
+          'http://98.82.55.237/login/login',
           {
             provider,
             providerId,
@@ -190,6 +220,40 @@ const Login2 = () => {
           });
         } else {
           console.error('Login error:', error);
+        }
+      }
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    const result = await loginWithApple();
+    if (result) {
+      const providerId = result.providerId;
+      const provider = 'apple';
+
+      try {
+        const response = await axios.post(
+          'http://98.82.55.237/login/login',
+          {
+            provider,
+            providerId,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        await AsyncStorage.setItem('user', JSON.stringify(response.data));
+        navigation.navigate('BottomNavigation');
+      } catch (error) {
+        if (error.response) {
+          navigation.navigate('GetUserInfo', {
+            provider,
+            providerId,
+          });
+        } else {
+          console.error('Apple Login error:', error);
         }
       }
     }
@@ -223,6 +287,14 @@ const Login2 = () => {
               <Image source={kakaoIcon} style={styles.icon} />
               <Text style={[styles.buttonText, { color: '#2A1C11' }]}>카카오로 로그인</Text>
             </TouchableOpacity>
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity
+              style={[styles.loginButton, { backgroundColor: '#000000' }]}
+              onPress={handleAppleLogin}>
+              <Image source={appleIcon} style={styles.appleicon} />
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>Apple로 로그인</Text>
+            </TouchableOpacity>
+          )}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -269,7 +341,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30 * width_ratio,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 234 * height_ratio,
+    marginTop: 200 * height_ratio,
   },
   loginButton: {
     flexDirection: 'row',
@@ -287,6 +359,11 @@ const styles = StyleSheet.create({
     height: 24 * height_ratio,
     resizeMode: 'contain',
   },
+  appleicon:{
+    width: 45 * width_ratio,
+    height: 45 * height_ratio,
+    marginLeft: -10 *width_ratio,
+  },
   buttonText: {
     flex: 1,
     ...theme.fonts.Medium,
@@ -298,3 +375,4 @@ const styles = StyleSheet.create({
 });
 
 export default Login2;
+

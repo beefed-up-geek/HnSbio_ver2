@@ -115,7 +115,7 @@ const GetUnderlyingDiseaseInfo = () => {
   
     try {
       // register API 호출
-      const response = await axios.post('http://54.79.61.80:5000/login/registerByBirthdateAndName', userData, {
+      const response = await axios.post('http://98.82.55.237/login/registerByBirthdateAndName', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
