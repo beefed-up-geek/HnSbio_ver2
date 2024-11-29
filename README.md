@@ -1,4 +1,4 @@
-[![Frontend CI](https://github.com/H-S-Biolab/front/actions/workflows/deploy.yml/badge.svg)](https://github.com/H-S-Biolab/front/actions/workflows/deploy.yml)
+[![Build React Native App](https://github.com/beefed-up-geek/HnSbio_ver2/actions/workflows/build.yml/badge.svg)](https://github.com/beefed-up-geek/HnSbio_ver2/actions/workflows/build.yml)
 
 <<<<<<< HEAD
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
