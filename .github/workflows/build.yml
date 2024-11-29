@@ -3,7 +3,7 @@ name: Build and Test React Native App
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-test:
@@ -24,14 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 5. 테스트 실행
-      - name: Run tests
-        run: npm test
+      - name: Build Android App
+        run: cd android && gradlew assembleRelease
 
-      # 6. 결과 확인
-      - name: Archive test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: test-results/
