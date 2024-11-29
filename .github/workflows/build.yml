@@ -46,33 +46,3 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease
-
-  ios-build:
-    runs-on: macos-latest
-
-    steps:
-      # 1. Repository 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # 2. Node.js 설정
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.12.1'
-
-      # 3. CocoaPods 설치
-      - name: Install CocoaPods dependencies
-        run: |
-          cd ios
-          pod install
-
-      # 4. iOS 빌드
-      - name: Build iOS App
-        run: |
-          xcodebuild -workspace ios/YourApp.xcworkspace \
-                     -scheme YourApp \
-                     -sdk iphoneos \
-                     -configuration Release \
-                     archive \
-                     -archivePath $PWD/build/YourApp.xcarchive
