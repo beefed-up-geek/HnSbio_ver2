@@ -1,0 +1,41 @@
+name: Build and Test React Native App
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Repository 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js 설정
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.12.1' # React Native의 지원 버전에 따라 조정
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4. 앱 빌드 (iOS/Android 환경 설정에 따라 추가 가능)
+      - name: Build the app
+        run: npm run build # 빌드 스크립트가 다를 경우 명령어 수정
+
+      # 5. 테스트 실행
+      - name: Run tests
+        run: npm test
+
+      # 6. 결과 확인
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/
