@@ -329,7 +329,7 @@ const Examin_record_screen = ({ route }) => {
                       source={require('../../images/health_screen/document.png')}
                       style={styles.noDataImage}
                     />
-                    <Text style={styles.noDataText}>10년 이내에 건강검진 내역이 없어요</Text>
+                    <Text style={styles.noDataText}>10년 이내 검진 내역 없음</Text>
                     <Text style={styles.infoText}></Text>
                   </View>
                 ) : (
