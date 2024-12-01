@@ -1,4 +1,4 @@
-// src\screens\login\get_underlying_disease_info.js
+// src/screens/login/get_underlying_disease_info.js
 import React, { useState } from 'react';
 import {
   View,
@@ -36,7 +36,16 @@ const GetUnderlyingDiseaseInfo = () => {
 
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [agreements, setAgreements] = useState([false, false, false, false]); // Agreement options
+
+  // Agreement options
+  const agreementOptions = [
+    '모두 동의하기', // New option added at the top
+    '이용 약관 동의',
+    '개인정보 보호방침 동의',
+    '민감정보수집 및 이용동의',
+    '만 14세 이상입니다',
+  ];
+  const [agreements, setAgreements] = useState(new Array(agreementOptions.length).fill(false));
 
   const options = [
     '해당사항 없음',
@@ -75,11 +84,22 @@ const GetUnderlyingDiseaseInfo = () => {
 
   const handleAgreementToggle = (index) => {
     const updatedAgreements = [...agreements];
-    updatedAgreements[index] = !updatedAgreements[index];
+
+    if (index === 0) { // "모두 동의하기"를 눌렀을 때
+      const newValue = !updatedAgreements[0];
+      for (let i = 0; i < updatedAgreements.length; i++) {
+        updatedAgreements[i] = newValue;
+      }
+    } else {
+      updatedAgreements[index] = !updatedAgreements[index];
+      // 개별 항목이 모두 선택되었는지 확인하여 "모두 동의하기" 상태 업데이트
+      updatedAgreements[0] = updatedAgreements.slice(1).every(Boolean);
+    }
+
     setAgreements(updatedAgreements);
   };
 
-  const allAgreed = agreements.every(Boolean); // Check if all agreements are checked
+  const allAgreed = agreements.slice(1).every(Boolean); // Check if all agreements except "모두 동의하기" are checked
 
   const getFormattedDate = () => {
     const today = new Date();
@@ -90,6 +110,11 @@ const GetUnderlyingDiseaseInfo = () => {
   };
 
   const handleAgreeAndProceed = async () => {
+    if (!allAgreed) {
+      Alert.alert('동의 필요', '모든 필수 항목에 동의해주세요.');
+      return;
+    }
+
     const hypertension = selectedOptions.includes('고혈압') ? 1 : 0;
     const diabetes = selectedOptions.includes('당뇨') ? 1 : 0;
     const hyperlipidemia = selectedOptions.includes('고지혈증') ? 1 : 0;
@@ -112,7 +137,7 @@ const GetUnderlyingDiseaseInfo = () => {
         retinal_complication,
       },
     };
-  
+
     try {
       // register API 호출
       const response = await axios.post('http://98.82.55.237/login/registerByBirthdateAndName', userData, {
@@ -120,11 +145,11 @@ const GetUnderlyingDiseaseInfo = () => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       // 응답에서 newUser 데이터를 AsyncStorage에 저장
       const newUser = response.data.user;
       await AsyncStorage.setItem('user', JSON.stringify(newUser));
-  
+
       setIsModalVisible(false); // Hide modal
       navigation.navigate('BottomNavigation');
     } catch (error) {
@@ -132,7 +157,6 @@ const GetUnderlyingDiseaseInfo = () => {
       Alert.alert('오류', '데이터 전송 중 문제가 발생했습니다.');
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -172,10 +196,13 @@ const GetUnderlyingDiseaseInfo = () => {
         <TouchableOpacity style={styles.overlay} onPress={() => setIsModalVisible(false)} />
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>서비스 이용 필수 동의</Text>
-          {['이용 약관 동의', '개인정보 보호방침 동의', '민감정보수집 및 이용동의', '만 14세 이상입니다'].map((item, index) => (
+          {agreementOptions.map((item, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.agreementItem}
+              style={[
+                styles.agreementItem,
+                index === 0 && styles.allAgreeItem, // 스타일 추가
+              ]}
               onPress={() => handleAgreementToggle(index)}
             >
               <Image
@@ -186,7 +213,14 @@ const GetUnderlyingDiseaseInfo = () => {
                 }
                 style={styles.checkIcon}
               />
-              <Text style={styles.agreementText}>{item}</Text>
+              <Text
+                style={[
+                  styles.agreementText,
+                  index === 0 && styles.allAgreeText, // 스타일 추가
+                ]}
+              >
+                {item}
+              </Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity
@@ -273,11 +307,17 @@ const styles = StyleSheet.create({
   agreementItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start', // Align items to the left
-    alignSelf: 'flex-start', // Make the item align left within the container
+    justifyContent: 'flex-start',
+    alignSelf: 'flex-start',
     marginBottom: 12 * height_ratio,
   },
-  
+  allAgreeItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    paddingBottom: 12 * height_ratio,
+    marginBottom: 16 * height_ratio,
+    width: '100%',
+  },
   checkIcon: {
     width: 24 * width_ratio,
     height: 24 * width_ratio,
@@ -286,6 +326,10 @@ const styles = StyleSheet.create({
   agreementText: {
     fontSize: 14 * width_ratio,
     color: '#333',
+  },
+  allAgreeText: {
+    fontSize: 16 * width_ratio,
+    fontWeight: 'bold',
   },
   agreeButton: {
     marginTop: 20 * height_ratio,
