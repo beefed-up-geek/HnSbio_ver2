@@ -1,4 +1,4 @@
-// src\screens\login\get_usr_info.js
+// src/screens/login/get_usr_info.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
@@ -56,33 +56,46 @@ const Get_User_Info = () => {
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
-    // Form 유효성 검사
+    // Form validation
     validateForm();
-  }, [name, nickname, birthdate, height, weight, gender, birthdate]);
-  
+  }, [name, nickname, birthdate, height, weight, gender]);
 
   const validateForm = () => {
     const currentYear = new Date().getFullYear();
-    const [year, month, day] = birthdate.split('/').map(Number);
+    const birthdateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+    let isValid = true;
 
-    if (
-      name &&
-      nickname &&
-      height &&
-      weight &&
-      gender &&
-      /^\d{4}\/\d{2}\/\d{2}$/.test(birthdate) &&
-      year >= currentYear - 150 &&
-      year <= currentYear &&
-      month >= 1 &&
-      month <= 12 &&
-      day >= 1 &&
-      day <= 31
-    ) {
-      setIsFormValid(true);
-    } else {
-      setIsFormValid(false);
+    if (!name.trim()) {
+      isValid = false;
     }
+    if (!nickname.trim()) {
+      isValid = false;
+    }
+    if (!height) {
+      isValid = false;
+    }
+    if (!weight) {
+      isValid = false;
+    }
+    if (!gender) {
+      isValid = false;
+    }
+    if (!birthdateRegex.test(birthdate)) {
+      isValid = false;
+    } else {
+      const [year, month, day] = birthdate.split('/').map(Number);
+      if (
+        year < currentYear - 150 ||
+        year > currentYear ||
+        month < 1 ||
+        month > 12 ||
+        day < 1 ||
+        day > 31
+      ) {
+        isValid = false;
+      }
+    }
+    setIsFormValid(isValid);
   };
 
   const handleSave = () => {
@@ -97,17 +110,44 @@ const Get_User_Info = () => {
     if (!trimmedNickname) {
       errorMessage += '닉네임을 입력해주세요.\n';
     }
-    if (!height) {
-      errorMessage += '키를 입력해주세요.\n';
-    }
-    if (!weight) {
-      errorMessage += '체중을 입력해주세요.\n';
-    }
     if (!gender) {
       errorMessage += '성별을 선택해주세요.\n';
     }
-    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(birthdate)) {
-      errorMessage += '생년월일 형식이 잘못되었습니다.\n';
+    if (!birthdate) {
+      errorMessage += '생년월일을 입력해주세요.\n';
+    } else {
+      const birthdateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+      if (!birthdateRegex.test(birthdate)) {
+        errorMessage += '생년월일 형식이 잘못되었습니다. YYYY/MM/DD 형식으로 입력해주세요.\n';
+      } else {
+        const [year, month, day] = birthdate.split('/').map(Number);
+        const currentYear = new Date().getFullYear();
+        if (year < currentYear - 150 || year > currentYear) {
+          errorMessage += '생년월일의 년도가 유효하지 않습니다.\n';
+        }
+        if (month < 1 || month > 12) {
+          errorMessage += '생년월일의 월이 유효하지 않습니다.\n';
+        }
+        if (day < 1 || day > 31) {
+          errorMessage += '생년월일의 일이 유효하지 않습니다.\n';
+        }
+      }
+    }
+    if (!height) {
+      errorMessage += '키를 입력해주세요.\n';
+    } else {
+      const numHeight = parseInt(height, 10);
+      if (isNaN(numHeight) || numHeight < 30 || numHeight > 250) {
+        errorMessage += '키를 올바르게 입력해주세요.\n';
+      }
+    }
+    if (!weight) {
+      errorMessage += '체중을 입력해주세요.\n';
+    } else {
+      const numWeight = parseFloat(weight);
+      if (isNaN(numWeight) || numWeight < 2 || numWeight > 300) {
+        errorMessage += '체중을 올바르게 입력해주세요.\n';
+      }
     }
 
     if (errorMessage) {
@@ -207,18 +247,18 @@ const Get_User_Info = () => {
       scrollViewRef.current.scrollTo({ y: yOffset, animated: true });
     }
   };
-  
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView
-        ref = {scrollViewRef}
+        ref={scrollViewRef}
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled">
         <View style={styles.innerContainer}>
           <Text style={styles.title}>
-            더 정확한 건강 관리를 위해 {'\n'}기본 정보를 알려주세요
+            더 정확한 건강 관리를 위해{'\n'}기본 정보를 알려주세요
           </Text>
 
           <View style={styles.genderWrapper}>
@@ -264,7 +304,9 @@ const Get_User_Info = () => {
                 onFocus={() => setNameTextAlign('left')}
                 onBlur={() => !name && setNameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => nicknameInputRef.current && nicknameInputRef.current.focus()}
+                onSubmitEditing={() =>
+                  nicknameInputRef.current && nicknameInputRef.current.focus()
+                }
                 returnKeyType="next"
               />
               {nameError ? (
@@ -285,7 +327,9 @@ const Get_User_Info = () => {
                 onFocus={() => setNicknameTextAlign('left')}
                 onBlur={() => !nickname && setNicknameTextAlign('center')}
                 blurOnSubmit={false}
-                onSubmitEditing={() => birthdateInputRef.current && birthdateInputRef.current.focus()}
+                onSubmitEditing={() =>
+                  birthdateInputRef.current && birthdateInputRef.current.focus()
+                }
                 returnKeyType="next"
               />
               {nicknameError ? (
@@ -310,7 +354,9 @@ const Get_User_Info = () => {
               onFocus={() => setBirthdateTextAlign('left')}
               onBlur={() => !birthdate && setBirthdateTextAlign('center')}
               blurOnSubmit={false}
-              onSubmitEditing={() => heightInputRef.current && heightInputRef.current.focus()}
+              onSubmitEditing={() =>
+                heightInputRef.current && heightInputRef.current.focus()
+              }
               returnKeyType="next"
             />
           </View>
@@ -333,7 +379,9 @@ const Get_User_Info = () => {
                   onFocus={() => setHeightTextAlign('left')}
                   onBlur={() => !height && setHeightTextAlign('center')}
                   blurOnSubmit={false}
-                  onSubmitEditing={() => weightInputRef.current && weightInputRef.current.focus()}
+                  onSubmitEditing={() =>
+                    weightInputRef.current && weightInputRef.current.focus()
+                  }
                   returnKeyType="next"
                 />
                 <Text style={styles.unit}>cm</Text>
@@ -365,15 +413,7 @@ const Get_User_Info = () => {
         </View>
         <View style={styles.fixedButtonContainer}>
           <TouchableOpacity
-            onPress={
-              isFormValid
-                ? handleSave
-                : () =>
-                    Alert.alert(
-                      '입력 오류',
-                      '모든 필드를 형식에 맞게 입력해주세요.',
-                    )
-            }
+            onPress={handleSave}
             style={[
               styles.button,
               isFormValid ? styles.buttonEnabled : styles.buttonDisabled,
@@ -401,7 +441,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    paddingBottom: 100 * height_ratio, // Ensure there's space for the button
+    paddingBottom: 100 * height_ratio,
   },
   innerContainer: {
     paddingTop: 80 * height_ratio,
@@ -409,8 +449,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    marginLeft: 4 * width_ratio,
-    fontSize: 20 * width_ratio,
     marginLeft: 4 * width_ratio,
     fontSize: 20 * width_ratio,
     ...theme.fonts.Bold,
@@ -425,13 +463,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F1F1',
     borderRadius: 13 * width_ratio,
     paddingRight: 24 * width_ratio,
-    borderRadius: 13 * width_ratio,
-    paddingRight: 24 * width_ratio,
   },
   inputGroup: {
     flex: 1,
-    marginHorizontal: 8 * width_ratio,
-    marginBottom: 24 * height_ratio,
     marginHorizontal: 8 * width_ratio,
     marginBottom: 24 * height_ratio,
   },
@@ -455,16 +489,6 @@ const styles = StyleSheet.create({
     ...theme.fonts.Regular,
     color: 'black',
   },
-  nickname_input: {
-    borderWidth: 0,
-    borderColor: '#ccc',
-    borderRadius: 13 * width_ratio,
-    paddingVertical: 17 * height_ratio,
-    paddingHorizontal: 24 * width_ratio,
-    fontSize: 14 * width_ratio,
-    ...theme.fonts.Regular,
-    color: 'black',
-  },
   unit: {
     fontSize: 16 * width_ratio,
     ...theme.fonts.Regular,
@@ -473,7 +497,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: -8 * width_ratio,
     marginHorizontal: -8 * width_ratio,
   },
   fixedButtonContainer: {
@@ -488,8 +511,6 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 17 * height_ratio,
     borderRadius: 24 * width_ratio,
-    paddingVertical: 17 * height_ratio,
-    borderRadius: 24 * width_ratio,
     alignItems: 'center',
     width: '66.67%',
   },
@@ -500,7 +521,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCCCCC',
   },
   buttonText: {
-    fontSize: 16 * width_ratio,
     fontSize: 16 * width_ratio,
     ...theme.fonts.Bold,
   },
@@ -513,7 +533,6 @@ const styles = StyleSheet.create({
   genderWrapper: {
     width: '100%',
     marginBottom: 24 * height_ratio,
-    marginBottom: 24 * height_ratio,
   },
   genderContainer: {
     flexDirection: 'row',
@@ -522,22 +541,14 @@ const styles = StyleSheet.create({
   genderButton: {
     alignItems: 'center',
     padding: 10 * width_ratio,
-    padding: 10 * width_ratio,
   },
   genderImageFemale: {
-    marginLeft: 26 * width_ratio,
-    width: 109 * width_ratio,
-    height: 117.63 * height_ratio,
     marginLeft: 26 * width_ratio,
     width: 109 * width_ratio,
     height: 117.63 * height_ratio,
     resizeMode: 'contain',
   },
   genderImageMale: {
-    marginTop: 17 * height_ratio,
-    marginRight: 28 * width_ratio,
-    width: 102 * width_ratio,
-    height: 101 * height_ratio,
     marginTop: 17 * height_ratio,
     marginRight: 28 * width_ratio,
     width: 102 * width_ratio,

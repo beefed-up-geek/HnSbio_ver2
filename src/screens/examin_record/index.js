@@ -27,10 +27,12 @@ const Examin_record_screen = ({ route }) => {
   const tapCount = useRef(0);
   const [addingData, setAddingData] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { refreshHomeScreen } = route.params || {};
 
   const [showAllBloodTests, setShowAllBloodTests] = useState(false);
   const [showAllHealthCheckups, setShowAllHealthCheckups] = useState(false);
+
+  // 새로운 상태 변수 추가
+  const [hasHealthCheckupData, setHasHealthCheckupData] = useState(false);
 
   const refreshHealthData = async () => {
     const userData = await AsyncStorage.getItem('user');
@@ -38,10 +40,18 @@ const Examin_record_screen = ({ route }) => {
       const parsedData = JSON.parse(userData);
       setProviderId(parsedData.providerId);
       setUserGender(parsedData.gender);
-      setHealthCheckupData(parsedData.healthCheckup || []);
-      setBloodTestData(parsedData.blood_test_result || []);
       setAddingData(false);
-      refreshHomeScreen && refreshHomeScreen();
+
+      // healthCheckup 변수 존재 여부 확인 및 상태 업데이트
+      if (parsedData.hasOwnProperty('healthCheckup')) {
+        setHasHealthCheckupData(true);
+        setHealthCheckupData(parsedData.healthCheckup || []);
+      } else {
+        setHasHealthCheckupData(false);
+        setHealthCheckupData([]);
+      }
+
+      setBloodTestData(parsedData.blood_test_result || []);
     }
   };
 
@@ -66,7 +76,6 @@ const Examin_record_screen = ({ route }) => {
     }
     return false;
   };
-  
 
   const renderBloodTestCard = ({ item, index }) => {
     if (!item) return null;
@@ -304,7 +313,7 @@ const Examin_record_screen = ({ route }) => {
                   </TouchableOpacity>
                 </View>
               )}
-              {(!healthCheckupData || healthCheckupData.length === 0) ? (
+              {(!hasHealthCheckupData) ? (
                 <View style={styles.noDataContainer}>
                   <Image
                     source={require('../../images/health_screen/document.png')}
@@ -314,11 +323,22 @@ const Examin_record_screen = ({ route }) => {
                   <Text style={styles.infoText}>건강검진을 불러오면 분석을 제공해드려요!</Text>
                 </View>
               ) : (
-                <View>
-                  { (showAllHealthCheckups ? healthCheckupData : healthCheckupData.slice(0,2)).map((item, index) =>
-                    renderHealthCheckupCard({ item, index })
-                  )}
-                </View>
+                healthCheckupData.length === 0 ? (
+                  <View style={styles.noDataContainer}>
+                    <Image
+                      source={require('../../images/health_screen/document.png')}
+                      style={styles.noDataImage}
+                    />
+                    <Text style={styles.noDataText}>10년 이내 검진 내역 없음</Text>
+                    <Text style={styles.infoText}></Text>
+                  </View>
+                ) : (
+                  <View>
+                    { (showAllHealthCheckups ? healthCheckupData : healthCheckupData.slice(0,2)).map((item, index) =>
+                      renderHealthCheckupCard({ item, index })
+                    )}
+                  </View>
+                )
               )}
             </View>
           </View>
