@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
   },
   nextCheckupText1: {
     marginTop: 4,
-    marginLeft: 24,
+    marginLeft: 22 * width_ratio,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,
     color: '#4D495A',
   },
   nextCheckupText2: {
-    marginLeft: 24,
+    marginLeft: 22 * width_ratio,
     ...theme.fonts.SemiBold,
     fontSize: 24 * width_ratio,
     color: '#4D495A',
