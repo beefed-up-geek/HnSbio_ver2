@@ -297,7 +297,6 @@ const HomeScreen = () => {
       style={styles.gradient}>
       <View style={styles.logoContainer}>
             <DevButton loadUserData={loadUserData} />
-            <DevButton loadUserData={loadUserData} />
         </View>
       <ScrollView
         contentContainerStyle={styles.container}
