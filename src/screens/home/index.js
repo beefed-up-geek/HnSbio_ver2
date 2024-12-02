@@ -37,7 +37,6 @@ const HomeScreen = () => {
     retinal_complication: 0,
   });
   const [latestBloodTest, setLatestBloodTest] = useState(null);
-  const [latestKitTest, setLatestKitTest] = useState(null);
   const [estimatedKidneyFunction, setEstimatedKidneyFunction] = useState(null);
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
   const [checkCompletedToday, setCheckCompletedToday] = useState(false);
