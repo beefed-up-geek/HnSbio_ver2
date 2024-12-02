@@ -14,7 +14,7 @@
     <application
       android:requestLegacyExternalStorage="true"
       android:name=".MainApplication"
-      android:label="새로운 앱 이름" 
+      android:label="H&amp;S바이오랩" 
       android:icon="@mipmap/hns" 
       android:roundIcon="@mipmap/hns" 
       android:allowBackup="false"
