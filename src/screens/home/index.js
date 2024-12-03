@@ -1,4 +1,5 @@
 // src\screens\home\index.js
+
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
@@ -10,15 +11,16 @@ import {
   Animated,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useNavigation,
   useFocusEffect,
   useRoute,
 } from '@react-navigation/native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import DevButton from '../../components/devButton.js';
 import styles from './styles.js'; // 스타일 분리
-
 import {
   parseDateString,
   parseHealthCheckupDate,
