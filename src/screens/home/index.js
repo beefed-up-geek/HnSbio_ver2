@@ -438,6 +438,16 @@ const HomeScreen = () => {
             <Text style={styles.nextCheckupText2}>
               콩팥 건강 관리를 시작해보세요
             </Text>
+            <TouchableOpacity
+              style={styles.setPushAlarmButton}
+              onPress={() =>
+                navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+              }>
+              <Image
+                source={require('../../images/home/gearIcon.png')}
+                style={styles.setPushAlarmIcon}
+              />
+            </TouchableOpacity>
           </>
         )}
         <View style={styles.buttonContainer}>
