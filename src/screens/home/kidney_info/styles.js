@@ -59,12 +59,13 @@ const styles = StyleSheet.create({
     marginBottom: 12 * height_ratio,
   },
 
-  riskLevels: {
+  criteriaCard: {
+    height: 330 * height_ratio,
     marginHorizontal: 18 * width_ratio,
     borderWidth: 1,
     borderColor: '#E3E3E3',
     borderRadius: 13,
-    paddingVertical: 50 * height_ratio,
+    paddingVertical: 48 * height_ratio,
     alignSelf: 'center',
   },
   riskGraph: {
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
   },
 
   selectedRiskLabel: {
+    marginTop: 6 * height_ratio,
     ...theme.fonts.SemiBold,
     fontSize: 18 * width_ratio,
     color: '#49494F'

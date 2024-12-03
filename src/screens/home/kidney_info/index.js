@@ -190,7 +190,7 @@ const Kidney_info_screen = () => {
       <Text style={styles.sectionTitle}>콩팥 건강 단계 기준</Text>
 
       {/* 콩팥 건강 위험도 */}
-      <View style={styles.riskLevels}>
+      <View style={styles.criteriaCard}>
         <View style={styles.riskGraph}>
           {riskLevelsData &&
             riskLevelsData.map((level, index) => (
