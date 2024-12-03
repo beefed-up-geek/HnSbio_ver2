@@ -162,7 +162,10 @@ const Kidney_info_screen = () => {
                 <Text style={styles.MiddleText}>
                   {userName}님의 사구체여과율:
                 </Text>
-                <Text style={styles.gfrText}>{`${userGFR} ml/min/1.73㎡`}</Text>
+                <Text style={styles.gfrText}>
+                  <Text>{userGFR}</Text>
+                  <Text style={styles.lightText}> ml/min/1.73㎡</Text>
+                </Text>
               </View>
             </View>
           </>

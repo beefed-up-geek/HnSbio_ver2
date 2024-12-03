@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   profileButton: {
     marginBottom: 4 * height_ratio,
-    paddingRight: 24,
+    paddingRight: 24 * width_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     width: 24 * width_ratio,
-    height: 24 * height_ratio,
+    height: 24 * width_ratio,
     resizeMode: 'contain',
   },
   character: {
@@ -48,16 +48,16 @@ const styles = StyleSheet.create({
   },
   characterImage: {
     width: 278 * width_ratio,
-    height: 179.83 * height_ratio,
+    height: 179.83 * width_ratio,
     resizeMode: 'contain',
   },
   lineWrapper: {
-    gap: 8,
+    gap: 8 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
   },
   nextCheckupText1: {
-    marginTop: 4,
+    marginTop: 4 * height_ratio,
     marginLeft: 24 * width_ratio,
     ...theme.fonts.Regular,
     fontSize: 24 * width_ratio,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   boxText: {
     fontSize: 16 * width_ratio,
-    ...theme.fonts.SemiBold,
+    ...theme.fonts.Medium,
     color: '#4A4A4F',
   },
   checkImage: {
