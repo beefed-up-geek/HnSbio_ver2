@@ -257,47 +257,6 @@ const HomeScreen = () => {
           setRepeatInterval(null);
         }
 
-        // // Retrieve the latest health checkup
-        // if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
-        //   const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
-        //     const dateA = new Date(
-        //       a.resCheckupYear,
-        //       a.resCheckupDate.substring(0, 2) - 1,
-        //       a.resCheckupDate.substring(2),
-        //     );
-        //     const dateB = new Date(
-        //       b.resCheckupYear,
-        //       b.resCheckupDate.substring(0, 2) - 1,
-        //       b.resCheckupDate.substring(2),
-        //     );
-        //     return dateB - dateA;
-        //   });
-
-        //   const latestCheckup = sortedHealthCheckup[0];
-        //   const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
-        //   if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
-        //     let estimatedFunction;
-        //     if (parsedData.gender === 'male') {
-        //       estimatedFunction =
-        //         serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
-        //     } else {
-        //       estimatedFunction =
-        //         serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
-        //     }
-        //     setEstimatedKidneyFunction(Math.round(estimatedFunction));
-        //   } else {
-        //     setEstimatedKidneyFunction(null);
-        //   }
-
-        //   const dateString = `${
-        //     latestCheckup.resCheckupYear
-        //   }.${latestCheckup.resCheckupDate.substring(
-        //     0,
-        //     2,
-        //   )}.${latestCheckup.resCheckupDate.substring(2)}`;
-        //   setLatestCheckupDate(dateString);
-        // }
-
         // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
         if (parsedData.kit_result && parsedData.kit_result.length > 0) {
           const sortedKitResults = parsedData.kit_result.sort(
@@ -519,19 +478,21 @@ const HomeScreen = () => {
             <Text style={styles.nextCheckupText1}>
               아직 검사를 하지 않았어요.
             </Text>
-            <Text style={styles.nextCheckupText2}>
-              콩팥 건강 관리를 시작해보세요
-            </Text>
-            <TouchableOpacity
-              style={styles.setPushAlarmButton}
-              onPress={() =>
-                navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
-              }>
-              <Image
-                source={require('../../images/home/gearIcon.png')}
-                style={styles.setPushAlarmIcon}
-              />
-            </TouchableOpacity>
+            <View style={styles.lineWrapper}>
+              <Text style={styles.nextCheckupText2}>
+                콩팥 건강 관리를 시작해보세요
+              </Text>
+              <TouchableOpacity
+                style={styles.setPushAlarmButton}
+                onPress={() =>
+                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                }>
+                <Image
+                  source={require('../../images/home/gearIcon.png')}
+                  style={styles.setPushAlarmIcon}
+                />
+              </TouchableOpacity>
+            </View>
           </>
         )}
         <View style={styles.buttonContainer}>
@@ -560,7 +521,7 @@ const HomeScreen = () => {
           }>
           <View style={styles.titleContainer}>
             <Image
-              source={require('../../images/home/testButton.png')}
+              source={require('../../images/home/kit.png')}
               style={styles.bodyImage}
             />
             <View style={styles.titleLines}>
@@ -610,7 +571,7 @@ const HomeScreen = () => {
                 <Text style={styles.boxSubTextDark}>
                   {latestCheckupDate
                     ? `${latestCheckupDate} 검사 결과 기준`
-                    : '병원 기록을 입력하고 콩팥 건강 상태를 알아보세요'}
+                    : '검진 기록을 입력하고 콩팥 건강 상태를 알아보세요.'}
                 </Text>
               </View>
             </View>
@@ -622,7 +583,10 @@ const HomeScreen = () => {
                 style={styles.kidneyImage}
               />
             ) : (
-              <Text style={styles.noDataText}>데이터 없음</Text>
+              <Image
+                source={require('../../images/home/데이터없음.png')}
+                style={styles.noDataImage}
+              />
             )}
           </View>
         </TouchableOpacity>

@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   characterImage: {
-    width: 270 * width_ratio,
-    height: 220.7 * height_ratio,
+    width: 278 * width_ratio,
+    height: 179.83 * height_ratio,
     resizeMode: 'contain',
   },
   lineWrapper: {
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
     marginHorizontal: 24 * width_ratio,
-    paddingHorizontal: 22 * width_ratio,
-    paddingVertical: 24 * height_ratio,
+    paddingHorizontal: 24 * width_ratio,
+    paddingVertical: 22.5 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -155,12 +155,6 @@ const styles = StyleSheet.create({
     fontSize: 16 * width_ratio,
     ...theme.fonts.SemiBold,
     color: '#4A4A4F',
-  },
-  goIcon: {
-    width: 26.93 * width_ratio,
-    height: 23 * height_ratio,
-    marginLeft: 0 * width_ratio,
-    resizeMode: 'contain',
   },
   checkImage: {
     width: 36 * width_ratio,
