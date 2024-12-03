@@ -101,12 +101,21 @@ const HomeScreen = () => {
   };
 
   const parseDateString = dateString => {
-    // dateString format: "YYYY/MM/DD HH:mm:ss"
-    const [datePart, timePart] = dateString.split(' ');
-    const [year, month, day] = datePart.split('/').map(Number);
-    const [hours, minutes, seconds] = timePart.split(':').map(Number);
+    if (!dateString) return null;
 
-    return new Date(year, month - 1, day, hours, minutes, seconds);
+    // dateString can be "YYYY/MM/DD HH:mm:ss" or "YYYY/MM/DD"
+    const [datePart, timePart] = dateString.trim().split(' ');
+    const [year, month, day] = datePart.split(/[-/]/).map(Number);
+
+    let hours = 0,
+      minutes = 0,
+      seconds = 0;
+    if (timePart) {
+      [hours, minutes, seconds] = timePart.split(':').map(Number);
+    }
+
+    const date = new Date(year, month - 1, day, hours, minutes, seconds);
+    return isNaN(date.getTime()) ? null : date;
   };
 
   const parseHealthCheckupDate = (year, dateString) => {
@@ -259,10 +268,23 @@ const HomeScreen = () => {
 
         // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
         if (parsedData.kit_result && parsedData.kit_result.length > 0) {
-          const sortedKitResults = parsedData.kit_result.sort(
-            (a, b) => new Date(b.datetime) - new Date(a.datetime),
-          );
-          setLatestKitTest(sortedKitResults[0]);
+          const validKitResults = parsedData.kit_result.filter(kit => {
+            const date = parseDateString(kit.datetime);
+            if (date) {
+              kit.parsedDate = date; // Store parsed date for sorting
+              return true;
+            } else {
+              console.warn(`Invalid datetime in kit_result: ${kit.datetime}`);
+              return false;
+            }
+          });
+
+          if (validKitResults.length > 0) {
+            validKitResults.sort((a, b) => b.parsedDate - a.parsedDate);
+            setLatestKitTest(validKitResults[0]);
+          } else {
+            setLatestKitTest(null);
+          }
         }
 
         const combinedResults = [];
@@ -273,15 +295,19 @@ const HomeScreen = () => {
           parsedData.blood_test_result.length > 0
         ) {
           parsedData.blood_test_result.forEach(test => {
-            const date = parseDateString(test.date);
-            if (!isNaN(date)) {
-              combinedResults.push({
-                source: 'blood_test',
-                date,
-                data: test,
-              });
+            if (test.date) {
+              const date = parseDateString(test.date);
+              if (date) {
+                combinedResults.push({
+                  source: 'blood_test',
+                  date,
+                  data: test,
+                });
+              } else {
+                console.warn(`Invalid date in blood_test_result: ${test.date}`);
+              }
             } else {
-              console.warn(`Invalid date in blood_test_result: ${test.date}`);
+              console.warn('Missing date in blood_test_result entry:', test);
             }
           });
         }
@@ -529,7 +555,8 @@ const HomeScreen = () => {
                 {latestKitTest ? (
                   <>
                     <Text style={styles.boxSubTextDark}>
-                      {formatDate(new Date(latestKitTest.datetime))} 검사
+                      {formatDate(parseDateString(latestKitTest.datetime))} 키트
+                      결과 기준
                     </Text>
                   </>
                 ) : (
@@ -545,12 +572,12 @@ const HomeScreen = () => {
               latestKitTest.result === 1 ? (
                 <Image
                   source={require('../../images/home/양성.png')} // 양성일 때 표시
-                  style={styles.noDataImage}
+                  style={styles.kidneyImage}
                 />
               ) : (
                 <Image
                   source={require('../../images/home/음성.png')} // 음성일 때 표시
-                  style={styles.noDataImage}
+                  style={styles.kidneyImage}
                 />
               )
             ) : (
@@ -577,8 +604,10 @@ const HomeScreen = () => {
               <View style={styles.subLines}>
                 <Text style={styles.boxSubTextDark}>
                   {latestCheckupDate
-                    ? `${latestCheckupDate} 검사 결과 기준`
-                    : '최근 검진 기록이 없습니다.'}
+                    ? latestRecordSource === 'health_checkup'
+                      ? `${latestCheckupDate} 건강검진 결과 기준`
+                      : `${latestCheckupDate} 혈액검사 결과 기준`
+                    : '병원 기록을 입력하고 콩팥 건강 상태를 알아보세요'}
                 </Text>
               </View>
             </View>

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
     marginHorizontal: 22 * width_ratio,
-    paddingRight: 24 * width_ratio,
+    paddingRight: 22 * width_ratio,
     paddingLeft: 22 * width_ratio,
     paddingVertical: 22.5 * height_ratio,
     flexDirection: 'row',
