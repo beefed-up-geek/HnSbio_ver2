@@ -1,6 +1,14 @@
 // src/screens/examin_record/blood_test_input/index.js
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -60,19 +68,26 @@ const Blood_test_input_screen = ({ route }) => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
 
+    // 날짜 형식 및 미래 날짜 검사
     if (!dateRegex.test(date)) {
       errors.push('date');
+    } else {
+      const enteredDate = new Date(date.replace(/\//g, '-'));
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 0시로 설정
+      if (enteredDate > today) {
+        errors.push('date');
+      }
     }
 
-    if (!bun || isNaN(bun) || bun <= 0) {
+    // 범위 검사
+    if (!bun || isNaN(bun) || bun <= 0 || bun > 200) {
       errors.push('bun');
     }
-
-    if (!creatinine || isNaN(creatinine) || creatinine <= 0) {
+    if (!creatinine || isNaN(creatinine) || creatinine <= 0 || creatinine > 20) {
       errors.push('creatinine');
     }
-
-    if (!gfr || isNaN(gfr) || gfr <= 0) {
+    if (!gfr || isNaN(gfr) || gfr <= 0 || gfr > 300) {
       errors.push('gfr');
     }
 
@@ -97,7 +112,6 @@ const Blood_test_input_screen = ({ route }) => {
     };
 
     try {
-      // 기존 데이터 가져오기
       const userData = await AsyncStorage.getItem('user');
       let parsedData = userData ? JSON.parse(userData) : {};
 
@@ -108,11 +122,8 @@ const Blood_test_input_screen = ({ route }) => {
       }
 
       const providerId = parsedData.providerId;
-
-      // 검사 결과 업데이트
       let bloodTestResults = parsedData.blood_test_result || [];
 
-      // 중복 데이터 체크
       const isDuplicate = bloodTestResults.some(
         (result) =>
           result.date === newTestResult.date &&
@@ -128,26 +139,16 @@ const Blood_test_input_screen = ({ route }) => {
       }
 
       bloodTestResults.push(newTestResult);
-
-      // 날짜 정렬을 위해 슬래시를 대시로 변경하여 Date 객체 생성
-      bloodTestResults.sort((a, b) => {
-        const dateA = new Date(a.date.replace(/\//g, '-'));
-        const dateB = new Date(b.date.replace(/\//g, '-'));
-        return dateB - dateA;
-      });
-
+      bloodTestResults.sort((a, b) => new Date(b.date) - new Date(a.date));
       parsedData.blood_test_result = bloodTestResults;
 
-      // 업데이트된 데이터 저장
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-      // API 호출
       await axios.put('http://98.82.55.237/blood_test/addBloodTestResult', {
         providerId,
         ...newTestResult,
       });
 
-      // 데이터 새로고침 및 화면 이동
       refreshHealthData();
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' });
     } catch (error) {
@@ -168,65 +169,70 @@ const Blood_test_input_screen = ({ route }) => {
         ]}
         placeholder="YYYY/MM/DD"
         placeholderTextColor="#828287"
-        cursorColor="black"
         value={date}
         onChangeText={handleDateChange}
         keyboardType="numeric"
+        maxLength={10}
         returnKeyType="next"
         onSubmitEditing={() => bunRef.current.focus()}
-        maxLength={10}
       />
 
       <Text style={styles.label}>BUN</Text>
-      <TextInput
-        ref={bunRef}
-        style={[
-          styles.input,
-          invalidFields.includes('bun') && styles.invalidInput,
-        ]}
-        placeholder="mg/dL"
-        placeholderTextColor="#828287"
-        cursorColor="black"
-        value={bun}
-        onChangeText={setBun}
-        keyboardType="numeric"
-        returnKeyType="next"
-        onSubmitEditing={() => creatinineRef.current.focus()}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          ref={bunRef}
+          style={[
+            styles.input,
+            invalidFields.includes('bun') && styles.invalidInput,
+          ]}
+          placeholder="0 ~ 200"
+          placeholderTextColor="#828287"
+          value={bun}
+          onChangeText={setBun}
+          keyboardType="numeric"
+          returnKeyType="next"
+          onSubmitEditing={() => creatinineRef.current.focus()}
+        />
+        <Text style={styles.unitText}>mg/dL</Text>
+      </View>
 
       <Text style={styles.label}>혈청 크레아티닌</Text>
-      <TextInput
-        ref={creatinineRef}
-        style={[
-          styles.input,
-          invalidFields.includes('creatinine') && styles.invalidInput,
-        ]}
-        placeholder="mg/dL"
-        placeholderTextColor="#828287"
-        cursorColor="black"
-        value={creatinine}
-        onChangeText={setCreatinine}
-        keyboardType="numeric"
-        returnKeyType="next"
-        onSubmitEditing={() => gfrRef.current.focus()}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          ref={creatinineRef}
+          style={[
+            styles.input,
+            invalidFields.includes('creatinine') && styles.invalidInput,
+          ]}
+          placeholder="0 ~ 20"
+          placeholderTextColor="#828287"
+          value={creatinine}
+          onChangeText={setCreatinine}
+          keyboardType="numeric"
+          returnKeyType="next"
+          onSubmitEditing={() => gfrRef.current.focus()}
+        />
+        <Text style={styles.unitText}>mg/dL</Text>
+      </View>
 
       <Text style={styles.label}>GFR</Text>
-      <TextInput
-        ref={gfrRef}
-        style={[
-          styles.input,
-          invalidFields.includes('gfr') && styles.invalidInput,
-        ]}
-        placeholder="mL/min/1.73m²"
-        placeholderTextColor="#828287"
-        cursorColor="black"
-        value={gfr}
-        onChangeText={setGfr}
-        keyboardType="numeric"
-        returnKeyType="done"
-        onSubmitEditing={addTestResult}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          ref={gfrRef}
+          style={[
+            styles.input,
+            invalidFields.includes('gfr') && styles.invalidInput,
+          ]}
+          placeholder="0 ~ 300"
+          placeholderTextColor="#828287"
+          value={gfr}
+          onChangeText={setGfr}
+          keyboardType="numeric"
+          returnKeyType="done"
+          onSubmitEditing={addTestResult}
+        />
+        <Text style={styles.unitText}>mL/min/1.73m²</Text>
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={addTestResult} disabled={isSaving}>
         <Text style={styles.buttonText}>검사 결과 추가</Text>
@@ -247,6 +253,10 @@ const styles = StyleSheet.create({
     marginBottom: 5 * height_ratio,
     ...theme.fonts.Medium,
   },
+  inputWrapper: {
+    position: 'relative',
+    marginBottom: 15 * height_ratio,
+  },
   input: {
     height: 50 * height_ratio,
     borderRadius: 10 * width_ratio,
@@ -256,12 +266,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F1F1F1',
     color: '#333',
-    marginBottom: 15 * height_ratio,
     ...theme.fonts.Regular,
   },
   invalidInput: {
-    borderWidth: 1,
     borderColor: '#F53E50',
+  },
+  unitText: {
+    position: 'absolute',
+    right: 15 * width_ratio,
+    top: 15 * height_ratio,
+    fontSize: 14 * width_ratio,
+    color: '#828287',
+    ...theme.fonts.Regular,
   },
   button: {
     height: 50 * height_ratio,
@@ -269,6 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EFFD',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20 * height_ratio,
   },
   buttonText: {
     fontSize: 16 * width_ratio,

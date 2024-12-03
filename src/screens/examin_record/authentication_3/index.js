@@ -158,7 +158,7 @@ const Authentication_3_screen = () => {
         <Modal transparent={true} animationType="none">
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.mainBlue} />
-            <Text style={styles.loadingText}>인증을 진행 중입니다...</Text>
+            <Text style={styles.loadingText}>건강보험공단에서 불러오는 중입니다.</Text>
           </View>
         </Modal>
       )}

@@ -79,9 +79,9 @@ const Examin_record_screen = ({ route }) => {
 
   const renderBloodTestCard = ({ item, index }) => {
     if (!item) return null;
-
+  
     const abnormalLabels = [];
-
+  
     const addAbnormalLabel = (value, type) => {
       if (isValueOutOfRange(value, type)) {
         abnormalLabels.push(
@@ -93,13 +93,16 @@ const Examin_record_screen = ({ route }) => {
         );
       }
     };
-
+  
     addAbnormalLabel(item.GFR, 'GFR');
     addAbnormalLabel(item.creatinine, '혈청크레아티닌');
     addAbnormalLabel(item.BUN, 'BUN');
-
-    const displayDate = item.date.substring(5, 10);
-
+  
+    // 연도와 날짜를 추출
+    const displayYear = item.date.substring(0, 4); // 연도
+    const displayMonth = item.date.substring(5, 7); // 월
+    const displayDay = item.date.substring(8, 10); // 일
+  
     return (
       <TouchableOpacity
         key={index}
@@ -112,12 +115,14 @@ const Examin_record_screen = ({ route }) => {
               userGender: userGender,
               index: index, // 위에서부터 몇 번째인지 전달
               refreshHealthData: refreshHealthData, // 함수 전달
-              },
+            },
           })
         }
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.cardType}>{displayDate} 검사 결과</Text>
+          <Text style={styles.cardType}>
+            {displayYear}/{displayMonth}/{displayDay} 검사 결과
+          </Text>
           <View style={styles.cardHeaderRight}>
             <Text style={styles.moreText}>수정하기</Text>
             <FontAwesome5 name="chevron-right" size={12 * width_ratio} color="#828282" />
@@ -133,6 +138,7 @@ const Examin_record_screen = ({ route }) => {
       </TouchableOpacity>
     );
   };
+  
 
   const getHealthTags = (item) => {
     const healthTags = [];
