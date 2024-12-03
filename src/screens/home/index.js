@@ -403,6 +403,15 @@ const HomeScreen = () => {
       <View style={styles.logoContainer}>
         <DevButton loadUserData={loadUserData} />
       </View>
+      <TouchableOpacity
+        style={styles.profileButton}
+        onPress={() => navigation.navigate('NoTabs', {screen: 'my_profile'})}>
+        <Text style={styles.profileText}>내 프로필</Text>
+        <Image
+          source={require('../../images/home/user.png')}
+          style={styles.profileIcon}
+        />
+      </TouchableOpacity>
       <ScrollView
         contentContainerStyle={styles.container}
         scrollEventThrottle={16}
@@ -412,20 +421,10 @@ const HomeScreen = () => {
             useNativeDriver: false,
             listener: event => {
               const offsetY = event.nativeEvent.contentOffset.y;
-              characterOpacity.setValue(1 - Math.min(offsetY / 300, 1));
+              characterOpacity.setValue(1 - Math.min(offsetY / 100, 1));
             },
           },
         )}>
-        <TouchableOpacity
-          style={styles.profileButton}
-          onPress={() => navigation.navigate('NoTabs', {screen: 'my_profile'})}>
-          <Text style={styles.profileText}>내 프로필</Text>
-          <Image
-            source={require('../../images/home/user.png')}
-            style={styles.profileIcon}
-          />
-        </TouchableOpacity>
-
         <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
           <Image
             source={require('../../images/home/sampleimage2.png')}
@@ -579,7 +578,7 @@ const HomeScreen = () => {
                 <Text style={styles.boxSubTextDark}>
                   {latestCheckupDate
                     ? `${latestCheckupDate} 검사 결과 기준`
-                    : '검진 기록을 입력하고 콩팥 건강 상태를 알아보세요.'}
+                    : '최근 검진 기록이 없습니다.'}
                 </Text>
               </View>
             </View>

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    marginTop: 20 * height_ratio,
+    marginTop: 18 * height_ratio,
     marginBottom: 16 * height_ratio,
     gap: 4 * width_ratio,
   },
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 6 * height_ratio,
+    marginBottom: 7 * height_ratio,
   },
   titleContainer: {
     flexDirection: 'row',
