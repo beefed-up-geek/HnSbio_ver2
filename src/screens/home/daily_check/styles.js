@@ -1,4 +1,5 @@
 // src\screens\home\daily_check\styles.js
+
 import {StyleSheet, Dimensions} from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
@@ -23,8 +24,8 @@ const styles = StyleSheet.create({
     gap: 6 * height_ratio,
   },
   checkBoxImage: {
-    width: 20, // 원하는 크기로 조정
-    height: 20,
+    width: 20 * width_ratio, 
+    height: 20 * width_ratio,
   },
   checklistItem: {
     height: 56 * height_ratio,
@@ -36,9 +37,9 @@ const styles = StyleSheet.create({
     gap: 22 * width_ratio,
   },
   checklistText: {
-    color: 'black',
+    color: '#49494F',
     ...theme.fonts.Regular,
-    fontSize: 15,
+    fontSize: 15 * width_ratio,
   },
   saveButtonContainer: {
     alignItems: 'center',
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     ...theme.fonts.SemiBold,
-    fontSize: 15,
+    fontSize: 16 * width_ratio,
     color: '#7596FF',
   },
 
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
   },
   modalMessage: {
     ...theme.fonts.Regular,
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     textAlign: 'left',
     marginBottom: 26 * height_ratio,
     color: '#353535',
@@ -87,12 +88,12 @@ const styles = StyleSheet.create({
     gap: 7 * width_ratio,
   },
   modalButtonImage1: {
-    height: 48 * height_ratio,
+    height: 48 * width_ratio,
     width: 79 * width_ratio,
     resizeMode: 'contain',
   },
   modalButtonImage2: {
-    height: 48 * height_ratio,
+    height: 48 * width_ratio,
     width: 192 * width_ratio,
     resizeMode: 'contain',
   },

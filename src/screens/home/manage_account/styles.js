@@ -1,4 +1,5 @@
 // src\screens\home\manage_account\styles.js
+
 import { StyleSheet, Dimensions } from 'react-native';
 
 import theme from '../../../theme';
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
     paddingTop: 10 * height_ratio,
   },
   detailsContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: 'white',
     borderRadius: 16,
     borderColor: '#F4F4F4',
     borderWidth: 1,
@@ -38,12 +39,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     ...theme.fonts.Regular,
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     color: 'black',
   },
   detailValue: {
     ...theme.fonts.Regular,
-    fontSize: 15,
+    fontSize: 15 * width_ratio,
     color: '#5D5D5D',
   },
   goIcon: {

@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
   },
   profileImageContainer: {
     alignItems: 'center',
-    marginTop: 30 * height_ratio,
-    marginBottom: 30 * height_ratio,
+    marginTop: 30 * width_ratio,
+    marginBottom: 30 * width_ratio,
   },
   profileImage: {
     width: 110 * width_ratio,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   modalSaveButtonContainer: {
     alignItems: 'center', // 중앙 정렬
     justifyContent: 'center', // 수직 중앙 정렬
-    marginTop: 20 * height_ratio, // 여백 추가 (필요에 따라 조정)
+    marginTop: 20 * height_ratio, 
   },
   inputContainer: {
     marginBottom: 18 * height_ratio,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     ...theme.fonts.Regular,
-    fontSize: 15,
+    fontSize: 15 * width_ratio,
     color: '#49494F',
   },
   selectedOptionText: {
@@ -201,21 +201,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 10 * height_ratio,
   },
   birthdateInput: {
     borderBottomWidth: 1,
     borderColor: '#828287',
     width: 90 * width_ratio,
     textAlign: 'center',
-    fontSize: 16,
-    color: '#000', // 텍스트 색상 검은색 설정
-    marginHorizontal: 5,
+    fontSize: 16 * width_ratio,
+    color: 'black', 
+    marginHorizontal: 5 * width_ratio,
   },
   birthdateSeparator: {
-    fontSize: 16,
-    color: '#000',
-    marginHorizontal: 2,
+    fontSize: 16 * width_ratio,
+    color: 'black',
+    marginHorizontal: 2 * width_ratio,
   },
 });
   

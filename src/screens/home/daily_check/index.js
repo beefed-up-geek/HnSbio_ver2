@@ -1,4 +1,5 @@
 // src\screens\home\daily_check\index.js
+
 import React, {useState} from 'react';
 import {
   View,

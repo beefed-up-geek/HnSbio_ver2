@@ -1,4 +1,5 @@
 // src\screens\home\set_push_alarm\styles.js
+
 import { StyleSheet, Dimensions } from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
@@ -43,11 +44,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: 18 * width_ratio,
-    height: 18 * height_ratio,
+    height: 18 * width_ratio,
   },
   detailLabel: {
     ...theme.fonts.Regular,
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     color: 'black',
   },
   valueContainer: {
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     ...theme.fonts.Regular,
-    fontSize: 15,
+    fontSize: 15 * width_ratio,
     color: '#5D5D5D',
   },
   
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     ...theme.fonts.SemiBold,
-    fontSize: 15,
+    fontSize: 15 * width_ratio,
   },
 
     // 변경사항 저장 컨펌 모달 스타일
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     },
     modalMessage: {
       ...theme.fonts.Regular,
-      fontSize: 16,
+      fontSize: 16 * width_ratio,
       textAlign: 'left',
       marginBottom: 24 * height_ratio,
       color: '#353535',
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
     },
     modalButtonImage: {
-      height: 42 * height_ratio,
+      height: 42 * width_ratio,
       width: 105 * width_ratio,
       resizeMode: 'contain',
     },
