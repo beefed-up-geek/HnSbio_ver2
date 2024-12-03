@@ -128,13 +128,7 @@ const styles = StyleSheet.create({
   subLines: {
     gap: 1 * height_ratio,
   },
-  boxSubLight: {
-    width: 170 * width_ratio,
-    fontSize: 12 * width_ratio,
-    ...theme.fonts.Light,
-    color: '#4A4A4F',
-  },
-  boxSubTextDark: {
+  boxSubTextLight: {
     width: 170 * width_ratio,
     fontSize: 12 * width_ratio,
     ...theme.fonts.Light,

@@ -554,13 +554,13 @@ const HomeScreen = () => {
               <View style={styles.subLines}>
                 {latestKitTest ? (
                   <>
-                    <Text style={styles.boxSubTextDark}>
+                    <Text style={styles.boxSubTextLight}>
                       {formatDate(parseDateString(latestKitTest.datetime))} 키트
                       결과 기준
                     </Text>
                   </>
                 ) : (
-                  <Text style={styles.boxSubTextDark}>
+                  <Text style={styles.boxSubTextLight}>
                     최근 검사 결과가 없습니다.
                   </Text>
                 )}
@@ -602,12 +602,12 @@ const HomeScreen = () => {
             <View style={styles.titleLines}>
               <Text style={styles.boxText}>나의 콩팥 건강</Text>
               <View style={styles.subLines}>
-                <Text style={styles.boxSubTextDark}>
+                <Text style={styles.boxSubTextLight}>
                   {latestCheckupDate
                     ? latestRecordSource === 'health_checkup'
                       ? `${latestCheckupDate} 건강검진 결과 기준`
                       : `${latestCheckupDate} 혈액검사 결과 기준`
-                    : '병원 기록을 입력하고 콩팥 건강 상태를 알아보세요'}
+                    : '최근 검진 기록이 없습니다.'}
                 </Text>
               </View>
             </View>
@@ -639,8 +639,8 @@ const HomeScreen = () => {
             />
             <View style={styles.titleLines}>
               <Text style={styles.boxText}>오늘의 콩팥 상태 체크하기</Text>
-              <Text style={styles.boxSubLight}>
-                매일 체크하는 것을 권장해요
+              <Text style={styles.boxSubTextLight}>
+                매일 체크하는 것을 권장해요.
               </Text>
             </View>
           </View>

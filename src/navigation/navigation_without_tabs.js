@@ -191,7 +191,7 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="kidney_info"
         component={Kidney_info_screen}
-        options={{title: '나의 콩팥 점수'}}
+        options={{title: '나의 콩팥 건강'}}
       />
       <Stack.Screen
         name="HealthCheckupSpecifics"
