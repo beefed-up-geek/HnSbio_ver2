@@ -41,6 +41,7 @@ const HomeScreen = () => {
   const [estimatedKidneyFunction, setEstimatedKidneyFunction] = useState(null);
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
   const [checkCompletedToday, setCheckCompletedToday] = useState(false);
+  const [latestRecordSource, setLatestRecordSource] = useState('');
 
   // 홈화면 메인 글자를 위한 상태변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
@@ -53,12 +54,9 @@ const HomeScreen = () => {
 
   const characterOpacity = useState(new Animated.Value(1))[0];
 
-  // 신기능 단계에 따른 스타일 설정 함수
-  const calculateGFR = bloodTest => {
-    const {creatinine} = bloodTest;
+  const calculateGFR = creatinine => {
     const age = calculateAge(birthdate);
     const isFemale = gender === 'female';
-
     let gfr = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
     if (isFemale) {
       gfr *= 0.742;
@@ -93,21 +91,30 @@ const HomeScreen = () => {
   };
 
   const formatDate = date => {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return '';
+    }
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
+    return `${year}.${month}.${day}`;
   };
 
-  // 날짜 문자열 파싱 함수
   const parseDateString = dateString => {
-    // dateString 형식: "YYYY/MM/DD HH:mm:ss"
+    // dateString format: "YYYY/MM/DD HH:mm:ss"
     const [datePart, timePart] = dateString.split(' ');
     const [year, month, day] = datePart.split('/').map(Number);
     const [hours, minutes, seconds] = timePart.split(':').map(Number);
 
-    // JavaScript에서 month는 0부터 시작하므로 month에서 1을 빼줌
     return new Date(year, month - 1, day, hours, minutes, seconds);
+  };
+
+  const parseHealthCheckupDate = (year, dateString) => {
+    // dateString format: "MMDD"
+    const month = parseInt(dateString.substring(0, 2), 10) - 1; // Months are 0-based
+    const day = parseInt(dateString.substring(2), 10);
+
+    return new Date(parseInt(year, 10), month, day);
   };
 
   // Calculate days until the next kit test
@@ -250,46 +257,46 @@ const HomeScreen = () => {
           setRepeatInterval(null);
         }
 
-        // Retrieve the latest health checkup
-        if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
-          const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
-            const dateA = new Date(
-              a.resCheckupYear,
-              a.resCheckupDate.substring(0, 2) - 1,
-              a.resCheckupDate.substring(2),
-            );
-            const dateB = new Date(
-              b.resCheckupYear,
-              b.resCheckupDate.substring(0, 2) - 1,
-              b.resCheckupDate.substring(2),
-            );
-            return dateB - dateA;
-          });
+        // // Retrieve the latest health checkup
+        // if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+        //   const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
+        //     const dateA = new Date(
+        //       a.resCheckupYear,
+        //       a.resCheckupDate.substring(0, 2) - 1,
+        //       a.resCheckupDate.substring(2),
+        //     );
+        //     const dateB = new Date(
+        //       b.resCheckupYear,
+        //       b.resCheckupDate.substring(0, 2) - 1,
+        //       b.resCheckupDate.substring(2),
+        //     );
+        //     return dateB - dateA;
+        //   });
 
-          const latestCheckup = sortedHealthCheckup[0];
-          const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
-          if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
-            let estimatedFunction;
-            if (parsedData.gender === 'male') {
-              estimatedFunction =
-                serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
-            } else {
-              estimatedFunction =
-                serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
-            }
-            setEstimatedKidneyFunction(Math.round(estimatedFunction));
-          } else {
-            setEstimatedKidneyFunction(null);
-          }
+        //   const latestCheckup = sortedHealthCheckup[0];
+        //   const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
+        //   if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
+        //     let estimatedFunction;
+        //     if (parsedData.gender === 'male') {
+        //       estimatedFunction =
+        //         serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
+        //     } else {
+        //       estimatedFunction =
+        //         serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
+        //     }
+        //     setEstimatedKidneyFunction(Math.round(estimatedFunction));
+        //   } else {
+        //     setEstimatedKidneyFunction(null);
+        //   }
 
-          const dateString = `${
-            latestCheckup.resCheckupYear
-          }.${latestCheckup.resCheckupDate.substring(
-            0,
-            2,
-          )}.${latestCheckup.resCheckupDate.substring(2)}`;
-          setLatestCheckupDate(dateString);
-        }
+        //   const dateString = `${
+        //     latestCheckup.resCheckupYear
+        //   }.${latestCheckup.resCheckupDate.substring(
+        //     0,
+        //     2,
+        //   )}.${latestCheckup.resCheckupDate.substring(2)}`;
+        //   setLatestCheckupDate(dateString);
+        // }
 
         // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
         if (parsedData.kit_result && parsedData.kit_result.length > 0) {
@@ -299,29 +306,90 @@ const HomeScreen = () => {
           setLatestKitTest(sortedKitResults[0]);
         }
 
-        // 가장 최근 혈액검사 결과를 latestBloodTest 변수로 설정
+        const combinedResults = [];
+
+        // Process blood_test_result
         if (
           parsedData.blood_test_result &&
           parsedData.blood_test_result.length > 0
         ) {
-          const sortedBloodTests = parsedData.blood_test_result.sort(
-            (a, b) => new Date(b.date) - new Date(a.date),
-          );
-          const latestTest = sortedBloodTests[0];
-          setLatestBloodTest(latestTest);
+          parsedData.blood_test_result.forEach(test => {
+            const date = parseDateString(test.date);
+            if (!isNaN(date)) {
+              combinedResults.push({
+                source: 'blood_test',
+                date,
+                data: test,
+              });
+            } else {
+              console.warn(`Invalid date in blood_test_result: ${test.date}`);
+            }
+          });
+        }
 
-          // Use GFR from the blood test result, or calculate it
-          if (latestTest.GFR) {
-            setLatestGFR(latestTest.GFR);
-          } else if (latestTest.creatinine) {
-            const calculatedGFR = calculateGFR(latestTest);
-            setLatestGFR(calculatedGFR);
-          } else {
-            setLatestGFR(null);
+        // Process healthCheckup
+        if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
+          parsedData.healthCheckup.forEach(checkup => {
+            const date = parseHealthCheckupDate(
+              checkup.resCheckupYear,
+              checkup.resCheckupDate,
+            );
+            if (!isNaN(date)) {
+              combinedResults.push({
+                source: 'health_checkup',
+                date,
+                data: checkup,
+              });
+            } else {
+              console.warn(
+                `Invalid date in healthCheckup: ${checkup.resCheckupYear}-${checkup.resCheckupDate}`,
+              );
+            }
+          });
+        }
+
+        // Find the most recent record
+        if (combinedResults.length > 0) {
+          // Sort the combined results by date in descending order
+          combinedResults.sort((a, b) => b.date - a.date);
+
+          const latestRecord = combinedResults[0];
+
+          // Set the date for display
+          setLatestCheckupDate(formatDate(latestRecord.date));
+
+          if (latestRecord.source === 'blood_test') {
+            setLatestBloodTest(latestRecord.data);
+
+            // Use GFR from the blood test result, or calculate it
+            if (latestRecord.data.GFR) {
+              setLatestGFR(latestRecord.data.GFR);
+            } else if (latestRecord.data.creatinine) {
+              const calculatedGFR = calculateGFR(latestRecord.data.creatinine);
+              setLatestGFR(calculatedGFR);
+            } else {
+              setLatestGFR(null);
+            }
+          } else if (latestRecord.source === 'health_checkup') {
+            // Use GFR from health checkup, or calculate it
+            const serumCreatinine = parseFloat(
+              latestRecord.data.resSerumCreatinine,
+            );
+            if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
+              let gfrValue;
+              if (latestRecord.data.resGFR) {
+                gfrValue = parseFloat(latestRecord.data.resGFR);
+              } else {
+                gfrValue = calculateGFR(serumCreatinine);
+              }
+              setLatestGFR(gfrValue);
+            } else {
+              setLatestGFR(null);
+            }
           }
         } else {
-          setLatestBloodTest(null);
           setLatestGFR(null);
+          setLatestCheckupDate(null);
         }
       }
     } catch (error) {
@@ -540,9 +608,9 @@ const HomeScreen = () => {
               <Text style={styles.boxText}>나의 콩팥 건강</Text>
               <View style={styles.subLines}>
                 <Text style={styles.boxSubTextDark}>
-                  {latestBloodTest
-                    ? `${formatDate(new Date(latestBloodTest.date))} 검사 결과`
-                    : '병원 기록을 입력하고'}
+                  {latestCheckupDate
+                    ? `${latestCheckupDate} 검사 결과 기준`
+                    : '병원 기록을 입력하고 콩팥 건강 상태를 알아보세요'}
                 </Text>
               </View>
             </View>
@@ -554,10 +622,7 @@ const HomeScreen = () => {
                 style={styles.kidneyImage}
               />
             ) : (
-              <Image
-              source={require('../../images/home/데이터없음.png')}
-              style={styles.noDataImage}
-              />
+              <Text style={styles.noDataText}>데이터 없음</Text>
             )}
           </View>
         </TouchableOpacity>
