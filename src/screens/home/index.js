@@ -125,13 +125,15 @@ const HomeScreen = () => {
       nextTestDate.setDate(start.getDate() + (periodsElapsed + 1) * repeatDays);
 
       // Calculate days left until the next test date
-      const daysLeft = Math.ceil((nextTestDate - currentDate) / (1000 * 3600 * 24));
+      const daysLeft = Math.ceil(
+        (nextTestDate - currentDate) / (1000 * 3600 * 24),
+      );
 
       setDaysToNextKitTest(daysLeft);
     } else {
       setDaysToNextKitTest(null);
     }
-  }
+  };
 
   // Calculate days since the last kit test
   const calculateLastKitTest = () => {
@@ -388,28 +390,56 @@ const HomeScreen = () => {
           />
         </Animated.View>
 
-        <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
-        <View style={styles.lineWrapper}>
-          {daysToNextKitTest !== null ? (
-            <Text style={styles.nextCheckupText2}>{daysToNextKitTest}일 남았습니다</Text>
-          ) : (
-            <Text style={styles.nextCheckupText2}>
-              아직 검사를 하지 않았어요.{'\n'}콩팥 건강 관리를 시작해보세요
+        {alarmEnabled && daysToNextKitTest !== null ? (
+          <>
+            <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
+            <View style={styles.lineWrapper}>
+              <Text style={styles.nextCheckupText2}>
+                {daysToNextKitTest}일 남았습니다
+              </Text>
+              <TouchableOpacity
+                style={styles.setPushAlarmButton}
+                onPress={() =>
+                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                }>
+                <Image
+                  source={require('../../images/home/gearIcon.png')}
+                  style={styles.setPushAlarmIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : latestKitTest ? (
+          <>
+            <Text style={styles.nextCheckupText1}>마지막 키트 검사일은</Text>
+            <View style={styles.lineWrapper}>
+              <Text style={styles.nextCheckupText2}>
+                {lastKitTestDaysAgo !== null
+                  ? `${lastKitTestDaysAgo}일 전입니다`
+                  : '오늘입니다'}
+              </Text>
+              <TouchableOpacity
+                style={styles.setPushAlarmButton}
+                onPress={() =>
+                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                }>
+                <Image
+                  source={require('../../images/home/gearIcon.png')}
+                  style={styles.setPushAlarmIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.nextCheckupText1}>
+              아직 검사를 하지 않았어요.
             </Text>
-          )}
-          <TouchableOpacity
-            style={styles.setPushAlarmButton}
-            onPress={() =>
-              navigation.navigate('NoTabs', { screen: 'set_push_alarm' })
-            }
-          >
-            <Image
-              source={require('../../images/home/gearIcon.png')}
-              style={styles.setPushAlarmIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
+            <Text style={styles.nextCheckupText2}>
+              콩팥 건강 관리를 시작해보세요
+            </Text>
+          </>
+        )}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={() => Linking.openURL('https://hnsbiolab.com/device')}>
