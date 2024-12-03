@@ -37,6 +37,7 @@ const HomeScreen = () => {
     retinal_complication: 0,
   });
   const [latestBloodTest, setLatestBloodTest] = useState(null);
+  const [latestGFR, setLatestGFR] = useState(null);
   const [estimatedKidneyFunction, setEstimatedKidneyFunction] = useState(null);
   const [latestCheckupDate, setLatestCheckupDate] = useState('');
   const [checkCompletedToday, setCheckCompletedToday] = useState(false);
@@ -50,45 +51,46 @@ const HomeScreen = () => {
   const [lastKitTestDaysAgo, setLastKitTestDaysAgo] = useState(null);
   const [nextCheckupText2, setNextCheckupText2] = useState('');
 
+  const characterOpacity = useState(new Animated.Value(1))[0];
+
   // 신기능 단계에 따른 스타일 설정 함수
-  const getKidneyFunctionStyle = functionValue => {
-    if (functionValue >= 90) {
-      return {
-        backgroundColor: '#DFEEFF',
-        color: '#4099FF',
-        description: '신장이 정상적으로 기능하고 있습니다.',
-      };
-    } else if (functionValue >= 60) {
-      return {
-        backgroundColor: '#D9F9CF',
-        color: '#5E8254',
-        description: '약간의 신기능 감소가 있습니다.',
-      };
-    } else if (functionValue >= 30) {
-      return {
-        backgroundColor: '#FFF5AC',
-        color: '#B4AA05',
-        description:
-          '신기능이 중등도로 감소하여 일부 증상이 나타날 수 있습니다.',
-      };
-    } else if (functionValue >= 15) {
-      return {
-        backgroundColor: '#FFDDA2',
-        color: '#E49509',
-        description:
-          '신기능이 심각하게 감소하여 전문적인 의료 관리가 필요합니다.',
-      };
-    } else {
-      return {
-        backgroundColor: '#FFECEC',
-        color: '#EA4447',
-        description:
-          '신장이 거의 기능하지 않는 상태로, 투석이나 이식이 필요할 수 있습니다.',
-      };
+  const calculateGFR = bloodTest => {
+    const {creatinine} = bloodTest;
+    const age = calculateAge(birthdate);
+    const isFemale = gender === 'female';
+
+    let gfr = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
+    if (isFemale) {
+      gfr *= 0.742;
     }
+    return Math.round(gfr);
   };
 
-  const characterOpacity = useState(new Animated.Value(1))[0];
+  const calculateAge = birthdate => {
+    const birthDate = new Date(birthdate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const getKidneyImage = gfrValue => {
+    if (gfrValue >= 90) {
+      return require('../../images/home/콩팥_정상.png');
+    } else if (gfrValue >= 60) {
+      return require('../../images/home/콩팥_주의.png');
+    } else if (gfrValue >= 30) {
+      return require('../../images/home/콩팥_중등도.png');
+    } else if (gfrValue >= 15) {
+      return require('../../images/home/콩팥_위험.png');
+    } else {
+      return require('../../images/home/콩팥_매우위험.png');
+    }
+  };
 
   const formatDate = date => {
     const year = date.getFullYear();
@@ -305,7 +307,21 @@ const HomeScreen = () => {
           const sortedBloodTests = parsedData.blood_test_result.sort(
             (a, b) => new Date(b.date) - new Date(a.date),
           );
-          setLatestBloodTest(sortedBloodTests[0]);
+          const latestTest = sortedBloodTests[0];
+          setLatestBloodTest(latestTest);
+
+          // Use GFR from the blood test result, or calculate it
+          if (latestTest.GFR) {
+            setLatestGFR(latestTest.GFR);
+          } else if (latestTest.creatinine) {
+            const calculatedGFR = calculateGFR(latestTest);
+            setLatestGFR(calculatedGFR);
+          } else {
+            setLatestGFR(null);
+          }
+        } else {
+          setLatestBloodTest(null);
+          setLatestGFR(null);
         }
       }
     } catch (error) {
@@ -476,7 +492,7 @@ const HomeScreen = () => {
           }>
           <View style={styles.titleContainer}>
             <Image
-              source={require('../../images/home/testButton.png')} // 적절한 아이콘 경로 설정
+              source={require('../../images/home/testButton.png')}
               style={styles.bodyImage}
             />
             <View style={styles.titleLines}>
@@ -524,49 +540,24 @@ const HomeScreen = () => {
               <Text style={styles.boxText}>나의 콩팥 건강</Text>
               <View style={styles.subLines}>
                 <Text style={styles.boxSubTextDark}>
-                  {latestCheckupDate
-                    ? `${latestCheckupDate} 건강검진 결과 기준`
+                  {latestBloodTest
+                    ? `${formatDate(new Date(latestBloodTest.date))} 검사 결과`
                     : '병원 기록을 입력하고'}
                 </Text>
-                {estimatedKidneyFunction !== null ? (
-                  <Text style={styles.boxSubLight}>
-                    {
-                      getKidneyFunctionStyle(estimatedKidneyFunction)
-                        .description
-                    }
-                  </Text>
-                ) : (
-                  <Text style={styles.boxSubTextDark}>
-                    나의 신기능 추정치를 알아보세요
-                  </Text>
-                )}
               </View>
             </View>
           </View>
-          <View
-            style={[
-              styles.percentageContainer,
-              {
-                backgroundColor:
-                  estimatedKidneyFunction !== null
-                    ? getKidneyFunctionStyle(estimatedKidneyFunction)
-                        .backgroundColor
-                    : '#E8E8E8',
-              },
-            ]}>
-            {estimatedKidneyFunction !== null ? (
-              <Text
-                style={[
-                  styles.percentageText,
-                  {
-                    color: getKidneyFunctionStyle(estimatedKidneyFunction)
-                      .color,
-                  },
-                ]}>
-                {estimatedKidneyFunction}%
-              </Text>
+          <View style={styles.imageContainer}>
+            {latestGFR !== null ? (
+              <Image
+                source={getKidneyImage(latestGFR)}
+                style={styles.kidneyImage}
+              />
             ) : (
-              <Text style={styles.noDataText}>데이터 없음</Text>
+              <Image
+              source={require('../../images/home/데이터없음.png')}
+              style={styles.noDataImage}
+              />
             )}
           </View>
         </TouchableOpacity>

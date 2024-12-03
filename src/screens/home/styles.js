@@ -187,24 +187,15 @@ const styles = StyleSheet.create({
     ...theme.fonts.Light,
     color: '#7F7F7F',
   },
-  percentageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#E8E8E8',
-    borderRadius: 24 * width_ratio,
-    paddingHorizontal: 8 * width_ratio,
-    // width: 68 * width_ratio,
-    height: 30 * width_ratio,
+  kidneyImage: {
+    width: 76 * width_ratio,
+    height: 28 * height_ratio,
+    resizeMode: 'contain',
   },
-  percentageText: {
-    ...theme.fonts.Medium,
-    fontSize: 16 * width_ratio,
-    color: '#4A4A4F',
-  },
-  noDataText: {
-    ...theme.fonts.Medium,
-    fontSize: 14 * width_ratio,
-    color: '#4A4A4F',
+  noDataImage: {
+    width: 88 * width_ratio,
+    height: 28 * height_ratio,
+    resizeMode: 'contain',
   },
   checkStatusImage: {
     width: 68 * width_ratio,
