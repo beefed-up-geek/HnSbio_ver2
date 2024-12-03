@@ -89,58 +89,17 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-  // resultsContainer: {
-  //   marginBottom: 36 * height_ratio,
-  // },
-  // pastResultGo: {
-  //   marginTop: 24 * height_ratio,
-  //   marginLeft: 28 * width_ratio,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   marginBottom: 11 * height_ratio,
-  // },
-  // sectionTitle: {
-  //   ...theme.fonts.Medium,
-  //   fontSize: 16,
-  //   color: '#A2A1AD',
-  // },
-  // resultGoIcon: {
-  //   width: 16 * width_ratio,
-  //   height: 16 * width_ratio,
-  // },
-  // resultBoxContainer: {
-  //   paddingRight: 48,
-  //   marginLeft: 24 * width_ratio,
-  //   gap: 6,
-  // },
-  // resultBox: {
-  //   alignItems: 'center',
-  //   gap: 12 * height_ratio,
-  //   paddingHorizontal: 18 * width_ratio,
-  //   paddingVertical: 24 * height_ratio,
-  //   backgroundColor: 'white',
-  //   borderRadius: 18,
-  // },
-  // dateText: {
-  //   ...theme.fonts.Medium,
-  //   fontSize: 15 * width_ratio,
-  //   color: '#4A4A4F',
-  // },
-  // kitStatusImage: {
-  //   width: 68 * width_ratio,
-  //   height: 28 * width_ratio,
-  // },
-
   roundedButtonBox: {
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
-    marginHorizontal: 24 * width_ratio,
-    paddingHorizontal: 24 * width_ratio,
+    marginHorizontal: 22 * width_ratio,
+    paddingRight: 24 * width_ratio,
+    paddingLeft: 22 * width_ratio,
     paddingVertical: 22.5 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8 * height_ratio,
+    marginBottom: 6 * height_ratio,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -164,7 +123,7 @@ const styles = StyleSheet.create({
   titleLines: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: 4 * height_ratio,
+    gap: 2 * height_ratio,
   },
   subLines: {
     gap: 1 * height_ratio,

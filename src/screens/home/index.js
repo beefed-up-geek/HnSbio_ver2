@@ -532,18 +532,6 @@ const HomeScreen = () => {
                     <Text style={styles.boxSubTextDark}>
                       {formatDate(new Date(latestKitTest.datetime))} 검사
                     </Text>
-                    <Text
-                      style={[
-                        styles.boxSubLight,
-                        {
-                          color:
-                            latestKitTest.result === 1
-                              ? '#FF6B6B' // 이상 (빨강)
-                              : '#5E9DFF', // 정상 (파랑)
-                        },
-                      ]}>
-                      {latestKitTest.result === 1 ? '양성' : '정상'}
-                    </Text>
                   </>
                 ) : (
                   <Text style={styles.boxSubTextDark}>
@@ -552,6 +540,26 @@ const HomeScreen = () => {
                 )}
               </View>
             </View>
+          </View>
+          <View style={styles.imageContainer}>
+            {latestKitTest ? (
+              latestKitTest.result === 1 ? (
+                <Image
+                  source={require('../../images/home/양성.png')} // 양성일 때 표시
+                  style={styles.noDataImage}
+                />
+              ) : (
+                <Image
+                  source={require('../../images/home/음성.png')} // 음성일 때 표시
+                  style={styles.noDataImage}
+                />
+              )
+            ) : (
+              <Image
+                source={require('../../images/home/데이터없음.png')} // 결과가 없을 때 표시
+                style={styles.noDataImage}
+              />
+            )}
           </View>
         </TouchableOpacity>
 
