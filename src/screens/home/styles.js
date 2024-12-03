@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     color: '#7F7F7F',
   },
   kidneyImage: {
+    alignSelf: 'flex-end',
     width: 76 * width_ratio,
     height: 28 * height_ratio,
     resizeMode: 'contain',
