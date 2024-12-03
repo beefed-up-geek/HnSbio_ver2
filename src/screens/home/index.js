@@ -97,29 +97,66 @@ const HomeScreen = () => {
     return `${year}-${month}-${day}`;
   };
 
+  // 날짜 문자열 파싱 함수
+  const parseDateString = dateString => {
+    // dateString 형식: "YYYY/MM/DD HH:mm:ss"
+    const [datePart, timePart] = dateString.split(' ');
+    const [year, month, day] = datePart.split('/').map(Number);
+    const [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+    // JavaScript에서 month는 0부터 시작하므로 month에서 1을 빼줌
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+  };
+
   // Calculate days until the next kit test
   const calculateNextKitTest = () => {
     if (alarmEnabled && startDate && repeatInterval) {
       const currentDate = new Date();
       const start = new Date(startDate);
       const repeatDays = parseInt(repeatInterval);
-      const diffDays = Math.ceil((currentDate - start) / (1000 * 60 * 60 * 24));
-      const daysLeft = repeatDays - (diffDays % repeatDays);
-      setDaysToNextKitTest(daysLeft);
-    }
-  };
 
-  // Calculate days since the last kit test if notifications are disabled
+      // Calculate the number of periods (cycles) since the start date
+      const diffTime = currentDate.getTime() - start.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+      const periodsElapsed = Math.floor(diffDays / repeatDays);
+
+      // Calculate the next test date
+      const nextTestDate = new Date(start.getTime());
+      nextTestDate.setDate(start.getDate() + (periodsElapsed + 1) * repeatDays);
+
+      // Calculate days left until the next test date
+      const daysLeft = Math.ceil((nextTestDate - currentDate) / (1000 * 3600 * 24));
+
+      setDaysToNextKitTest(daysLeft);
+    } else {
+      setDaysToNextKitTest(null);
+    }
+  }
+
+  // Calculate days since the last kit test
   const calculateLastKitTest = () => {
-    if (latestKitTest && !alarmEnabled) {
+    if (latestKitTest) {
+      // 마지막 검사 날짜 파싱
+      const lastTestDate = parseDateString(latestKitTest.datetime);
+      // 시간 요소 제거 (자정으로 설정)
+      lastTestDate.setHours(0, 0, 0, 0);
+
+      // 현재 날짜 및 시간 요소 제거
       const currentDate = new Date();
-      const lastTestDate = new Date(latestKitTest.datetime);
-      const daysAgo = Math.ceil(
-        (currentDate - lastTestDate) / (1000 * 60 * 60 * 24),
-      );
-      setLastKitTestDaysAgo(daysAgo);
-    } else if (!latestKitTest) {
-      setLastKitTestDaysAgo(null); // No previous tests
+      currentDate.setHours(0, 0, 0, 0);
+
+      // 시간 차이 계산
+      const timeDiff = currentDate - lastTestDate;
+      const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+      if (daysAgo >= 0) {
+        setLastKitTestDaysAgo(daysAgo);
+      } else {
+        // 미래 날짜인 경우 (예상치 못한 상황)
+        setLastKitTestDaysAgo(null);
+      }
+    } else {
+      setLastKitTestDaysAgo(null); // 이전 테스트가 없음
     }
   };
 
@@ -181,7 +218,7 @@ const HomeScreen = () => {
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
-    console.log("홈 화면 갱신!");
+    console.log('홈 화면 갱신!');
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
@@ -194,56 +231,77 @@ const HomeScreen = () => {
         setNickname(parsedData.nickname);
         setChronicKidneyDisease(parsedData.chronic_kidney_disease);
         setUnderlyingDisease(parsedData.underlying_disease);
-  
+
+        // Retrieve pushNotificationSettings
+        if (parsedData.pushNotificationSettings) {
+          const {alarmEnabled, startDate, repeatInterval} =
+            parsedData.pushNotificationSettings;
+          setAlarmEnabled(alarmEnabled);
+          setStartDate(startDate);
+          setRepeatInterval(repeatInterval);
+        } else {
+          // Set default values if pushNotificationSettings doesn't exist
+          setAlarmEnabled(false);
+          setStartDate(null);
+          setRepeatInterval(null);
+        }
+
         // Retrieve the latest health checkup
         if (parsedData.healthCheckup && parsedData.healthCheckup.length > 0) {
           const sortedHealthCheckup = parsedData.healthCheckup.sort((a, b) => {
             const dateA = new Date(
               a.resCheckupYear,
               a.resCheckupDate.substring(0, 2) - 1,
-              a.resCheckupDate.substring(2)
+              a.resCheckupDate.substring(2),
             );
             const dateB = new Date(
               b.resCheckupYear,
               b.resCheckupDate.substring(0, 2) - 1,
-              b.resCheckupDate.substring(2)
+              b.resCheckupDate.substring(2),
             );
             return dateB - dateA;
           });
-  
+
           const latestCheckup = sortedHealthCheckup[0];
           const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
           if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
             let estimatedFunction;
             if (parsedData.gender === 'male') {
-              estimatedFunction = serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
+              estimatedFunction =
+                serumCreatinine < 0.9 ? 100 : (0.9 / serumCreatinine) * 100;
             } else {
-              estimatedFunction = serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
+              estimatedFunction =
+                serumCreatinine < 0.7 ? 100 : (0.7 / serumCreatinine) * 100;
             }
             setEstimatedKidneyFunction(Math.round(estimatedFunction));
           } else {
             setEstimatedKidneyFunction(null);
           }
-  
-          const dateString = `${latestCheckup.resCheckupYear}.${latestCheckup.resCheckupDate.substring(
+
+          const dateString = `${
+            latestCheckup.resCheckupYear
+          }.${latestCheckup.resCheckupDate.substring(
             0,
-            2
+            2,
           )}.${latestCheckup.resCheckupDate.substring(2)}`;
           setLatestCheckupDate(dateString);
         }
-  
+
         // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
         if (parsedData.kit_result && parsedData.kit_result.length > 0) {
           const sortedKitResults = parsedData.kit_result.sort(
-            (a, b) => new Date(b.datetime) - new Date(a.datetime)
+            (a, b) => new Date(b.datetime) - new Date(a.datetime),
           );
           setLatestKitTest(sortedKitResults[0]);
         }
-  
+
         // 가장 최근 혈액검사 결과를 latestBloodTest 변수로 설정
-        if (parsedData.blood_test_result && parsedData.blood_test_result.length > 0) {
+        if (
+          parsedData.blood_test_result &&
+          parsedData.blood_test_result.length > 0
+        ) {
           const sortedBloodTests = parsedData.blood_test_result.sort(
-            (a, b) => new Date(b.date) - new Date(a.date)
+            (a, b) => new Date(b.date) - new Date(a.date),
           );
           setLatestBloodTest(sortedBloodTests[0]);
         }
@@ -252,14 +310,6 @@ const HomeScreen = () => {
       console.error('Error loading user data from AsyncStorage:', error);
     }
   };
-
-  
-  useFocusEffect(
-    useCallback(() => {
-      loadUserData();
-      checkDailyCompletionStatus();
-    }, []),
-  );
 
   const checkDailyCompletionStatus = async () => {
     const today = new Date().toDateString(); // today's date as a string
@@ -276,19 +326,29 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    loadUserData(); // 컴포넌트가 마운트될 때 사용자 데이터 로드
+    loadUserData(); // Load user data when the component mounts
+    checkDailyCompletionStatus(); // Also check daily completion status
   }, []);
+
   useEffect(() => {
     let newNextCheckupText2 = '';
-    if (alarmEnabled && daysToNextKitTest !== null)
+    if (alarmEnabled && daysToNextKitTest !== null) {
       newNextCheckupText2 = daysToNextKitTest + '일 남았습니다';
-    else {
-      if (lastKitTestDaysAgo)
-        newNextCheckupText2 = lastKitTestDaysAgo + '일 전입니다';
-      else newNextCheckupText2 = '콩팥 건강 관리를 시작해보세요';
+    } else {
+      if (latestKitTest) {
+        if (lastKitTestDaysAgo !== null) {
+          newNextCheckupText2 = lastKitTestDaysAgo + '일 전입니다';
+        } else {
+          newNextCheckupText2 = '오늘입니다';
+        }
+      } else {
+        newNextCheckupText2 =
+          '아직 검사를 하지 않았어요.\n콩팥 건강 관리를 시작해보세요';
+      }
     }
     setNextCheckupText2(newNextCheckupText2);
-  }, [alarmEnabled, daysToNextKitTest, lastKitTestDaysAgo]);
+  }, [alarmEnabled, daysToNextKitTest, lastKitTestDaysAgo, latestKitTest]);
+
   return (
     <LinearGradient
       colors={['#EBEFFE', '#B7C8FF']}
@@ -296,8 +356,8 @@ const HomeScreen = () => {
       end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
       style={styles.gradient}>
       <View style={styles.logoContainer}>
-            <DevButton loadUserData={loadUserData} />
-        </View>
+        <DevButton loadUserData={loadUserData} />
+      </View>
       <ScrollView
         contentContainerStyle={styles.container}
         scrollEventThrottle={16}
@@ -328,40 +388,21 @@ const HomeScreen = () => {
           />
         </Animated.View>
 
-        {/* <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
+        <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
         <View style={styles.lineWrapper}>
-          <Text style={styles.nextCheckupText2}>
-            13일 남았습니다.
-          </Text>
+          {daysToNextKitTest !== null ? (
+            <Text style={styles.nextCheckupText2}>{daysToNextKitTest}일 남았습니다</Text>
+          ) : (
+            <Text style={styles.nextCheckupText2}>
+              아직 검사를 하지 않았어요.{'\n'}콩팥 건강 관리를 시작해보세요
+            </Text>
+          )}
           <TouchableOpacity
             style={styles.setPushAlarmButton}
             onPress={() =>
-              navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
-            }>
-            <Image
-              source={require('../../images/home/gearIcon.png')}
-              style={styles.setPushAlarmIcon}
-            />
-          </TouchableOpacity>
-        </View> */}
-
-        {alarmEnabled && daysToNextKitTest !== null ? (
-          <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
-        ) : lastKitTestDaysAgo !== null ? (
-          <Text style={styles.nextCheckupText1}>마지막 키트 검사일은</Text>
-        ) : (
-          <Text style={styles.nextCheckupText1}>
-            아직 검사를 하지 않았어요
-          </Text>
-        )}
-        <View style={styles.lineWrapper}>
-          {/* <Text style={styles.nextCheckupText2}>{lastKitTestDaysAgo}일 전입니다.</Text> */}
-          <Text style={styles.nextCheckupText2}>{nextCheckupText2}</Text>
-          <TouchableOpacity
-            style={styles.setPushAlarmButton}
-            onPress={() =>
-              navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
-            }>
+              navigation.navigate('NoTabs', { screen: 'set_push_alarm' })
+            }
+          >
             <Image
               source={require('../../images/home/gearIcon.png')}
               style={styles.setPushAlarmIcon}
@@ -388,83 +429,47 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* <View style={styles.resultsContainer}>
-          <TouchableOpacity
-            style={styles.pastResultGo}
-            onPress={() => navigation.navigate('KitStack')}>
-            <Text style={styles.sectionTitle}>지난 결과</Text>
-            <Image
-              source={require('../../images/home/resultGo.png')}
-              style={styles.resultGoIcon}
-            />
-          </TouchableOpacity>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.resultBoxContainer}>
-            <View style={styles.resultBox}>
-              <Text style={styles.dateText}>10월 22일</Text>
-              <Image
-                source={require('../../images/home/abnormal.png')}
-                style={styles.kitStatusImage}
-              />
-            </View>
-            <View style={styles.resultBox}>
-              <Text style={styles.dateText}>9월 24일</Text>
-              <Image
-                source={require('../../images/home/normal.png')}
-                style={styles.kitStatusImage}
-              />
-            </View>
-            <View style={styles.resultBox}>
-              <Text style={styles.dateText}>8월 27일</Text>
-              <Image
-                source={require('../../images/home/normal.png')}
-                style={styles.kitStatusImage}
-              />
-            </View>
-            <View style={styles.resultBox}>
-              <Text style={styles.dateText}>7월 30일</Text>
-              <Image
-                source={require('../../images/home/normal.png')}
-                style={styles.kitStatusImage}
-              />
-            </View>
-            <View style={styles.resultBox}>
-              <Text style={styles.dateText}>7월 2일</Text>
-              <Image
-                source={require('../../images/home/normal.png')}
-                style={styles.kitStatusImage}
-              />
-            </View>
-          </ScrollView>
-        </View> */}
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
-            navigation.navigate('KitStack')
+            navigation.navigate('BottomNavigation', {screen: 'Kit'})
           }>
           <View style={styles.titleContainer}>
             <Image
-              source={require('../../images/home/body.png')}
+              source={require('../../images/home/testButton.png')} // 적절한 아이콘 경로 설정
               style={styles.bodyImage}
             />
             <View style={styles.titleLines}>
-              <Text style={styles.boxText}>콩팥 진단 키트 컨테이너</Text>
+              <Text style={styles.boxText}>콩팥 진단 키트 결과</Text>
               <View style={styles.subLines}>
-                <Text style={styles.boxSubTextDark}>
-                콩팥 진단키트 컨테이너
-                </Text>
+                {latestKitTest ? (
+                  <>
+                    <Text style={styles.boxSubTextDark}>
+                      {formatDate(new Date(latestKitTest.datetime))} 검사
+                    </Text>
+                    <Text
+                      style={[
+                        styles.boxSubLight,
+                        {
+                          color:
+                            latestKitTest.result === 1
+                              ? '#FF6B6B' // 이상 (빨강)
+                              : '#5E9DFF', // 정상 (파랑)
+                        },
+                      ]}>
+                      {latestKitTest.result === 1 ? '양성' : '정상'}
+                    </Text>
+                  </>
+                ) : (
+                  <Text style={styles.boxSubTextDark}>
+                    최근 검사 결과가 없습니다.
+                  </Text>
+                )}
               </View>
             </View>
           </View>
-          <View
-            style={[
-              styles.percentageContainer,
-            ]}>
-          </View>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
@@ -476,7 +481,7 @@ const HomeScreen = () => {
               style={styles.bodyImage}
             />
             <View style={styles.titleLines}>
-              <Text style={styles.boxText}>신기능 추정치</Text>
+              <Text style={styles.boxText}>나의 콩팥 건강</Text>
               <View style={styles.subLines}>
                 <Text style={styles.boxSubTextDark}>
                   {latestCheckupDate
