@@ -71,14 +71,10 @@ const Authentication_3_screen = () => {
         // 업데이트된 데이터를 다시 저장
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         console.log('Updated user data in AsyncStorage:', userData);
-  
-        if (filteredData.length === 0) {
-          //Alert.alert('알림', '인증이 완료되었으나 데이터를 찾을 수 없습니다.');
-        } else {
-          //Alert.alert('성공', '인증이 완료되었습니다.');
-          refreshHealthData();
-          navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
-        }
+        
+        refreshHealthData();
+        navigation.navigate('BottomNavigation', { screen: 'HealthCheckup' });
+        
       } else {
         console.error('User data not found in AsyncStorage');
         Alert.alert('오류', '사용자 데이터를 찾을 수 없습니다.');
