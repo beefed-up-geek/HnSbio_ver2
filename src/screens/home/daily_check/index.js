@@ -56,11 +56,11 @@ const Daily_check_screen = ({ route }) => {
 
   // 모달 내용 렌더링
   const renderModalContent = () => {
-    if (checkedCount === 0) {
+    if (checkedCount < 3) {
       return (
         <>
           <Text style={styles.modalMessage}>
-            아직 해당하는 증상이 없어요.{'\n'}
+            아직 심각한 증상이 없어요.{'\n'}
             꾸준히 생활 습관을 지키며 콩팥 건강을 관리해보세요.
           </Text>
         </>
