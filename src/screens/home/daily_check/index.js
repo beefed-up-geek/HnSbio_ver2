@@ -1,6 +1,4 @@
-// src\screens\home\daily_check\index.js
-
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,17 +7,21 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import styles from './styles.js'; // 스타일 분리
 
-const Daily_check_screen = () => {
+const Daily_check_screen = ({ route }) => {
   const navigation = useNavigation();
 
+  // `refreshHome` 함수: 사용자가 완료 버튼을 눌렀을 때 홈 화면 갱신
+  const refreshHome = route.params?.refreshHome || (() => {});
+
+  // 체크리스트 상태 관리
   const [checks, setChecks] = useState(Array(7).fill(false));
   const [modalVisible, setModalVisible] = useState(false); // 모달 가시성 상태
-  const [checkedCount, setCheckedCount] = useState(0);
+  const [checkedCount, setCheckedCount] = useState(0); // 체크된 항목 개수
 
   const checklistItems = [
     '자다가 일어나 소변을 자주 본다.',
@@ -30,26 +32,29 @@ const Daily_check_screen = () => {
     '몸 전체가 가렵다.',
   ];
 
+  // 체크 상태 변경
   const handleCheckChange = index => {
     const newChecks = [...checks];
     newChecks[index] = !newChecks[index];
     setChecks(newChecks);
   };
 
+  // 완료 버튼 클릭 시 호출
   const calculateChecked = async () => {
     const count = checks.filter(Boolean).length;
     setCheckedCount(count);
     setModalVisible(true);
 
-    const today = new Date().toDateString(); // 오늘 날짜를 string 형식으로 받아옴
+    const today = new Date().toDateString(); // 오늘 날짜를 string 형식으로 저장
     try {
       await AsyncStorage.setItem('dailyCheckComplete', today);
+      refreshHome(); // 홈 화면 갱신
     } catch (error) {
       console.error('Failed to save check completion status:', error);
     }
   };
 
-  // 개수에 따른 모달 two versions
+  // 모달 내용 렌더링
   const renderModalContent = () => {
     if (checkedCount === 0) {
       return (
@@ -76,6 +81,7 @@ const Daily_check_screen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* 체크리스트 */}
       <View style={styles.checklist}>
         {checklistItems.map((item, index) => (
           <TouchableOpacity
@@ -94,12 +100,15 @@ const Daily_check_screen = () => {
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* 완료 버튼 */}
       <View style={styles.saveButtonContainer}>
         <TouchableOpacity style={styles.saveButton} onPress={calculateChecked}>
           <Text style={styles.saveButtonText}>완료</Text>
         </TouchableOpacity>
       </View>
 
+      {/* 결과 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -117,7 +126,7 @@ const Daily_check_screen = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('BottomNavigation', {screen: 'KitStack'})
+                  navigation.navigate('BottomNavigation', { screen: 'KitStack' })
                 }>
                 <Image
                   source={require('../../../images/home/daily_check/키트.png')}

@@ -8,9 +8,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles.js';
 
-const SetPushAlarmScreen = () => {
+const SetPushAlarmScreen = ({ route }) => {
   const navigation = useNavigation();
 
+  // 전달된 refreshHome 함수: "변경사항 저장" 버튼에서만 호출
+  const refreshHome = route.params?.refreshHome || (() => {});
+
+  // 화면 상태 변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [repeatInterval, setRepeatInterval] = useState('28');
@@ -22,6 +26,7 @@ const SetPushAlarmScreen = () => {
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [providerId, setProviderId] = useState('');
 
+  // 날짜 포맷 함수
   const formatDate = (date) => {
     if (!date || !(date instanceof Date)) {
       return '';
@@ -32,6 +37,7 @@ const SetPushAlarmScreen = () => {
     return `${year}-${month}-${day}`;
   };
 
+  // 변경 사항이 있는지 확인
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
@@ -40,6 +46,7 @@ const SetPushAlarmScreen = () => {
     );
   };
 
+  // 사용자 데이터 불러오기
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await AsyncStorage.getItem('user');
@@ -73,11 +80,14 @@ const SetPushAlarmScreen = () => {
     fetchUserData();
   }, []);
 
+  // 알람 상태 토글
   const toggleAlarm = () => setAlarmEnabled((prev) => !prev);
 
+  // 모달 열기/닫기
   const openModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: true }));
   const closeModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: false }));
 
+  // 알림 설정 저장
   const savePushNotificationSettings = async () => {
     if (!providerId) {
       Alert.alert('Error', 'Provider ID를 찾을 수 없습니다.');
@@ -88,6 +98,7 @@ const SetPushAlarmScreen = () => {
       setConfirmationModalVisible(true);
       setInitialSettings({ alarmEnabled, startDate, repeatInterval });
 
+      // AsyncStorage에 데이터 저장
       await AsyncStorage.mergeItem(
         'user',
         JSON.stringify({
@@ -98,6 +109,9 @@ const SetPushAlarmScreen = () => {
           },
         })
       );
+
+      // "변경사항 저장" 시에만 홈 화면 갱신 함수 호출
+      refreshHome();
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
@@ -107,6 +121,7 @@ const SetPushAlarmScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.detailsContainer}>
+        {/* 알림 설정 */}
         {alarmEnabled !== null && (
           <DetailRow
             icon={require('../../../images/home/set_push_alarm/알림.png')}
@@ -133,6 +148,7 @@ const SetPushAlarmScreen = () => {
             last={!alarmEnabled}
           />
         )}
+        {/* 시작 날짜와 반복 주기 */}
         {alarmEnabled && (
           <>
             <DetailRow
@@ -152,6 +168,7 @@ const SetPushAlarmScreen = () => {
         )}
       </View>
 
+      {/* 날짜 선택기 */}
       {showDatePicker && (
         <DateTimePicker
           value={startDate}
@@ -166,6 +183,7 @@ const SetPushAlarmScreen = () => {
         />
       )}
 
+      {/* 반복 주기 모달 */}
       <ModalComponent
         visible={modalVisible.repeatInterval}
         title="반복 주기 변경"
@@ -177,6 +195,7 @@ const SetPushAlarmScreen = () => {
         keyboardType="numeric"
       />
 
+      {/* 확인 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -198,6 +217,7 @@ const SetPushAlarmScreen = () => {
         </View>
       </Modal>
 
+      {/* 저장 버튼 */}
       <TouchableOpacity
         style={[
           styles.saveButton,

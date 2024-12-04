@@ -314,7 +314,12 @@ const HomeScreen = () => {
               <TouchableOpacity
                 style={styles.setPushAlarmButton}
                 onPress={() =>
-                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                  navigation.navigate('NoTabs', {
+                    screen: 'set_push_alarm',
+                    params: { 
+                      refreshHome: loadUserData 
+                    },
+                  })
                 }>
                 <Image
                   source={require('../../images/home/gearIcon.png')}
@@ -335,7 +340,12 @@ const HomeScreen = () => {
               <TouchableOpacity
                 style={styles.setPushAlarmButton}
                 onPress={() =>
-                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                  navigation.navigate('NoTabs', {
+                    screen: 'set_push_alarm',
+                    params: { 
+                      refreshHome: loadUserData 
+                    },
+                  })
                 }>
                 <Image
                   source={require('../../images/home/gearIcon.png')}
@@ -356,8 +366,14 @@ const HomeScreen = () => {
               <TouchableOpacity
                 style={styles.setPushAlarmButton}
                 onPress={() =>
-                  navigation.navigate('NoTabs', {screen: 'set_push_alarm'})
+                  navigation.navigate('NoTabs', {
+                    screen: 'set_push_alarm',
+                    params: { 
+                      refreshHome: loadUserData 
+                    },
+                  })
                 }>
+                
                 <Image
                   source={require('../../images/home/gearIcon.png')}
                   style={styles.setPushAlarmIcon}
@@ -476,7 +492,12 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.roundedButtonBox}
           onPress={() =>
-            navigation.navigate('NoTabs', {screen: 'daily_check'})
+            navigation.navigate('NoTabs', {
+              screen: 'daily_check',
+              params: { 
+                refreshHome: loadUserData 
+              },
+            })
           }>
           <View style={styles.titleContainer}>
             <Image
