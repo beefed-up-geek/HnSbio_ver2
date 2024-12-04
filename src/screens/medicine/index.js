@@ -235,6 +235,7 @@ const MedicineScreen = () => {
                                                 setSearchText(item);  // 선택한 항목으로 검색어 설정
                                                 setSuggestions([]);    // 자동완성 목록 지우기
                                                 searchMedicine();      // 검색 실행
+                                                addRecentSearch(item);
                                             }}
                                         >
                                             <Text style={styles.suggestionItem}>{item}</Text>
