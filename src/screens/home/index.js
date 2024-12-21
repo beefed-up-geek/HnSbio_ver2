@@ -261,10 +261,18 @@ const HomeScreen = () => {
     }
   };
 
+  // 데일리체크
   useEffect(() => {
     loadUserData(); // Load user data when the component mounts
     checkDailyCompletionStatus(); // Also check daily completion status
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadUserData();
+      checkDailyCompletionStatus();
+    }, [])
+  );
 
   return (
     <LinearGradient
