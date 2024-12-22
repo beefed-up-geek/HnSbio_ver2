@@ -228,7 +228,7 @@ const MedicineScreen = () => {
                                 <FlatList
                                     data={suggestions}
                                     keyExtractor={(item, index) => index.toString()}
-                                    onScroll={() => setSuggestions([])} // 스크롤 시 자동완성 목록 숨기기
+                                    // onScroll={() => setSuggestions([])} // 스크롤 시 자동완성 목록 숨기기
                                     renderItem={({ item }) => (
                                         <TouchableOpacity 
                                             onPress={() => {
