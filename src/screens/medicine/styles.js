@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: 330 * width_ratio,
+        width: '85%', // 화면 너비의 90%로 설정
         paddingHorizontal: 20,
         paddingVertical: 35,
         backgroundColor: 'white',
@@ -235,6 +235,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: '100%',
+        alignItems: 'flex-start', // 왼쪽 정렬
+        flexShrink: 1, // 텍스트가 창을 넘어가지 않도록 설정
     },
     row: {
         flexDirection: 'row',
@@ -245,6 +247,7 @@ const styles = StyleSheet.create({
         ...theme.fonts.Bold,
         marginBottom: 20,
         color: '#333',
+        textAlign: 'center', // 제목 가운데 정렬
     },
     icon: {
         width: 58,
