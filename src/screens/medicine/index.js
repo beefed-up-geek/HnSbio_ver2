@@ -1,3 +1,5 @@
+// src\screens\medicine\index.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TextInput, TouchableOpacity, FlatList, Alert, Keyboard, Modal, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
@@ -77,6 +79,11 @@ const MedicineScreen = () => {
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
+    };
+
+    const clearSearchText = () => {
+        setSearchText(''); // 입력값 초기화
+        setSuggestions([]); // 자동완성 목록 초기화
     };
 
     const searchMedicine = async (query) => {
@@ -209,7 +216,12 @@ const MedicineScreen = () => {
                             keyboardType="default"
                             returnKeyType="search"
                         />
-    
+                        {/* 닫기 버튼 */}
+                        {searchText !== '' && (
+                            <TouchableOpacity onPress={clearSearchText}>
+                                <Image source={require('../../images/medicine/eraser.png')} style={styles.closeIcon} />
+                            </TouchableOpacity>
+                        )}
                         <TouchableOpacity onPress={() => {
                             if (searchText.trim() !== '') {
                                 Keyboard.dismiss();

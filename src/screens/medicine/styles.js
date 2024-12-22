@@ -39,9 +39,14 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         height: 48 * height_ratio,
     },
+    closeIcon: {
+        width: 20,
+        height: 20,
+        marginHorizontal: 10,
+    },
     searchIcon: {
-        width: 25,
-        height: 25,
+        width: 24,
+        height: 24,
         marginHorizontal: 10,
         tintColor: '#8E9098',
         marginLeft: 10,
