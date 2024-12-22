@@ -108,16 +108,16 @@ const styles = StyleSheet.create({
         fontSize: 12 * height_ratio,
         ...theme.fonts.Medium,
     },
-    removeText: {
-        color: '#5D5D62',
-        marginLeft: 6,
-        fontSize: 20 * height_ratio,
-        marginBottom: 1
-    },
     tabsContainer: {
         flexDirection: 'row',
         alignItems: 'center', // 중앙 정렬
         paddingHorizontal: 23,
+    },
+    removeIcon: {
+        width: 18, // 너비
+        height: 18, // 높이
+        marginLeft: 6, // 텍스트와의 간격
+        tintColor: '#5D5D62',
     },
     tabButton: {
         paddingVertical: 10,

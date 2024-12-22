@@ -228,7 +228,7 @@ const MedicineScreen = () => {
                                 searchMedicine();
                                 setSuggestions([]); // 검색 완료 시 자동완성 목록 숨기기
                             }
-                        }}>
+                            }}>
                             <Image source={require('../../images/medicine/돋보기.png')} style={styles.searchIcon} />
                         </TouchableOpacity>
                     </View>
@@ -270,7 +270,10 @@ const MedicineScreen = () => {
                                             <Text style={styles.recentSearchText}>{item}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => handleRecentSearchDelete(item)}>
-                                            <Text style={styles.removeText}>✕</Text>
+                                            <Image
+                                                source={require('../../images/xButton.png')} // 이미지 경로
+                                                style={styles.removeIcon} // 스타일 정의
+                                            />
                                         </TouchableOpacity>
                                     </View>
                                 ))}
