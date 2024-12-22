@@ -1,9 +1,9 @@
 // src/screens/kit/kit_test_styles.js
-
 import {StyleSheet, Dimensions} from 'react-native';
-import theme from '../../../theme'; // 개발 규칙: 폰트 적용
-const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
-const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+import theme from '../../../theme';
+
+const width_ratio = Dimensions.get('screen').width / 390; // 상대 크기 기준
+const height_ratio = Dimensions.get('screen').height / 844; // 상대 크기 기준
 
 const styles = StyleSheet.create({
   overlayContainer: {
@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
   },
   header: {
     display: 'flex',
-    height: 68,
-    paddingHorizontal: 24,
+    height: 68 * height_ratio,
+    paddingHorizontal: 24 * width_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -24,37 +24,39 @@ const styles = StyleSheet.create({
   },
   headerIconContainer: {
     position: 'absolute',
-    left: 24,
+    left: 24 * width_ratio,
     zIndex: 2,
-    padding: 10, // 터치 영역을 늘려서 사용자가 쉽게 누를 수 있도록 합니다.
+    padding: 10 * width_ratio, // 터치 영역을 늘려서 사용자가 쉽게 누를 수 있도록 합니다.
   },
   headerIcon: {
-    width: 20,
-    height: 20,
+    width: 20 * width_ratio,
+    height: 20 * height_ratio,
   },
   headerText: {
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     fontWeight: '600',
-    lineHeight: 16,
-    color: '#000000',
+    lineHeight: 16 * height_ratio,
+    color: theme.colors.Black,
     textAlign: 'center',
     position: 'absolute',
     left: '50%',
     transform: [{translateX: 0}],
     zIndex: 1,
+    ...theme.fonts.Medium,
   },
   instructionsContainer: {
-    paddingTop: 40,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
+    paddingTop: 40 * height_ratio,
+    paddingBottom: 20 * height_ratio,
+    paddingHorizontal: 20 * width_ratio,
     alignItems: 'center',
     zIndex: 1,
   },
   instructionsText: {
-    fontSize: 16,
+    fontSize: 16 * width_ratio,
     fontWeight: '500',
     textAlign: 'center',
-    color: '#49494e',
+    color: theme.colors.BlueGray,
+    ...theme.fonts.Regular,
   },
   squareContainer: {
     flex: 1,
@@ -62,32 +64,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   orangeSquare: {
-    width: 250,
-    height: 350,
-    borderWidth: 3,
+    width: 250 * width_ratio,
+    height: 350 * height_ratio,
+    borderWidth: 3 * width_ratio,
     borderColor: 'orange',
     backgroundColor: 'transparent',
     zIndex: 2,
   },
   captureButton: {
-    width: 150,
-    height: 50,
+    width: 150 * width_ratio,
+    height: 50 * height_ratio,
     backgroundColor: 'orange',
-    borderRadius: 25,
+    borderRadius: 25 * width_ratio,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 100,
+    marginBottom: 100 * height_ratio,
     zIndex: 3,
   },
   captureButtonText: {
-    fontSize: 18,
-    color: '#ffffff',
+    fontSize: 18 * width_ratio,
+    color: theme.colors.White,
     fontWeight: '600',
+    ...theme.fonts.Bold,
   },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    padding: 20,
+    backgroundColor: theme.colors.White,
+    padding: 20 * width_ratio,
   },
   cameraContainer: {
     flex: 1,
@@ -96,7 +99,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-    top: 10,
+    top: 10 * height_ratio,
     left: 0,
     width: '100%',
     height: '100%',
@@ -108,85 +111,76 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
+    borderRadius: 10 * width_ratio,
   },
   backButton: {
     position: 'absolute',
-    top: 40,
-    left: 20,
-    backgroundColor: '#ffffffaa',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
+    top: 40 * height_ratio,
+    left: 20 * width_ratio,
+    backgroundColor: `${theme.colors.White}aa`,
+    paddingVertical: 8 * height_ratio,
+    paddingHorizontal: 12 * width_ratio,
+    borderRadius: 8 * width_ratio,
   },
   backButtonText: {
-    fontSize: 16,
-    color: '#000',
-  },
-  captureButton: {
-    position: 'absolute',
-    bottom: 30,
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#ffffffaa',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
+    fontSize: 16 * width_ratio,
+    color: theme.colors.Black,
+    ...theme.fonts.Medium,
   },
   resultContainer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 20 * height_ratio,
   },
   resultTitle: {
-    fontSize: 24,
+    fontSize: 24 * width_ratio,
     fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 10,
+    color: theme.colors.textGray,
+    marginBottom: 10 * height_ratio,
+    ...theme.fonts.Bold,
   },
   result: {
-    fontSize: 18,
-    color: '#555555',
-    marginBottom: 20,
+    fontSize: 18 * width_ratio,
+    color: theme.colors.BlueGray,
+    marginBottom: 20 * height_ratio,
+    ...theme.fonts.Regular,
   },
   percentageContainer: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 20 * height_ratio,
   },
   percentageItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
+    marginVertical: 5 * height_ratio,
+    padding: 10 * width_ratio,
+    borderRadius: 8 * width_ratio,
+    backgroundColor: theme.colors.lightGray,
   },
   percentage: {
-    fontSize: 18,
+    fontSize: 18 * width_ratio,
     fontWeight: 'bold',
-    color: '#333333',
+    color: theme.colors.textGray,
+    ...theme.fonts.Bold,
   },
   label: {
-    fontSize: 16,
-    color: '#777777',
+    fontSize: 16 * width_ratio,
+    color: theme.colors.BlueGray,
+    ...theme.fonts.Regular,
   },
   proceedButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#4CAF50', // 초록색
-    borderRadius: 5,
+    marginTop: 10 * height_ratio,
+    paddingVertical: 10 * height_ratio,
+    paddingHorizontal: 20 * width_ratio,
+    backgroundColor: theme.colors.mainBlue,
+    borderRadius: 5 * width_ratio,
     alignItems: 'center',
   },
   proceedButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: theme.colors.White,
+    fontSize: 16 * width_ratio,
     fontWeight: 'bold',
+    ...theme.fonts.Bold,
   },
 });
 

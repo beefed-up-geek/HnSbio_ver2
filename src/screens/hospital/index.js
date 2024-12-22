@@ -538,7 +538,7 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
       <View style={styles.hospitalInfoContainer}>
         <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
         <Text style={styles.distanceText}>
-          {hospital.distance.toFixed(1)}km
+          {hospital.distance ? `${hospital.distance.toFixed(1)}km` : '거리 정보 없음'}
         </Text>
       </View>
       <View style={styles.hospitalAddressContainer}>

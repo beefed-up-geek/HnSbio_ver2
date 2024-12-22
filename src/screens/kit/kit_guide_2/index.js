@@ -126,7 +126,6 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
               </View>
             </View>
           </TouchableOpacity>
-          <View style={styles.spacer} />
         </View>
       </ScrollView>
     </SafeAreaView>

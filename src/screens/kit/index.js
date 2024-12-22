@@ -235,6 +235,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
                 {renderResults()}
               </View>
             </View>
+            <View style={styles.bottomSpacing} />
           </View>
         </ScrollView>
       </SafeAreaView>
