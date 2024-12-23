@@ -169,7 +169,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
   return (
     <>
-      <SafeAreaView>
+      <View>
         <ScrollView
           scrollEnabled={true}
           contentInsetAdjustmentBehavior="automatic">
@@ -186,7 +186,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               <View style={styles.cardContainer}>
                 <ImageBackground
                   style={styles.profileImage}
-                  source={require('./assets/images/35dfdd72ec7b06088f1aa32a7f0e4db35347eabf.png')}
+                  source={require('../../images/kitMain.png')}
                   resizeMode="cover"
                 />
                 <View style={styles.card}>
@@ -213,7 +213,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
                       <View style={styles.roundButtonInner}>
                         <ImageBackground
                           style={styles.roundButtonImage}
-                          source={require('./assets/images/ad153a78-1510-497d-8dad-61ee25759ee6.png')}
+                          source={require('../../images/arrowRight.png')}
                           resizeMode="cover"
                         />
                       </View>
@@ -225,7 +225,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
                   onPress={handleKitPurchase}>
                   <Image
                     style={styles.linkIcon}
-                    source={require('./assets/images/1bd18327-449a-421c-a713-db8473a9045a.png')}
+                    source={require('../../images/store.png')}
                   />
                   <Text style={styles.linkText}>스토어 바로가기</Text>
                 </TouchableOpacity>
@@ -238,7 +238,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
             <View style={styles.bottomSpacing} />
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </>
   );
 };

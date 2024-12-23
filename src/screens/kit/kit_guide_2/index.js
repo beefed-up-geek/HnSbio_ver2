@@ -1,21 +1,14 @@
-// src\screens\kit\kit_guide_2\index.js
-import {useNavigation} from '@react-navigation/native';
-import theme from '../../../theme'; // 개발 규칙: 폰트 적용
-import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
-const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
-const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
+import React, {useCallback, useState, useEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import YoutubePlayer from 'react-native-youtube-iframe';
-
-import React from 'react';
 import {
   View,
-  Text,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
-  Dimensions,
   TouchableOpacity,
+  Text,
+  Dimensions,
+  Image,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -24,26 +17,52 @@ import Animated, {
   withRepeat,
   Easing,
 } from 'react-native-reanimated';
-import {useEffect} from 'react';
-import LinearGradient from 'react-native-linear-gradient';
-import Video from 'react-native-video';
+import {launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import styles from './styles.js';
 
 const {width, height} = Dimensions.get('window');
-const scaleWidth = width / 390;
-const scaleHeight = height / 844;
 
-const Kit_guide_2_screen = ({onPress, navigation}) => {
+const ImageOrIcon = ({defaultIcon}) => {
+  return (
+    <View style={styles.iconContainer}>
+      <Icon name={defaultIcon} size={(30 * width) / 390} color="#4CAF50" />
+    </View>
+  );
+};
+
+const Kit_guide_2_screen = ({navigation}) => {
+  const [isPlaying, setIsPlaying] = useState(false); // 재생 상태 관리
   const opacity = useSharedValue(1);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImagePick = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 1,
+    });
+
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsPlaying(false);
+      };
+    }, []),
+  );
 
   useEffect(() => {
-    // 페이드인 페이드아웃 애니메이션 설정
     opacity.value = withRepeat(
       withTiming(0, {
         duration: 1000,
         easing: Easing.ease,
       }),
-      -1, // 무한 반복
-      true, // 요요 효과 (반대로 애니메이션 반복)
+      -1,
+      true,
     );
   }, [opacity]);
 
@@ -53,82 +72,60 @@ const Kit_guide_2_screen = ({onPress, navigation}) => {
     };
   });
 
+  const getIconName = index => {
+    const icons = ['check', 'tint', 'flask', 'ban', 'clock-o', 'list'];
+    return icons[index] || 'info-circle';
+  };
+
   return (
-    <SafeAreaView>
-      <ScrollView
-        scrollEnabled={true}
-        contentInsetAdjustmentBehavior="automatic">
+    <View>
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View style={styles.container}>
-          <View style={styles.banner}>
-            {/* <View style={styles.bannerInner}>
-              <ImageBackground
-                style={styles.bannerBackgroundImage}
-                source={require('../assets/images/150b862e-e74e-485a-a1f8-73dce2fa73f4.png')}
-                resizeMode="cover"
-              />
-              <ImageBackground
-                style={styles.bannerForegroundImage}
-                source={require('../assets/images/0a9072ca-e17b-4750-ba0d-2659d1ab76d3.png')}
-                resizeMode="cover"
-              />
-              <Text style={styles.bannerText} numberOfLines={1}>
-                HS
-              </Text>
+          <TouchableOpacity onPress={handleImagePick}>
+            <View style={styles.banner}>
+              {selectedImage ? (
+                <Image
+                  source={{uri: selectedImage}}
+                  style={styles.bannerImage}
+                />
+              ) : (
+                <YoutubePlayer
+                  height={height * 0.4}
+                  width={width * 0.9}
+                  play={isPlaying}
+                  videoId="TXT4Zj0K6X4"
+                />
+              )}
             </View>
-            <View style={styles.progressBar}>
-              <View style={styles.progressBarIcon}>
-                <ImageBackground
-                  style={styles.progressBarIconImage}
-                  source={require('../assets/images/905cac4e-8da1-48c3-b6ab-6291d387aa69.png')}
-                />
-              </View>
-              <Text style={styles.progressBarText} numberOfLines={1}>
-                00:00
-              </Text>
-              <View style={styles.progressBarTrack} />
-              <Text style={styles.progressBarText} numberOfLines={1}>
-                -01:36
-              </Text>
-              <View style={styles.progressBarPlayIcon}>
-                <ImageBackground
-                  style={styles.progressBarPlayIconImage}
-                  source={require('../assets/images/babfae0e-3934-4e27-8cc0-b207c520f470.png')}
-                />
-              </View>
-            </View> */}
-            <YoutubePlayer
-              height={height * 0.4} // 비디오 높이 설정
-              width={width * 0.9} // 비디오 폭 설정
-              play={false} // 자동 재생 여부
-              videoId="TXT4Zj0K6X4" // YouTube 비디오 ID
-            />
-          </View>
+          </TouchableOpacity>
           <View style={styles.instructions}>
-            {Array.from({length: 6}).map((_, index) => (
-              <View key={index} style={styles.instruction}>
-                <View style={styles.instructionIconContainer}>
-                  <Text style={styles.instructionIconText}>{index + 1}</Text>
-                </View>
-                <Text style={styles.instructionText} numberOfLines={1}>
-                  {instructionTexts[index]}
-                </Text>
+            {instructionTexts.map((text, index) => (
+              <View key={index} style={styles.instructionBox}>
+                <ImageOrIcon defaultIcon={getIconName(index)} />
+                <Text style={styles.instructionText}>{text}</Text>
               </View>
             ))}
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('kit_test')}>
             <View style={styles.captureButton}>
-              <View style={styles.captureButtonTextContainer}>
-                <Animated.View style={animatedStyle}>
+              <Animated.View style={animatedStyle}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon
+                    name="camera"
+                    size={20}
+                    color="#FFF"
+                    style={{marginRight: 8}}
+                  />
                   <Text style={styles.captureButtonText} numberOfLines={1}>
                     촬영하러 가기
                   </Text>
-                </Animated.View>
-              </View>
+                </View>
+              </Animated.View>
             </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
