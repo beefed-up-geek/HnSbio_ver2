@@ -349,7 +349,10 @@ const MedicineScreen = () => {
                                     </View>
                                 </View>
                                 <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
-                                    <Text style={styles.closeButtonText}>✕</Text>
+                                    <Image
+                                        source={require('../../images/xButton.png')} // xButton 이미지 경로
+                                        style={styles.closeIcon} // 적절한 스타일 추가
+                                    />
                                 </TouchableOpacity>
                             </View>
                         </View>

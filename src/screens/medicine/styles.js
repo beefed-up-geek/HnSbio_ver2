@@ -283,9 +283,10 @@ const styles = StyleSheet.create({
         top: 10,
         right: 20,
     },
-    closeButtonText: {
-        fontSize: 30 * height_ratio,
-        color: '#888',
+    closeIcon: {
+        width: 24, // 이미지 크기
+        height: 24, // 이미지 크기
+        tintColor: '#5D5D62',
     },
 });
 
