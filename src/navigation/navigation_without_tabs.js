@@ -84,7 +84,11 @@ const stackScreenOptions = ({route, navigation}) => {
           title = `${year}년 ${month}월 ${day}일 검진 결과`;
         }
       }
-      return <CustomHeader title={title} />;
+      return (
+        <View style={{paddingTop: insets.top, backgroundColor: 'white'}}>
+          <CustomHeader title={title} />  
+        </View>
+      );
     },
   };
 };
