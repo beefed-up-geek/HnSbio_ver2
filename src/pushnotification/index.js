@@ -1,13 +1,21 @@
-import React, { useEffect } from 'react';
-import { View, PermissionsAndroid, Platform, Text, StyleSheet } from 'react-native';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import React, {useEffect} from 'react';
+import {
+  View,
+  PermissionsAndroid,
+  Platform,
+  Text,
+  StyleSheet,
+} from 'react-native';
+import notifee, {
+  AndroidImportance,
+} from '@notifee/react-native';
 
 const checkApplicationPermission = async () => {
   if (Platform.OS === 'android') {
     try {
       // Android POST_NOTIFICATIONS 권한 요청
       const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -60,8 +68,8 @@ const PushNotification = () => {
   useEffect(() => {
     // 권한 요청 및 알림 초기화
     const initNotification = async () => {
-      await checkApplicationPermission();
-      await onDisplayNotification(); // 앱 시작 시 바로 알림 표시
+      // await checkApplicationPermission();
+      // await onDisplayNotification(); // 앱 시작 시 바로 알림 표시
     };
 
     initNotification();
@@ -84,4 +92,3 @@ const styles = StyleSheet.create({
 });
 
 export default PushNotification;
-
