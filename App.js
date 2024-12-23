@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import React, { useEffect } from 'react';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomNavigation from './src/navigation/navigation_with_tabs';
@@ -11,7 +12,7 @@ import GetKidneyInfo from './src/screens/login/get_kidney_info';
 import GetUserInfo from './src/screens/login/get_usr_info';
 import GetUnderlyingDiseaseInfo from './src/screens/login/get_underlying_disease_info';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { SafeAreaView, LogBox, Alert } from 'react-native';
+import { LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -56,23 +57,25 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <PushNotification />
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="Login1" component={Login1} />
-          <Stack.Screen name="Login2" component={Login2} />
-          <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
-          <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
-          <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
-          <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-          <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent'}} edges={['top', 'bottom']}>
+        <NavigationContainer>
+          <PushNotification />
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}>
+            <Stack.Screen name="Login1" component={Login1} />
+            <Stack.Screen name="Login2" component={Login2} />
+            <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
+            <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
+            <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
+            <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+            <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider> 
   );
 };
 
