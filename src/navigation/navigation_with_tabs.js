@@ -86,7 +86,7 @@ const BottomNavigation = () => {
         name="Examin_record"
         component={Examin_record_screen}
         options={{
-          title: '나의 검진 기록', // 헤더 제목 설정
+          title: '검진 기록', // 헤더 제목 설정
           headerShown: true,
         }}
       />
