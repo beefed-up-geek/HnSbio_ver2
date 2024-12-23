@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, BackHandler, Alert } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  BackHandler,
+  Alert,
+} from 'react-native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 
@@ -67,14 +74,10 @@ const ManageAccountScreen = () => {
   );
 
   const handleLogoutConfirmation = () => {
-    Alert.alert(
-      '로그아웃 하시겠습니까?',
-      '',
-      [
-        { text: '아니오', style: 'cancel' },
-        { text: '예', onPress: handleLogout },
-      ]
-    );
+    Alert.alert('로그아웃 하시겠습니까?', '', [
+      {text: '아니오', style: 'cancel'},
+      {text: '예', onPress: handleLogout},
+    ]);
   };
 
   const handleLogout = async () => {
@@ -91,9 +94,9 @@ const ManageAccountScreen = () => {
       '회원탈퇴',
       '회원 탈퇴 시 모든 정보가 삭제됩니다. 정말로 탈퇴하시겠습니까?',
       [
-        { text: '아니오', style: 'cancel' },
-        { text: '예', onPress: handleDeleteAccount },
-      ]
+        {text: '아니오', style: 'cancel'},
+        {text: '예', onPress: handleDeleteAccount},
+      ],
     );
   };
 
@@ -101,16 +104,19 @@ const ManageAccountScreen = () => {
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
-        const { providerId } = JSON.parse(userData);
-  
-        const response = await fetch('http://98.82.55.237/user_info/deleteUser', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
+        const {providerId} = JSON.parse(userData);
+
+        const response = await fetch(
+          'http://98.82.55.237/user_info/deleteUser',
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({providerId}),
           },
-          body: JSON.stringify({ providerId }),
-        });
-  
+        );
+
         if (response.ok) {
           await AsyncStorage.removeItem('user');
           Alert.alert('회원탈퇴가 완료되었습니다.');
@@ -126,7 +132,9 @@ const ManageAccountScreen = () => {
           } else {
             const errorText = await response.text();
             console.error('회원탈퇴 실패:', errorText);
-            Alert.alert('회원탈퇴 중 서버 오류가 발생했습니다. 다시 시도해주세요.');
+            Alert.alert(
+              '회원탈퇴 중 서버 오류가 발생했습니다. 다시 시도해주세요.',
+            );
           }
         }
       }
@@ -135,7 +143,6 @@ const ManageAccountScreen = () => {
       Alert.alert('회원탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -146,14 +153,18 @@ const ManageAccountScreen = () => {
             {accountInfo.provider} (가입일: {accountInfo.createdAt})
           </Text>
         </View>
-        <TouchableOpacity style={styles.detailRow} onPress={handleLogoutConfirmation}>
+        <TouchableOpacity
+          style={styles.detailRow}
+          onPress={handleLogoutConfirmation}>
           <Text style={styles.detailLabel}>로그아웃</Text>
           <Image
             source={require('../../../images/home/my_profile/go.png')}
             style={styles.goIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.detailLastRow} onPress={handleDeleteAccountConfirmation}>
+        <TouchableOpacity
+          style={styles.detailLastRow}
+          onPress={handleDeleteAccountConfirmation}>
           <Text style={styles.detailLabel}>회원 탈퇴</Text>
           <Image
             source={require('../../../images/home/my_profile/go.png')}

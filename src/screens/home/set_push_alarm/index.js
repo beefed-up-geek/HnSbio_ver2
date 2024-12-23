@@ -89,7 +89,7 @@ const SetPushAlarmScreen = ({ route }) => {
     await notifee.createTriggerNotification(
       {
         title: '키트 검사 예정일 알림',
-        body: '오늘은 키트 검사 예정일입니다. 콩팥 건강을을 체크하세요!',
+        body: '오늘은 키트 검사 예정일입니다. 콩팥 건강을 체크하세요!',
         android: {
           channelId: 'default',
           smallIcon: 'hns',

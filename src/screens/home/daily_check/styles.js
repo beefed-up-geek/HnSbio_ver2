@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     gap: 6 * height_ratio,
   },
   checkBoxImage: {
-    width: 20 * width_ratio, 
+    width: 20 * width_ratio,
     height: 20 * width_ratio,
   },
   checklistItem: {
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   boldText: {
     ...theme.fonts.SemiBold,
-  },  
+  },
   modalButtonContainer: {
     alignSelf: 'center',
     flexDirection: 'row',

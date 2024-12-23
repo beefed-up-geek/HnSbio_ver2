@@ -50,7 +50,7 @@ const My_profile_screen = () => {
         const userData = await AsyncStorage.getItem('user');
         if (userData != null) {
           const user = JSON.parse(userData);
-  
+
           // 사용자 데이터 설정
           setProviderId(user.providerId || '');
           setName(user.name || '');
@@ -62,12 +62,12 @@ const My_profile_screen = () => {
           setWeight(user.weight || '');
           setGender(user.gender === 'male' ? '남자' : '여자');
           setKidneyStatus(user.chronic_kidney_disease || '');
-  
+
           // 프로필 이미지 설정
           if (user.profile_image) {
             setProfileImage(user.profile_image);
           }
-  
+
           // 기저질환 데이터 설정
           const underlyingDiseases = [];
           if (user.underlying_disease) {
@@ -84,7 +84,7 @@ const My_profile_screen = () => {
             });
           }
           setUnderlyingCondition(underlyingDiseases);
-  
+
           // 초기 상태 저장
           setInitialSettings({
             nickname: user.nickname || '',
@@ -100,10 +100,9 @@ const My_profile_screen = () => {
         console.log('Error loading user data', error);
       }
     };
-  
+
     loadUserData();
   }, []);
-  
 
   // 변경사항 여부 확인 함수
   const hasChanges = () => {
@@ -120,11 +119,11 @@ const My_profile_screen = () => {
   };
 
   const handleChooseProfilePicture = async () => {
-    const options = { mediaType: 'photo', includeBase64: false };
+    const options = {mediaType: 'photo', includeBase64: false};
     ImagePicker.launchImageLibrary(options, async response => {
       if (response.assets && response.assets.length > 0) {
         const file = response.assets[0];
-  
+
         try {
           // 이미지를 리사이즈하여 가로 해상도를 512로 조정
           const resizedImage = await ImageResizer.createResizedImage(
@@ -132,7 +131,7 @@ const My_profile_screen = () => {
             512, // 가로 해상도를 512로 설정
             file.height / (file.width / 512), // 비율 유지
             'JPEG', // 포맷 설정
-            80 // 퀄리티 설정
+            80, // 퀄리티 설정
           );
           setProfileImage(resizedImage.uri); // 리사이즈된 이미지의 URI를 상태에 저장
         } catch (error) {
@@ -158,7 +157,7 @@ const My_profile_screen = () => {
       if (!currentUserData) {
         throw new Error('현재 사용자 데이터를 찾을 수 없습니다.');
       }
-  
+
       const currentUser = JSON.parse(currentUserData);
       const updatedUserData = {
         ...currentUser, // 기존 데이터를 모두 유지
@@ -171,10 +170,12 @@ const My_profile_screen = () => {
           hypertension: underlyingCondition.includes('고혈압') ? 1 : 0,
           diabetes: underlyingCondition.includes('당뇨') ? 1 : 0,
           hyperlipidemia: underlyingCondition.includes('고지혈증') ? 1 : 0,
-          retinal_complication: underlyingCondition.includes('망막합병증') ? 1 : 0,
+          retinal_complication: underlyingCondition.includes('망막합병증')
+            ? 1
+            : 0,
         },
       };
-  
+
       // 프로필 이미지가 변경되었는지 확인
       if (profileImage && profileImage !== currentUser.profile_image) {
         const formData = new FormData();
@@ -184,7 +185,7 @@ const My_profile_screen = () => {
           name: `profile_${providerId}.jpg`, // 파일 이름
         });
         formData.append('providerId', providerId);
-  
+
         try {
           // 프로필 이미지 업로드 API 호출
           const apiResponse = await axios.put(
@@ -194,9 +195,9 @@ const My_profile_screen = () => {
               headers: {
                 'Content-Type': 'multipart/form-data',
               },
-            }
+            },
           );
-  
+
           // API에서 반환된 이미지 URL 저장
           updatedUserData.profile_image = apiResponse.data.profileImage;
         } catch (error) {
@@ -205,7 +206,7 @@ const My_profile_screen = () => {
           return;
         }
       }
-  
+
       // 사용자 정보 업데이트 API 호출
       await axios.put(
         'http://98.82.55.237/user_info/updateUser',
@@ -214,13 +215,13 @@ const My_profile_screen = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
-  
+
       // AsyncStorage 업데이트
       await AsyncStorage.setItem('user', JSON.stringify(updatedUserData));
       Alert.alert('알림', '변경사항이 저장되었습니다.');
-  
+
       // 변경사항 저장 후 초기상태 업데이트
       setInitialSettings({
         nickname,
@@ -236,7 +237,6 @@ const My_profile_screen = () => {
       Alert.alert('오류', '변경사항 저장에 실패하였습니다.');
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -315,16 +315,15 @@ const My_profile_screen = () => {
       <TouchableOpacity
         style={[
           styles.saveButton,
-          { backgroundColor: hasChanges() ? '#EBEFFE' : '#E8E8E8' },
+          {backgroundColor: hasChanges() ? '#EBEFFE' : '#E8E8E8'},
         ]}
         onPress={saveUserData}
         disabled={!hasChanges()}>
         <Text
           style={[
             styles.saveButtonText,
-            { color: hasChanges() ? '#7596FF' : '#7F7F7F' },
-          ]}
-        >
+            {color: hasChanges() ? '#7596FF' : '#7F7F7F'},
+          ]}>
           변경사항 저장
         </Text>
       </TouchableOpacity>

@@ -1,5 +1,5 @@
 // src\screens\home\my_profile\styles.js
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 
@@ -115,29 +115,29 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(0, 0, 0, 0)',
     // justifyContent: 'flex-end',
   },
-  modalVisibleBackground:{
+  modalVisibleBackground: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    height:'100%'
+    height: '100%',
     // paddingHorizontal: 24 * width_ratio,
     // paddingTop: 24 * height_ratio,
     // paddingBottom: 40 * height_ratio
   },
-  modalInvisibleBackground:{
+  modalInvisibleBackground: {
     backgroundColor: 'white',
-    height:'100%'
+    height: '100%',
   },
   modalContainer: {
-    position:'absolute',
-    bottom:0,
-    left:0,
-    right:0,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: 'white',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     // marginTop: 500*height_ratio,
     paddingHorizontal: 24 * width_ratio,
     paddingTop: 24 * height_ratio,
-    paddingBottom: 40 * height_ratio
+    paddingBottom: 40 * height_ratio,
   },
   modalTitle: {
     color: '#49494F',
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   modalSaveButtonContainer: {
     alignItems: 'center', // 중앙 정렬
     justifyContent: 'center', // 수직 중앙 정렬
-    marginTop: 20 * height_ratio, 
+    marginTop: 20 * height_ratio,
   },
   inputContainer: {
     marginBottom: 18 * height_ratio,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     width: 80 * width_ratio,
     textAlign: 'center',
     fontSize: 16 * width_ratio,
-    color: 'black', 
+    color: 'black',
     marginHorizontal: 5 * width_ratio,
   },
   birthdateSeparator: {
@@ -218,5 +218,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 2 * width_ratio,
   },
 });
-  
+
 export default styles;

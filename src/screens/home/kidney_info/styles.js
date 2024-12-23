@@ -116,13 +116,13 @@ const styles = StyleSheet.create({
     marginTop: 6 * height_ratio,
     ...theme.fonts.SemiBold,
     fontSize: 18 * width_ratio,
-    color: '#49494F'
+    color: '#49494F',
   },
   gfrCriteria: {
     ...theme.fonts.Medium,
     fontSize: 15 * width_ratio,
     marginTop: 10 * height_ratio,
-    color: '#49494F'
+    color: '#49494F',
   },
   descriptionText: {
     ...theme.fonts.Regular,

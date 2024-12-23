@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,12 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from './styles.js'; // 스타일 분리
 
-const Daily_check_screen = ({ route }) => {
+const Daily_check_screen = ({route}) => {
   const navigation = useNavigation();
 
   // `refreshHome` 함수: 사용자가 완료 버튼을 눌렀을 때 홈 화면 갱신
@@ -126,7 +126,7 @@ const Daily_check_screen = ({ route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('BottomNavigation', { screen: 'KitStack' })
+                  navigation.navigate('BottomNavigation', {screen: 'KitStack'})
                 }>
                 <Image
                   source={require('../../../images/home/daily_check/키트.png')}
