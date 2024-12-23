@@ -331,14 +331,6 @@ export default function Hospital_Screen({navigation}) {
     );
   };
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
-
   // 필터 적용 시 활성화된 필터 업데이트
   const updateActiveFilters = (filters) => {
     const newActiveFilters = [];
@@ -391,12 +383,6 @@ const filterLabels = {
 
 return (
   <View style={styles.container}>
-    {/* 항상 표시되는 헤더 */}
-    {/* <View style={styles.headerContainer}>
-      <Text style={styles.headerTitle}>병원 검색</Text>
-      <View style={styles.headerBorder} />
-    </View> */}
-
     {/* 항상 표시되는 검색 섹션 */}
     <View style={styles.searchSection}>
       <View style={styles.searchInputContainer}>
