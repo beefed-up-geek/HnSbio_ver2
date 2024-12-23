@@ -4,7 +4,6 @@ import {
   View,
   Text,
   ImageBackground,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -171,7 +170,8 @@ const Kit_screen = ({onPress, navigation, route}) => {
       <View>
         <ScrollView
           scrollEnabled={true}
-          contentInsetAdjustmentBehavior="automatic">
+          //contentInsetAdjustmentBehavior="automatic"
+          >
           <View style={styles.container}>
             <View style={styles.fixedHeaderContainer}>
               <View style={styles.headerContainer}>
