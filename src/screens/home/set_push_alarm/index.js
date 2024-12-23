@@ -16,13 +16,9 @@ const SetPushAlarmScreen = ({ route }) => {
 
   // 화면 상태 변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [repeatInterval, setRepeatInterval] = useState('28');
+  const [nextAlarmDate, setNextAlarmDate] = useState(new Date());
   const [initialSettings, setInitialSettings] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [modalVisible, setModalVisible] = useState({
-    repeatInterval: false,
-  });
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [providerId, setProviderId] = useState('');
 
@@ -41,8 +37,7 @@ const SetPushAlarmScreen = ({ route }) => {
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
-      formatDate(initialSettings.startDate) !== formatDate(startDate) ||
-      initialSettings.repeatInterval !== repeatInterval
+      formatDate(initialSettings.nextAlarmDate) !== formatDate(nextAlarmDate)
     );
   };
 
@@ -57,21 +52,17 @@ const SetPushAlarmScreen = ({ route }) => {
         const localSettings = parsedData.pushNotificationSettings;
         if (localSettings) {
           setAlarmEnabled(localSettings.alarmEnabled);
-          setStartDate(new Date(localSettings.startDate) || new Date());
-          setRepeatInterval(localSettings.repeatInterval);
+          setNextAlarmDate(new Date(localSettings.nextAlarmDate) || new Date());
           setInitialSettings({
             alarmEnabled: localSettings.alarmEnabled,
-            startDate: new Date(localSettings.startDate) || new Date(),
-            repeatInterval: localSettings.repeatInterval,
+            nextAlarmDate: new Date(localSettings.nextAlarmDate) || new Date(),
           });
         } else {
           setAlarmEnabled(false);
-          setStartDate(new Date());
-          setRepeatInterval('28');
+          setNextAlarmDate(new Date());
           setInitialSettings({
             alarmEnabled: false,
-            startDate: new Date(),
-            repeatInterval: '28',
+            nextAlarmDate: new Date(),
           });
         }
       }
@@ -83,10 +74,6 @@ const SetPushAlarmScreen = ({ route }) => {
   // 알람 상태 토글
   const toggleAlarm = () => setAlarmEnabled((prev) => !prev);
 
-  // 모달 열기/닫기
-  const openModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: true }));
-  const closeModal = (key) => setModalVisible((prev) => ({ ...prev, [key]: false }));
-
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
     if (!providerId) {
@@ -96,7 +83,7 @@ const SetPushAlarmScreen = ({ route }) => {
 
     try {
       setConfirmationModalVisible(true);
-      setInitialSettings({ alarmEnabled, startDate, repeatInterval });
+      setInitialSettings({ alarmEnabled, nextAlarmDate });
 
       // AsyncStorage에 데이터 저장
       await AsyncStorage.mergeItem(
@@ -104,8 +91,7 @@ const SetPushAlarmScreen = ({ route }) => {
         JSON.stringify({
           pushNotificationSettings: {
             alarmEnabled,
-            startDate,
-            repeatInterval,
+            nextAlarmDate,
           },
         })
       );
@@ -148,52 +134,33 @@ const SetPushAlarmScreen = ({ route }) => {
             last={!alarmEnabled}
           />
         )}
-        {/* 시작 날짜와 반복 주기 */}
+        {/* 다음 알림 날짜 */}
         {alarmEnabled && (
-          <>
-            <DetailRow
-              icon={require('../../../images/home/set_push_alarm/시작날짜.png')}
-              label="시작 날짜"
-              value={startDate.toLocaleDateString('ko-KR')}
-              onPress={() => setShowDatePicker(true)}
-            />
-            <DetailRow
-              icon={require('../../../images/home/set_push_alarm/반복주기.png')}
-              label="반복 주기"
-              value={`${repeatInterval}일`}
-              onPress={() => openModal('repeatInterval')}
-              last
-            />
-          </>
+          <DetailRow
+            icon={require('../../../images/home/set_push_alarm/반복주기.png')}
+            label="다음 키트 검사일"
+            value={nextAlarmDate.toLocaleDateString('ko-KR')}
+            onPress={() => setShowDatePicker(true)}
+            last
+          />
         )}
       </View>
-
+      
       {/* 날짜 선택기 */}
       {showDatePicker && (
         <DateTimePicker
-          value={startDate}
+          value={nextAlarmDate}
           mode="date"
           display="default"
+          minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);
             if (selectedDate) {
-              setStartDate(selectedDate);
+              setNextAlarmDate(selectedDate);
             }
           }}
         />
       )}
-
-      {/* 반복 주기 모달 */}
-      <ModalComponent
-        visible={modalVisible.repeatInterval}
-        title="반복 주기 변경"
-        label="반복 주기"
-        value={repeatInterval}
-        setValue={setRepeatInterval}
-        onClose={() => closeModal('repeatInterval')}
-        placeholder="반복 주기를 입력하세요"
-        keyboardType="numeric"
-      />
 
       {/* 확인 모달 */}
       <Modal
