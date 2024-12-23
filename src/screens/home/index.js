@@ -86,7 +86,7 @@ const HomeScreen = () => {
       const nextDate = new Date(nextAlarmDate);
       const diffTime = nextDate.getTime() - currentDate.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      setDaysToNextAlarm(diffDays >= 0 ? diffDays : 0);
+      setDaysToNextAlarm(diffDays); // 음수 값도 반영
     } else {
       setDaysToNextAlarm(null);
     }
@@ -256,30 +256,90 @@ const HomeScreen = () => {
               style={styles.characterImage}
             />
           </Animated.View>
-
           {alarmEnabled && nextAlarmDate !== null ? (
             <>
-              <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
-              <View style={styles.lineWrapper}>
-                <Text style={styles.nextCheckupText2}>
-                  {daysToNextAlarm}일 남았습니다
-                </Text>
-                <TouchableOpacity
-                  style={styles.setPushAlarmButton}
-                  onPress={() =>
-                    navigation.navigate('NoTabs', {
-                      screen: 'set_push_alarm',
-                      params: {
-                        refreshHome: loadUserData,
-                      },
-                    })
-                  }>
-                  <Image
-                    source={require('../../images/home/gearIcon.png')}
-                    style={styles.setPushAlarmIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              {daysToNextAlarm > 0 ? (
+                // 예정일이 아직 남은 경우
+                <>
+                  <Text style={styles.nextCheckupText1}>
+                    다음 키트 검사일까지
+                  </Text>
+                  <View style={styles.lineWrapper}>
+                    <Text style={styles.nextCheckupText2}>
+                      {daysToNextAlarm}일 남았습니다
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.setPushAlarmButton}
+                      onPress={() =>
+                        navigation.navigate('NoTabs', {
+                          screen: 'set_push_alarm',
+                          params: {
+                            refreshHome: loadUserData,
+                          },
+                        })
+                      }>
+                      <Image
+                        source={require('../../images/home/gearIcon.png')}
+                        style={styles.setPushAlarmIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : daysToNextAlarm === 0 ? (
+                // 오늘이 예정일인 경우
+                <>
+                  <Text style={styles.nextCheckupText1}>
+                    오늘은 키트 검사일이에요!
+                  </Text>
+                  <View style={styles.lineWrapper}>
+                    <Text style={styles.nextCheckupText2}>
+                      지금 바로 검사를 받아보세요
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.setPushAlarmButton}
+                      onPress={() =>
+                        navigation.navigate('NoTabs', {
+                          screen: 'set_push_alarm',
+                          params: {
+                            refreshHome: loadUserData,
+                          },
+                        })
+                      }>
+                      <Image
+                        source={require('../../images/home/gearIcon.png')}
+                        style={styles.setPushAlarmIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                // 예정일이 이미 지났다면(daysToNextAlarm < 0)
+                <>
+                  <Text style={styles.nextCheckupText1}>
+                    키트 검사 예정일로부터
+                  </Text>
+                  <View style={styles.lineWrapper}>
+                    <Text style={styles.nextCheckupText2}>
+                      {Math.abs(daysToNextAlarm)}일이 지났어요
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.setPushAlarmButton}
+                      onPress={() =>
+                        navigation.navigate('NoTabs', {
+                          screen: 'set_push_alarm',
+                          params: {
+                            refreshHome: loadUserData,
+                          },
+                        })
+                      }>
+                      <Image
+                        source={require('../../images/home/gearIcon.png')}
+                        style={styles.setPushAlarmIcon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
             </>
           ) : latestKitTest ? (
             <>

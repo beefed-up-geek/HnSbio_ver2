@@ -1,3 +1,5 @@
+//src\screens\home\set_push_alarm\index.js
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
