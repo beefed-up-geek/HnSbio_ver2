@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     height: 52 * height_ratio,
     backgroundColor: '#F1F1F1',
     borderRadius: 18,
-    paddingVertical: 15 * width_ratio,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   selectedOptionButton: {
     backgroundColor: '#EBEFFE',
@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
   },
   birthdateInput: {
     borderBottomWidth: 1,
-    borderColor: '#828287',
-    width: 90 * width_ratio,
+    borderColor: '#878787',
+    width: 80 * width_ratio,
     textAlign: 'center',
     fontSize: 16 * width_ratio,
     color: 'black', 
