@@ -8,8 +8,11 @@ import {
   Text,
   Animated,
   Easing,
+  SafeAreaView,
 } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import styles from './navigation_with_tabs_styles';
 
 import Examin_record_screen from '../screens/examin_record/index';
@@ -40,10 +43,31 @@ const selectedIconSources = {
 };
 
 const BottomNavigation = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        header: ({ options, route }) => (
+          <SafeAreaView style={{ backgroundColor: '#fff' }} edges={['top']}>
+            <View
+              style={{
+                height: 76,
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                borderBottomWidth: 0.8,
+                borderBottomColor: '#E9E9E9',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={styles.headerTitle}>
+                {options.title || route.name}
+              </Text>
+            </View>
+          </SafeAreaView>
+        ),
         tabBarStyle: {
           position: 'absolute',
           bottom: 20,
@@ -54,14 +78,6 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
-        headerStyle: {
-          height: 76 * height_ratio,
-          backgroundColor: '#fff',
-          borderBottomWidth: 1,
-          borderBottomColor: '#E9E9E9', // 헤더 아래 보더 추가
-        },
-        headerTitleAlign: 'center', // 제목 중앙 정렬
-        headerTitleStyle: styles.headerTitle, // 헤더 제목 스타일 적용
         unmountOnBlur: true,
       }}
       tabBar={(props) => <CustomTabBar {...props} />}

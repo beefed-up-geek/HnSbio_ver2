@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     ...theme.fonts.SemiBold,
-    color: '#333',
+    textAlign: 'center',
+    color: '#414141',
   },
 });
 
