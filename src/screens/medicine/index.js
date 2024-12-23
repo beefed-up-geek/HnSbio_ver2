@@ -186,6 +186,16 @@ const MedicineScreen = () => {
     const handleRecentSearch = (text) => {
         setSearchText(text);    // 선택한 최근 검색어로 검색어 설정
         setSuggestions([]);      // 자동완성 목록 지우기
+
+        // 검색 타입 판단
+        if (medications.some((item) => item.name === text)) {
+            setSearchType('name'); // 이름으로 검색된 경우
+        } else if (medications.some((item) =>
+            item.ingredients.includes(text) || item.cautionaryIngr.includes(text)
+        )) {
+            setSearchType('ingredient'); // 성분으로 검색된 경우
+        }
+
         Keyboard.dismiss();      // 키보드 숨기기
         searchMedicine(text);    // 검색 실행
     };
