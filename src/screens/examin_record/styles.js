@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     flex: 1,
-    marginTop: 100 * height_ratio,
+    marginTop: 10 * height_ratio,
     paddingHorizontal: 20 * width_ratio,
     paddingBottom: 20 * height_ratio,
   },
