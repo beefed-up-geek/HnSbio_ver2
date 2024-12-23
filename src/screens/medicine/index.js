@@ -1,3 +1,5 @@
+// src\screens\medicine\index.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions, Text, View, TextInput, TouchableOpacity, FlatList, Alert, Keyboard, Modal, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
@@ -30,7 +32,7 @@ const MedicineScreen = () => {
             const response = await fetch('http://98.82.55.237/medicine/autocomplete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query })
+                body: JSON.stringify({ query, searchType })
             });
             const data = await response.json();
             setSuggestions(data.suggestions || []);
@@ -77,6 +79,11 @@ const MedicineScreen = () => {
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
+    };
+
+    const clearSearchText = () => {
+        setSearchText(''); // 입력값 초기화
+        setSuggestions([]); // 자동완성 목록 초기화
     };
 
     const searchMedicine = async (query) => {
@@ -179,6 +186,21 @@ const MedicineScreen = () => {
     const handleRecentSearch = (text) => {
         setSearchText(text);    // 선택한 최근 검색어로 검색어 설정
         setSuggestions([]);      // 자동완성 목록 지우기
+
+        // 검색 타입 판단
+        if (medications.some((item) => item.name === text)) {
+            setSearchType('name'); // 이름으로 검색된 경우
+        } else if (
+            medications.some(
+                (item) =>
+                    item.ingredients.includes(text) || item.cautionaryIngr.includes(text)
+            )
+        ) {
+            setSearchType('ingredient'); // 성분으로 검색된 경우
+        } else {
+            setSearchType('name'); // 기본값으로 이름 검색 설정
+        }
+
         Keyboard.dismiss();      // 키보드 숨기기
         searchMedicine(text);    // 검색 실행
     };
@@ -209,14 +231,19 @@ const MedicineScreen = () => {
                             keyboardType="default"
                             returnKeyType="search"
                         />
-    
+                        {/* 닫기 버튼 */}
+                        {searchText !== '' && (
+                            <TouchableOpacity onPress={clearSearchText}>
+                                <Image source={require('../../images/medicine/eraser.png')} style={styles.closeIcon} />
+                            </TouchableOpacity>
+                        )}
                         <TouchableOpacity onPress={() => {
                             if (searchText.trim() !== '') {
                                 Keyboard.dismiss();
                                 searchMedicine();
                                 setSuggestions([]); // 검색 완료 시 자동완성 목록 숨기기
                             }
-                        }}>
+                            }}>
                             <Image source={require('../../images/medicine/돋보기.png')} style={styles.searchIcon} />
                         </TouchableOpacity>
                     </View>
@@ -258,7 +285,10 @@ const MedicineScreen = () => {
                                             <Text style={styles.recentSearchText}>{item}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => handleRecentSearchDelete(item)}>
-                                            <Text style={styles.removeText}>✕</Text>
+                                            <Image
+                                                source={require('../../images/xButton.png')} // 이미지 경로
+                                                style={styles.removeIcon} // 스타일 정의
+                                            />
                                         </TouchableOpacity>
                                     </View>
                                 ))}
