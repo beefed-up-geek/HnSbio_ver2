@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
         right: 20,
     },
     closeIcon: {
-        width: 24, // 이미지 크기
-        height: 24, // 이미지 크기
+        width: 20 * width_ratio, // 이미지 크기
+        height: 20 * width_ratio, // 이미지 크기
         tintColor: '#5D5D62',
     },
 });
