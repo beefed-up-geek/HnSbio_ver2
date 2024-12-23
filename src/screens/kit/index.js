@@ -173,12 +173,12 @@ const Kit_screen = ({onPress, navigation, route}) => {
           //contentInsetAdjustmentBehavior="automatic"
           >
           <View style={styles.container}>
-            <View style={styles.fixedHeaderContainer}>
+            {/* <View style={styles.fixedHeaderContainer}>
               <View style={styles.headerContainer}>
                 <Text style={styles.headerTitle}>키트 검사</Text>
                 <View style={styles.headerBorder} />
               </View>
-            </View>
+            </View> */}
             <View style={styles.innerContainer}>
               <View style={styles.topRow} />
               <View style={styles.secondRow} />

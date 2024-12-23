@@ -1,6 +1,9 @@
 // src\navigation\navigation_with_tabs_styles.js
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions,} from 'react-native';
 import theme from '../theme';
+
+const width_ratio = Dimensions.get('screen').width / 390;
+const height_ratio = Dimensions.get('screen').height / 844;
 
 const styles = StyleSheet.create({
   // CustomTabBar 스타일
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
 
   // CustomHeader 스타일
   headerContainer: {
-    height: 76, // 아이콘 크기에 맞게 헤더 높이 설정
+    height: 76 * height_ratio,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    ...theme.fonts.Bold,
+    ...theme.fonts.SemiBold,
     color: '#333',
   },
 });
