@@ -258,7 +258,10 @@ const MedicineScreen = () => {
                                             <Text style={styles.recentSearchText}>{item}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => handleRecentSearchDelete(item)}>
-                                            <Text style={styles.removeText}>✕</Text>
+                                            <Image
+                                                source={require('../../images/xButton.png')} // 이미지 경로
+                                                style={styles.removeIcon} // 스타일 정의
+                                            />
                                         </TouchableOpacity>
                                     </View>
                                 ))}

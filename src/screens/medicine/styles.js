@@ -39,9 +39,14 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         height: 48 * height_ratio,
     },
+    closeIcon: {
+        width: 20,
+        height: 20,
+        marginHorizontal: 10,
+    },
     searchIcon: {
-        width: 25,
-        height: 25,
+        width: 24,
+        height: 24,
         marginHorizontal: 10,
         tintColor: '#8E9098',
         marginLeft: 10,
@@ -103,16 +108,16 @@ const styles = StyleSheet.create({
         fontSize: 12 * height_ratio,
         ...theme.fonts.Medium,
     },
-    removeText: {
-        color: '#5D5D62',
-        marginLeft: 6,
-        fontSize: 20 * height_ratio,
-        marginBottom: 1
-    },
     tabsContainer: {
         flexDirection: 'row',
         alignItems: 'center', // 중앙 정렬
         paddingHorizontal: 23,
+    },
+    removeIcon: {
+        width: 18, // 너비
+        height: 18, // 높이
+        marginLeft: 6, // 텍스트와의 간격
+        tintColor: '#5D5D62',
     },
     tabButton: {
         paddingVertical: 10,
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: 330 * width_ratio,
+        width: '85%', // 화면 너비의 90%로 설정
         paddingHorizontal: 20,
         paddingVertical: 35,
         backgroundColor: 'white',
@@ -230,6 +235,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: '100%',
+        alignItems: 'flex-start', // 왼쪽 정렬
+        flexShrink: 1, // 텍스트가 창을 넘어가지 않도록 설정
     },
     row: {
         flexDirection: 'row',
@@ -240,6 +247,7 @@ const styles = StyleSheet.create({
         ...theme.fonts.Bold,
         marginBottom: 20,
         color: '#333',
+        textAlign: 'center', // 제목 가운데 정렬
     },
     icon: {
         width: 58,
