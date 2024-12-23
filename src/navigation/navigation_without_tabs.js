@@ -7,6 +7,7 @@ import {
   useFocusEffect,
   useRoute,
 } from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import styles from './navigation_without_tabs_styles';
 
@@ -68,6 +69,8 @@ const CustomHeader = ({title}) => {
 const Stack = createStackNavigator();
 
 const stackScreenOptions = ({route, navigation}) => {
+  const insets = useSafeAreaInsets();
+  
   return {
     header: ({options}) => {
       let title = options.title || route.name;
