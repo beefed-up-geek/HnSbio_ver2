@@ -11,7 +11,7 @@ import GetKidneyInfo from './src/screens/login/get_kidney_info';
 import GetUserInfo from './src/screens/login/get_usr_info';
 import GetUnderlyingDiseaseInfo from './src/screens/login/get_underlying_disease_info';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { LogBox, Alert } from 'react-native';
+import { SafeAreaView, LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -56,21 +56,23 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <PushNotification />
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Login1" component={Login1} />
-        <Stack.Screen name="Login2" component={Login2} />
-        <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
-        <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
-        <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
-        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-        <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <PushNotification />
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Login1" component={Login1} />
+          <Stack.Screen name="Login2" component={Login2} />
+          <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
+          <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
+          <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
+          <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+          <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 
