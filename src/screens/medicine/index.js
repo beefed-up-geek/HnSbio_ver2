@@ -32,7 +32,7 @@ const MedicineScreen = () => {
             const response = await fetch('http://98.82.55.237/medicine/autocomplete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query })
+                body: JSON.stringify({ query, searchType })
             });
             const data = await response.json();
             setSuggestions(data.suggestions || []);
