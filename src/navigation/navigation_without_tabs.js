@@ -51,7 +51,6 @@ const CustomHeader = ({title}) => {
         {
           // 상단 안전 영역 확보
           paddingTop: insets.top,
-          // 배경 투명(또는 원하는 색) 지정
           backgroundColor: 'white',
         },
       ]}>
