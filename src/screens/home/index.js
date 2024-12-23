@@ -10,7 +10,7 @@ import {
   Linking,
   Animated,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   useNavigation,
@@ -57,9 +57,8 @@ const HomeScreen = () => {
 
   // 홈화면 메인 글자를 위한 상태변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
-  const [startDate, setStartDate] = useState(null);
-  const [repeatInterval, setRepeatInterval] = useState(null);
-  const [daysToNextKitTest, setDaysToNextKitTest] = useState(null);
+  const [nextAlarmDate, setNextAlarmDate] = useState(null);
+  const [daysToNextAlarm, setDaysToNextAlarm] = useState(null);
   const [latestKitTest, setLatestKitTest] = useState(null);
   const [lastKitTestDaysAgo, setLastKitTestDaysAgo] = useState(null);
   const [checkCompletedToday, setCheckCompletedToday] = useState(false);
@@ -80,30 +79,20 @@ const HomeScreen = () => {
     }
   };
 
-  // Functions for kit test calculations
-  const calculateNextKitTest = () => {
-    if (alarmEnabled && startDate && repeatInterval) {
+  // 다음 키트 검사일 계산 함수
+  const calculateDaysToNextAlarm = () => {
+    if (nextAlarmDate) {
       const currentDate = new Date();
-      const start = new Date(startDate);
-      const repeatDays = parseInt(repeatInterval);
-
-      const diffTime = currentDate.getTime() - start.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
-      const periodsElapsed = Math.floor(diffDays / repeatDays);
-
-      const nextTestDate = new Date(start.getTime());
-      nextTestDate.setDate(start.getDate() + (periodsElapsed + 1) * repeatDays);
-
-      const daysLeft = Math.ceil(
-        (nextTestDate - currentDate) / (1000 * 3600 * 24),
-      );
-
-      setDaysToNextKitTest(daysLeft);
+      const nextDate = new Date(nextAlarmDate);
+      const diffTime = nextDate.getTime() - currentDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDaysToNextAlarm(diffDays >= 0 ? diffDays : 0);
     } else {
-      setDaysToNextKitTest(null);
+      setDaysToNextAlarm(null);
     }
   };
 
+  // 지난 키트 검사일 계산 함수
   const calculateLastKitTest = () => {
     if (latestKitTest) {
       const lastTestDate = parseDateString(latestKitTest.datetime);
@@ -125,61 +114,10 @@ const HomeScreen = () => {
     }
   };
 
-  // // homeScreenData가 변경될 때마다 데이터 업데이트
-  // useEffect(() => {
-  //   if (route.params?.homeScreenData) {
-  //     const data = route.params.homeScreenData;
-  //     setName(data.name);
-  //     setGender(data.gender);
-  //     setHeight(data.height);
-  //     setWeight(data.weight);
-  //     setBirthdate(data.birthdate);
-  //     setNickname(data.nickname);
-  //     setChronicKidneyDisease(data.chronic_kidney_disease);
-  //     setUnderlyingDisease(data.underlying_disease);
-
-  //     if (data.healthCheckup && data.healthCheckup.length > 0) {
-  //       const sortedHealthCheckup = data.healthCheckup.sort((a, b) => {
-  //         const dateA = new Date(
-  //           a.resCheckupYear,
-  //           a.resCheckupDate.substring(0, 2) - 1,
-  //           a.resCheckupDate.substring(2),
-  //         );
-  //         const dateB = new Date(
-  //           b.resCheckupYear,
-  //           b.resCheckupDate.substring(0, 2) - 1,
-  //           b.resCheckupDate.substring(2),
-  //         );
-  //         return dateB - dateA;
-  //       });
-
-  //       const latestCheckup = sortedHealthCheckup[0];
-  //       const serumCreatinine = parseFloat(latestCheckup.resSerumCreatinine);
-  //       if (!isNaN(serumCreatinine) && serumCreatinine > 0) {
-  //         let estimatedFunction;
-  //         if (data.gender === 'male') {
-  //           estimatedFunction = (0.9 / serumCreatinine) * 100;
-  //         } else {
-  //           estimatedFunction = (0.7 / serumCreatinine) * 100;
-  //         }
-  //         setEstimatedKidneyFunction(Math.round(estimatedFunction));
-  //       }
-
-  //       const dateString = `${
-  //         latestCheckup.resCheckupYear
-  //       }.${latestCheckup.resCheckupDate.substring(
-  //         0,
-  //         2,
-  //       )}.${latestCheckup.resCheckupDate.substring(2)}`;
-  //       setLatestCheckupDate(dateString);
-  //     }
-  //   }
-  // }, [route.params?.homeScreenData]);
-
   useEffect(() => {
-    calculateNextKitTest();
     calculateLastKitTest();
-  }, [alarmEnabled, startDate, repeatInterval, latestKitTest]);
+    calculateDaysToNextAlarm();
+  }, [latestKitTest, nextAlarmDate]);
 
   // AsyncStorage에서 사용자 정보를 불러오는 함수
   const loadUserData = async () => {
@@ -199,15 +137,13 @@ const HomeScreen = () => {
 
         // Retrieve pushNotificationSettings
         if (parsedData.pushNotificationSettings) {
-          const {alarmEnabled, startDate, repeatInterval} =
+          const {alarmEnabled, nextAlarmDate} =
             parsedData.pushNotificationSettings;
           setAlarmEnabled(alarmEnabled);
-          setStartDate(startDate);
-          setRepeatInterval(repeatInterval);
+          setNextAlarmDate(nextAlarmDate);
         } else {
           setAlarmEnabled(false);
-          setStartDate(null);
-          setRepeatInterval(null);
+          setNextAlarmDate(null);
         }
 
         // 가장 최근 키트검사 결과를 latestKitTest 변수로 설정
@@ -277,15 +213,16 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={{
-      flex: 1,
-      paddingTop: insets.top,
-    }}>
-      <LinearGradient
-        colors={['#EBEFFE', '#B7C8FF']}
-        start={{x: 0, y: 0.54}} // 그라데이션 시작점 (위쪽)
-        end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
-        style={styles.gradient}>
+    <LinearGradient
+      colors={['#EBEFFE', '#B7C8FF']}
+      start={{x: 0, y: 0.54}} // 그라데이션 시작점 (위쪽)
+      end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
+      style={styles.gradient}>
+      <View
+        style={{
+          flex: 1,
+          paddingTop: insets.top,
+        }}>
         <View style={styles.logoContainer}>
           <DevButton loadUserData={loadUserData} />
         </View>
@@ -311,19 +248,20 @@ const HomeScreen = () => {
               },
             },
           )}>
-          <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
+          <Animated.View
+            style={[styles.character, {opacity: characterOpacity}]}>
             <Image
               source={require('../../images/home/sampleimage2.png')}
               style={styles.characterImage}
             />
           </Animated.View>
 
-          {alarmEnabled && daysToNextKitTest !== null ? (
+          {alarmEnabled && nextAlarmDate !== null ? (
             <>
               <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
               <View style={styles.lineWrapper}>
                 <Text style={styles.nextCheckupText2}>
-                  {daysToNextKitTest}일 남았습니다
+                  {daysToNextAlarm}일 남았습니다
                 </Text>
                 <TouchableOpacity
                   style={styles.setPushAlarmButton}
@@ -430,8 +368,8 @@ const HomeScreen = () => {
                   {latestKitTest ? (
                     <>
                       <Text style={styles.boxSubTextLight}>
-                        {formatDate(parseDateString(latestKitTest.datetime))} 키트
-                        결과 기준
+                        {formatDate(parseDateString(latestKitTest.datetime))}{' '}
+                        키트 결과 기준
                       </Text>
                     </>
                   ) : (
@@ -536,8 +474,8 @@ const HomeScreen = () => {
 
           <View style={styles.bottomSpacer} />
         </ScrollView>
-      </LinearGradient>
-    </View>
+      </View>
+    </LinearGradient>
   );
 };
 
