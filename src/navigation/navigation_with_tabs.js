@@ -10,6 +10,8 @@ import {
   Easing,
 } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import styles from './navigation_with_tabs_styles';
 
 import Examin_record_screen from '../screens/examin_record/index';
@@ -40,6 +42,8 @@ const selectedIconSources = {
 };
 
 const BottomNavigation = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -55,6 +59,7 @@ const BottomNavigation = () => {
           height: 64,
         },
         headerStyle: {
+          marginTop: insets.top,
           height: 76 * height_ratio,
           backgroundColor: '#fff',
           borderBottomWidth: 1,
