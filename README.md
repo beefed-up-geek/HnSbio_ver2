@@ -135,7 +135,7 @@
     - 그 외에도 다양한 병원 정보 제공
    
 <div align='center'>
-  <img src='https://raw.githubusercontent.com/beefed-up-geek/hns_readme_images/main/images/%EB%B3%91%EC%9B%90.png' width='300px'>
+  <img src='https://github.com/user-attachments/assets/55c30a36-7b6b-4352-a1c8-59c5940f7d3d' width='300px'>
 </div>
 
 <br>
