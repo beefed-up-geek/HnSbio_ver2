@@ -8,6 +8,7 @@ import {
   Text,
   Animated,
   Easing,
+  SafeAreaView,
 } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
