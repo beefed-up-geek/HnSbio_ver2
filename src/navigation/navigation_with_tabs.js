@@ -53,11 +53,13 @@ const BottomNavigation = () => {
           <SafeAreaView style={{ backgroundColor: '#fff' }} edges={['top']}>
             <View
               style={{
-                height: 76 * height_ratio,
-                borderBottomWidth: 1,
+                height: 76,
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                borderBottomWidth: 0.8,
                 borderBottomColor: '#E9E9E9',
                 justifyContent: 'center',
-                alignItems: 'center',
               }}
             >
               <Text style={styles.headerTitle}>
