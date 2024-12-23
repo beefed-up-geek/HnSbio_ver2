@@ -80,7 +80,7 @@ const Medicine_specifics_screen = ({ route }) => {
 
                 <View style={styles.sectionFooter}>
                     <Text style={styles.footerText}>
-                        H&S Biolab 데이터는 식품의약안전처에서 제공하는 국가의약품안전정보를 기준으로 제작됩니다.
+                        H&S Biolab 데이터는 식품의약안전처가 제공한 2020년도 e약은요 자료와 2021년도 의약품 제품 허가정보를 기반으로 제공됩니다.
                     </Text>
                 </View>
             </ScrollView>
