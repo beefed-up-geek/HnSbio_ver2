@@ -44,7 +44,6 @@ const BottomNavigation = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        headerShown: false,
         tabBarStyle: {
           position: 'absolute',
           bottom: 20,
@@ -55,6 +54,14 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
+        headerStyle: {
+          height: 76 * height_ratio,
+          backgroundColor: '#fff',
+          borderBottomWidth: 1,
+          borderBottomColor: '#E9E9E9', // 헤더 아래 보더 추가
+        },
+        headerTitleAlign: 'center', // 제목 중앙 정렬
+        headerTitleStyle: styles.headerTitle, // 헤더 제목 스타일 적용
         unmountOnBlur: true,
       }}
       tabBar={(props) => <CustomTabBar {...props} />}
@@ -62,27 +69,42 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="Home"
         component={Home_screen}
-        options={{ title: '홈 화면' }}
+        options={{
+          title: '홈 화면',
+          headerShown: false, // 홈 화면에서는 헤더를 숨김
+        }}
       />
       <Tab.Screen
         name="Kit"
         component={Kit_screen}
-        options={{ title: '키트 결과' }}
+        options={{
+          title: '키트 검사', // 헤더 제목 설정
+          headerShown: true,
+        }}
       />
       <Tab.Screen
         name="Examin_record"
         component={Examin_record_screen}
-        options={{ title: '검진 기록' }}
+        options={{
+          title: '나의 검진 기록', // 헤더 제목 설정
+          headerShown: true,
+        }}
       />
       <Tab.Screen
         name="Hospital"
         component={Hospital_screen}
-        options={{ title: '병원 찾기' }}
+        options={{
+          title: '병원 검색', // 헤더 제목 설정
+          headerShown: true,
+        }}
       />
       <Tab.Screen
         name="Medicine"
         component={Medicine_screen}
-        options={{ title: '약 검색' }}
+        options={{
+          title: '약 검색', // 헤더 제목 설정
+          headerShown: true,
+        }}
       />
     </Tab.Navigator>
   );

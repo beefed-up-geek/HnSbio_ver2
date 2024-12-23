@@ -220,12 +220,7 @@ const Examin_record_screen = ({ route }) => {
   return (
     
       <View style={styles.container}>
-        <View style={styles.fixedHeaderContainer}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerTitle}>나의 검진 기록</Text>
-            <View style={styles.headerBorder} />
-          </View>
-        </View>
+        
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.contentWrapper}>
             {/* 혈액검사 섹션 */}

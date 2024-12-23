@@ -348,10 +348,10 @@ const filterLabels = {
 return (
   <View style={styles.container}>
     {/* 항상 표시되는 헤더 */}
-    <View style={styles.headerContainer}>
+    {/* <View style={styles.headerContainer}>
       <Text style={styles.headerTitle}>병원 검색</Text>
       <View style={styles.headerBorder} />
-    </View>
+    </View> */}
 
     {/* 항상 표시되는 검색 섹션 */}
     <View style={styles.searchSection}>

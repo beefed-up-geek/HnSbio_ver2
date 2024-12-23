@@ -208,9 +208,9 @@ const MedicineScreen = () => {
     return (
         <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSuggestions([]); }}>
             <View style={{ flex: 1 }}>
-                <View style={styles.headerContainer}>
+                {/* <View style={styles.headerContainer}>
                     <Text style={styles.headerTitle}>약 검색</Text>
-                </View>
+                </View> */}
     
                 <View style={styles.container}>
                     <View style={styles.searchContainer}>
