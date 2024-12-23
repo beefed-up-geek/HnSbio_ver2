@@ -250,14 +250,14 @@ const styles = StyleSheet.create({
         textAlign: 'center', // 제목 가운데 정렬
     },
     icon: {
-        width: 58,
-        height: 24, 
+        width: 58 * width_ratio,
+        height: 24 * width_ratio, 
         resizeMode: 'contain', 
         marginRight: 10, 
         marginLeft: 5,
     },
     warningText: {
-        fontSize: 14,
+        fontSize: 13 * width_ratio,
         color: 'black',
         ...theme.fonts.Regular,
         marginBottom: 5,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
         marginTop: 2
     },
     cautionText: {
-        fontSize: 14,
+        fontSize: 13 * width_ratio,
         color: 'black',
         ...theme.fonts.Regular,
         marginLeft: 10,
