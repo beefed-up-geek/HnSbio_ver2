@@ -1,4 +1,5 @@
 // src/screens/examin_record/blood_test_input/index.js
+
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -68,13 +69,32 @@ const Blood_test_input_screen = ({ route }) => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
 
-    // 날짜 형식 및 미래 날짜 검사
+    // 날짜 형식 검사
     if (!dateRegex.test(date)) {
       errors.push('date');
     } else {
+      // 연, 월, 일 각각 파싱
+      const [yearStr, monthStr, dayStr] = date.split('/');
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10);
+      const day = parseInt(dayStr, 10);
+
+      // 연, 월, 일 범위 검사
+      if (year < 1950) {
+        errors.push('date');
+      }
+      if (month < 1 || month > 12) {
+        errors.push('date');
+      }
+      if (day < 1 || day > 31) {
+        errors.push('date');
+      }
+
+      // 미래 날짜 검사
       const enteredDate = new Date(date.replace(/\//g, '-'));
       const today = new Date();
       today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 0시로 설정
+
       if (enteredDate > today) {
         errors.push('date');
       }
@@ -124,6 +144,7 @@ const Blood_test_input_screen = ({ route }) => {
       const providerId = parsedData.providerId;
       let bloodTestResults = parsedData.blood_test_result || [];
 
+      // 중복 데이터 검사
       const isDuplicate = bloodTestResults.some(
         (result) =>
           result.date === newTestResult.date &&
@@ -149,6 +170,7 @@ const Blood_test_input_screen = ({ route }) => {
         ...newTestResult,
       });
 
+      // 화면 새로고침 및 이동
       refreshHealthData();
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' });
     } catch (error) {
