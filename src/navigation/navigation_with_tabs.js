@@ -44,6 +44,7 @@ const BottomNavigation = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        headerShown: false,
         tabBarStyle: {
           position: 'absolute',
           bottom: 20,
@@ -61,42 +62,27 @@ const BottomNavigation = () => {
       <Tab.Screen
         name="Home"
         component={Home_screen}
-        options={{
-          title: '홈 화면',
-          headerShown: false, // 홈 화면에서는 헤더를 숨김
-        }}
+        options={{ title: '홈 화면' }}
       />
       <Tab.Screen
         name="Kit"
         component={Kit_screen}
-        options={{
-          title: '키트 결과', // 헤더 제목 설정
-          headerShown: true, // 헤더 표시
-        }}
+        options={{ title: '키트 결과' }}
       />
       <Tab.Screen
         name="Examin_record"
         component={Examin_record_screen}
-        options={{
-          title: '검진 기록', // 헤더 제목 설정
-          headerShown: true, // 헤더 표시
-        }}
+        options={{ title: '검진 기록' }}
       />
       <Tab.Screen
         name="Hospital"
         component={Hospital_screen}
-        options={{
-          title: '병원 찾기', // 헤더 제목 설정
-          headerShown: true, // 헤더 표시
-        }}
+        options={{ title: '병원 찾기' }}
       />
       <Tab.Screen
         name="Medicine"
         component={Medicine_screen}
-        options={{
-          title: '약 검색', // 헤더 제목 설정
-          headerShown: true, // 헤더 표시
-        }}
+        options={{ title: '약 검색' }}
       />
     </Tab.Navigator>
   );
