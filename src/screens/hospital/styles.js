@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 14 * width_ratio*0.95,
     color: '#333',
     fontFamily: 'Pretendard-SemiBold',
+    marginLeft: 1* width_ratio
   },
   scrollView: {
     flex: 1,
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', // 수직 정렬
     justifyContent: 'flex-start', // 병원 이름과 거리 사이 간격 조정
-
+    width: '86%',
   },
   
 });

@@ -27,7 +27,6 @@ import My_profile_screen from '../screens/home/my_profile';
 import Manage_account_screen from '../screens/home/manage_account';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm';
 import Kidney_info_screen from '../screens/home/kidney_info'
-import ClassificationResult from '../screens/classificationResult';
 
 const CustomHeader = ({title}) => {
   const navigation = useNavigation();
@@ -203,11 +202,6 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="HealthCheckupSpecifics"
         component={Health_checkup_specifics_screen}
-        options={{title: ''}}
-      />
-      <Stack.Screen
-        name="classificationResult"
-        component={ClassificationResult}
         options={{title: ''}}
       />
     </Stack.Navigator>
