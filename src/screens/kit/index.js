@@ -168,7 +168,6 @@ const Kit_screen = ({onPress, navigation, route}) => {
   };
 
   return (
-    <>
       <View>
         <ScrollView
           scrollEnabled={true}
@@ -239,7 +238,6 @@ const Kit_screen = ({onPress, navigation, route}) => {
           </View>
         </ScrollView>
       </View>
-    </>
   );
 };
 
