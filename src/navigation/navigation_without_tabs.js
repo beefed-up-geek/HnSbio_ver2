@@ -1,7 +1,6 @@
 // src\navigation\navigation_without_tabs.js
 import React from 'react';
 import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   useNavigation,
@@ -26,13 +25,12 @@ import Daily_check_screen from '../screens/home/daily_check';
 import My_profile_screen from '../screens/home/my_profile';
 import Manage_account_screen from '../screens/home/manage_account';
 import Set_push_alarm_screen from '../screens/home/set_push_alarm';
-import Kidney_info_screen from '../screens/home/kidney_info';
+import Kidney_info_screen from '../screens/home/kidney_info'
 import ClassificationResult from '../screens/classificationResult';
 
 const CustomHeader = ({title}) => {
   const navigation = useNavigation();
   const route = useRoute();
-  const insets = useSafeAreaInsets();
 
   const handleBackPress = () => {
     if (route.name === 'authentication_3') {
@@ -45,15 +43,7 @@ const CustomHeader = ({title}) => {
   };
 
   return (
-    <View
-      style={[
-        styles.headerContainer,
-        {
-          // 상단 안전 영역 확보
-          paddingTop: insets.top,
-          backgroundColor: 'white',
-        },
-      ]}>
+    <View style={styles.headerContainer}>
       <TouchableOpacity
         onPress={handleBackPress}
         style={styles.leftButtonContainer}
@@ -159,7 +149,7 @@ const NavigationWithoutTabs = () => {
         name="medicine_specifics"
         component={Medicine_specifics_screen}
         options={{
-          title: '의약품 상세정보',
+          title: '의약품 상세정보'
         }}
       />
 
