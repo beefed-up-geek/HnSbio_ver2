@@ -60,8 +60,13 @@ const styles = StyleSheet.create({
   },
   squareContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', // 세로 중앙 정렬
+    alignItems: 'center', // 가로 중앙 정렬
+    position: 'absolute', // 절대 위치
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   orangeSquare: {
     width: 250 * width_ratio,
@@ -69,7 +74,6 @@ const styles = StyleSheet.create({
     borderWidth: 3 * width_ratio,
     borderColor: 'orange',
     backgroundColor: 'transparent',
-    zIndex: 2,
   },
   captureButton: {
     width: 150 * width_ratio,
@@ -94,8 +98,9 @@ const styles = StyleSheet.create({
   },
   cameraContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'black', // 필요시 배경색 설정
   },
   camera: {
     flex: 1,

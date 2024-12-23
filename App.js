@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import React, { useEffect } from 'react';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomNavigation from './src/navigation/navigation_with_tabs';
@@ -56,21 +57,25 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <PushNotification />
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Login1" component={Login1} />
-        <Stack.Screen name="Login2" component={Login2} />
-        <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
-        <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
-        <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
-        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-        <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent'}} edges={['top', 'bottom']}>
+        <NavigationContainer>
+          <PushNotification />
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}>
+            <Stack.Screen name="Login1" component={Login1} />
+            <Stack.Screen name="Login2" component={Login2} />
+            <Stack.Screen name="GetUserInfo" component={GetUserInfo} />
+            <Stack.Screen name="GetKidneyInfo" component={GetKidneyInfo} />
+            <Stack.Screen name="GetUnderlyingDiseaseInfo" component={GetUnderlyingDiseaseInfo} />
+            <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+            <Stack.Screen name="NoTabs" component={NavigationWithoutTabs} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider> 
   );
 };
 

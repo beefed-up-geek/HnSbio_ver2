@@ -12,7 +12,6 @@ import {
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import styles from './navigation_with_tabs_styles';
 
-// Import your screen components
 import Examin_record_screen from '../screens/examin_record/index';
 import Home_screen from '../screens/home/index';
 import Hospital_screen from '../screens/hospital/index';

@@ -10,6 +10,7 @@ import {
   Linking,
   Animated,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   useNavigation,
@@ -31,6 +32,7 @@ import {
 } from '../../components/dataUtils';
 
 const HomeScreen = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -271,267 +273,271 @@ const HomeScreen = () => {
     useCallback(() => {
       loadUserData();
       checkDailyCompletionStatus();
-    }, [])
+    }, []),
   );
 
   return (
-    <LinearGradient
-      colors={['#EBEFFE', '#B7C8FF']}
-      start={{x: 0, y: 0.54}} // 그라데이션 시작점 (위쪽)
-      end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
-      style={styles.gradient}>
-      <View style={styles.logoContainer}>
-        <DevButton loadUserData={loadUserData} />
-      </View>
-      <TouchableOpacity
-        style={styles.profileButton}
-        onPress={() => navigation.navigate('NoTabs', {screen: 'my_profile'})}>
-        <Text style={styles.profileText}>내 프로필</Text>
-        <Image
-          source={require('../../images/home/user.png')}
-          style={styles.profileIcon}
-        />
-      </TouchableOpacity>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: characterOpacity}}}],
-          {
-            useNativeDriver: false,
-            listener: event => {
-              const offsetY = event.nativeEvent.contentOffset.y;
-              characterOpacity.setValue(1 - Math.min(offsetY / 100, 1));
-            },
-          },
-        )}>
-        <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
-          <Image
-            source={require('../../images/home/sampleimage2.png')}
-            style={styles.characterImage}
-          />
-        </Animated.View>
-
-        {alarmEnabled && daysToNextKitTest !== null ? (
-          <>
-            <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
-            <View style={styles.lineWrapper}>
-              <Text style={styles.nextCheckupText2}>
-                {daysToNextKitTest}일 남았습니다
-              </Text>
-              <TouchableOpacity
-                style={styles.setPushAlarmButton}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'set_push_alarm',
-                    params: { 
-                      refreshHome: loadUserData 
-                    },
-                  })
-                }>
-                <Image
-                  source={require('../../images/home/gearIcon.png')}
-                  style={styles.setPushAlarmIcon}
-                />
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : latestKitTest ? (
-          <>
-            <Text style={styles.nextCheckupText1}>마지막 키트 검사일은</Text>
-            <View style={styles.lineWrapper}>
-              <Text style={styles.nextCheckupText2}>
-                {lastKitTestDaysAgo !== null
-                  ? `${lastKitTestDaysAgo}일 전입니다`
-                  : '오늘입니다'}
-              </Text>
-              <TouchableOpacity
-                style={styles.setPushAlarmButton}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'set_push_alarm',
-                    params: { 
-                      refreshHome: loadUserData 
-                    },
-                  })
-                }>
-                <Image
-                  source={require('../../images/home/gearIcon.png')}
-                  style={styles.setPushAlarmIcon}
-                />
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <>
-            <Text style={styles.nextCheckupText1}>
-              아직 검사를 하지 않았어요.
-            </Text>
-            <View style={styles.lineWrapper}>
-              <Text style={styles.nextCheckupText2}>
-                콩팥 건강 관리를 시작해보세요
-              </Text>
-              <TouchableOpacity
-                style={styles.setPushAlarmButton}
-                onPress={() =>
-                  navigation.navigate('NoTabs', {
-                    screen: 'set_push_alarm',
-                    params: { 
-                      refreshHome: loadUserData 
-                    },
-                  })
-                }>
-                
-                <Image
-                  source={require('../../images/home/gearIcon.png')}
-                  style={styles.setPushAlarmIcon}
-                />
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => Linking.openURL('https://hnsbiolab.com/device')}>
-            <Image
-              source={require('../../images/home/storeButton.png')}
-              style={styles.button}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
-            }>
-            <Image
-              source={require('../../images/home/testButton.png')}
-              style={styles.button}
-            />
-          </TouchableOpacity>
+    <View style={{
+      flex: 1,
+      paddingTop: insets.top,
+    }}>
+      <LinearGradient
+        colors={['#EBEFFE', '#B7C8FF']}
+        start={{x: 0, y: 0.54}} // 그라데이션 시작점 (위쪽)
+        end={{x: 0, y: 1.2}} // 그라데이션 끝점 (아래쪽)
+        style={styles.gradient}>
+        <View style={styles.logoContainer}>
+          <DevButton loadUserData={loadUserData} />
         </View>
-
         <TouchableOpacity
-          style={styles.roundedButtonBox}
-          onPress={() =>
-            navigation.navigate('BottomNavigation', {screen: 'Kit'})
-          }>
-          <View style={styles.titleContainer}>
+          style={styles.profileButton}
+          onPress={() => navigation.navigate('NoTabs', {screen: 'my_profile'})}>
+          <Text style={styles.profileText}>내 프로필</Text>
+          <Image
+            source={require('../../images/home/user.png')}
+            style={styles.profileIcon}
+          />
+        </TouchableOpacity>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: characterOpacity}}}],
+            {
+              useNativeDriver: false,
+              listener: event => {
+                const offsetY = event.nativeEvent.contentOffset.y;
+                characterOpacity.setValue(1 - Math.min(offsetY / 100, 1));
+              },
+            },
+          )}>
+          <Animated.View style={[styles.character, {opacity: characterOpacity}]}>
             <Image
-              source={require('../../images/home/kit.png')}
-              style={styles.bodyImage}
+              source={require('../../images/home/sampleimage2.png')}
+              style={styles.characterImage}
             />
-            <View style={styles.titleLines}>
-              <Text style={styles.boxText}>콩팥 진단 키트 결과</Text>
-              <View style={styles.subLines}>
-                {latestKitTest ? (
-                  <>
+          </Animated.View>
+
+          {alarmEnabled && daysToNextKitTest !== null ? (
+            <>
+              <Text style={styles.nextCheckupText1}>다음 키트 검사일까지</Text>
+              <View style={styles.lineWrapper}>
+                <Text style={styles.nextCheckupText2}>
+                  {daysToNextKitTest}일 남았습니다
+                </Text>
+                <TouchableOpacity
+                  style={styles.setPushAlarmButton}
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {
+                      screen: 'set_push_alarm',
+                      params: {
+                        refreshHome: loadUserData,
+                      },
+                    })
+                  }>
+                  <Image
+                    source={require('../../images/home/gearIcon.png')}
+                    style={styles.setPushAlarmIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : latestKitTest ? (
+            <>
+              <Text style={styles.nextCheckupText1}>마지막 키트 검사일은</Text>
+              <View style={styles.lineWrapper}>
+                <Text style={styles.nextCheckupText2}>
+                  {lastKitTestDaysAgo !== null
+                    ? `${lastKitTestDaysAgo}일 전입니다`
+                    : '오늘입니다'}
+                </Text>
+                <TouchableOpacity
+                  style={styles.setPushAlarmButton}
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {
+                      screen: 'set_push_alarm',
+                      params: {
+                        refreshHome: loadUserData,
+                      },
+                    })
+                  }>
+                  <Image
+                    source={require('../../images/home/gearIcon.png')}
+                    style={styles.setPushAlarmIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={styles.nextCheckupText1}>
+                아직 검사를 하지 않았어요.
+              </Text>
+              <View style={styles.lineWrapper}>
+                <Text style={styles.nextCheckupText2}>
+                  콩팥 건강 관리를 시작해보세요
+                </Text>
+                <TouchableOpacity
+                  style={styles.setPushAlarmButton}
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {
+                      screen: 'set_push_alarm',
+                      params: {
+                        refreshHome: loadUserData,
+                      },
+                    })
+                  }>
+                  <Image
+                    source={require('../../images/home/gearIcon.png')}
+                    style={styles.setPushAlarmIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('https://hnsbiolab.com/device')}>
+              <Image
+                source={require('../../images/home/storeButton.png')}
+                style={styles.button}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
+              }>
+              <Image
+                source={require('../../images/home/testButton.png')}
+                style={styles.button}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            style={styles.roundedButtonBox}
+            onPress={() =>
+              navigation.navigate('BottomNavigation', {screen: 'Kit'})
+            }>
+            <View style={styles.titleContainer}>
+              <Image
+                source={require('../../images/home/kit.png')}
+                style={styles.bodyImage}
+              />
+              <View style={styles.titleLines}>
+                <Text style={styles.boxText}>콩팥 진단 키트 결과</Text>
+                <View style={styles.subLines}>
+                  {latestKitTest ? (
+                    <>
+                      <Text style={styles.boxSubTextLight}>
+                        {formatDate(parseDateString(latestKitTest.datetime))} 키트
+                        결과 기준
+                      </Text>
+                    </>
+                  ) : (
                     <Text style={styles.boxSubTextLight}>
-                      {formatDate(parseDateString(latestKitTest.datetime))} 키트
-                      결과 기준
+                      최근 검사 결과가 없습니다.
                     </Text>
-                  </>
-                ) : (
-                  <Text style={styles.boxSubTextLight}>
-                    최근 검사 결과가 없습니다.
-                  </Text>
-                )}
+                  )}
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.imageContainer}>
-            {latestKitTest ? (
-              latestKitTest.result === 1 ? (
+            <View style={styles.imageContainer}>
+              {latestKitTest ? (
+                latestKitTest.result === 1 ? (
+                  <Image
+                    source={require('../../images/home/양성.png')} // 양성일 때 표시
+                    style={styles.kidneyImage}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../images/home/음성.png')} // 음성일 때 표시
+                    style={styles.kidneyImage}
+                  />
+                )
+              ) : (
                 <Image
-                  source={require('../../images/home/양성.png')} // 양성일 때 표시
+                  source={require('../../images/home/데이터없음.png')} // 결과가 없을 때 표시
+                  style={styles.noDataImage}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.roundedButtonBox}
+            onPress={() =>
+              navigation.navigate('NoTabs', {screen: 'kidney_info'})
+            }>
+            <View style={styles.titleContainer}>
+              <Image
+                source={require('../../images/home/body.png')}
+                style={styles.bodyImage}
+              />
+              <View style={styles.titleLines}>
+                <Text style={styles.boxText}>나의 콩팥 건강</Text>
+                <View style={styles.subLines}>
+                  <Text style={styles.boxSubTextLight}>
+                    {latestCheckupDate
+                      ? latestRecordSource === 'health_checkup'
+                        ? `${latestCheckupDate} 건강검진 결과 기준`
+                        : `${latestCheckupDate} 혈액검사 결과 기준`
+                      : '최근 검진 기록이 없습니다.'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.imageContainer}>
+              {latestGFR !== null ? (
+                <Image
+                  source={getKidneyImage(latestGFR)}
                   style={styles.kidneyImage}
                 />
               ) : (
                 <Image
-                  source={require('../../images/home/음성.png')} // 음성일 때 표시
-                  style={styles.kidneyImage}
+                  source={require('../../images/home/데이터없음.png')}
+                  style={styles.noDataImage}
                 />
-              )
-            ) : (
-              <Image
-                source={require('../../images/home/데이터없음.png')} // 결과가 없을 때 표시
-                style={styles.noDataImage}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
+              )}
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.roundedButtonBox}
-          onPress={() =>
-            navigation.navigate('NoTabs', {screen: 'kidney_info'})
-          }>
-          <View style={styles.titleContainer}>
-            <Image
-              source={require('../../images/home/body.png')}
-              style={styles.bodyImage}
-            />
-            <View style={styles.titleLines}>
-              <Text style={styles.boxText}>나의 콩팥 건강</Text>
-              <View style={styles.subLines}>
+          <TouchableOpacity
+            style={styles.roundedButtonBox}
+            onPress={() =>
+              navigation.navigate('NoTabs', {
+                screen: 'daily_check',
+                params: {
+                  refreshHome: loadUserData,
+                },
+              })
+            }>
+            <View style={styles.titleContainer}>
+              <Image
+                source={require('../../images/home/check.png')}
+                style={styles.checkImage}
+              />
+              <View style={styles.titleLines}>
+                <Text style={styles.boxText}>오늘의 콩팥 상태 체크하기</Text>
                 <Text style={styles.boxSubTextLight}>
-                  {latestCheckupDate
-                    ? latestRecordSource === 'health_checkup'
-                      ? `${latestCheckupDate} 건강검진 결과 기준`
-                      : `${latestCheckupDate} 혈액검사 결과 기준`
-                    : '최근 검진 기록이 없습니다.'}
+                  매일 체크하는 것을 권장해요.
                 </Text>
               </View>
             </View>
-          </View>
-          <View style={styles.imageContainer}>
-            {latestGFR !== null ? (
-              <Image
-                source={getKidneyImage(latestGFR)}
-                style={styles.kidneyImage}
-              />
-            ) : (
-              <Image
-                source={require('../../images/home/데이터없음.png')}
-                style={styles.noDataImage}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.roundedButtonBox}
-          onPress={() =>
-            navigation.navigate('NoTabs', {
-              screen: 'daily_check',
-              params: { 
-                refreshHome: loadUserData 
-              },
-            })
-          }>
-          <View style={styles.titleContainer}>
             <Image
-              source={require('../../images/home/check.png')}
-              style={styles.checkImage}
+              source={
+                checkCompletedToday
+                  ? require('../../images/home/완료.png')
+                  : require('../../images/home/미완료.png')
+              }
+              style={styles.checkStatusImage}
             />
-            <View style={styles.titleLines}>
-              <Text style={styles.boxText}>오늘의 콩팥 상태 체크하기</Text>
-              <Text style={styles.boxSubTextLight}>
-                매일 체크하는 것을 권장해요.
-              </Text>
-            </View>
-          </View>
-          <Image
-            source={
-              checkCompletedToday
-                ? require('../../images/home/완료.png')
-                : require('../../images/home/미완료.png')
-            }
-            style={styles.checkStatusImage}
-          />
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-    </LinearGradient>
+          <View style={styles.bottomSpacer} />
+        </ScrollView>
+      </LinearGradient>
+    </View>
   );
 };
 
