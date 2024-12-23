@@ -135,7 +135,7 @@
     - 그 외에도 다양한 병원 정보 제공
    
 <div align='center'>
-  <img src='https://github.com/user-attachments/assets/55c30a36-7b6b-4352-a1c8-59c5940f7d3d' width='300px'>
+  <img src='https://github.com/user-attachments/assets/6093fd07-e62a-42d0-82b1-f19f18f11d49' width='300px'>
 </div>
 
 <br>
