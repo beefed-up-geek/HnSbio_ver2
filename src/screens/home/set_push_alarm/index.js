@@ -78,32 +78,86 @@ const SetPushAlarmScreen = ({ route }) => {
   const toggleAlarm = async () => {
     setAlarmEnabled((prev) => !prev);
     if (!alarmEnabled) {
+      // default는 다음날
       setNextAlarmDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
     }
   };
 
-  const scheduleNotification = async (date) => {
-    const trigger = {
-      type: TriggerType.TIMESTAMP,
-      timestamp: date.getTime(),
-    };
+  const scheduleKitNotifications  = async (date) => {
+    const dayOf = new Date(nextAlarmDate); 
+    // 자정 기준으로 날짜만 추출
+    dayOf.setHours(0, 0, 0, 0); 
+    // 당일 9시
+    dayOf.setHours(9);
+    
+    const dayBefore = new Date(dayOf);
+    dayBefore.setDate(dayBefore.getDate() - 1); // 하루 전
+    // 이미 dayOf.setHours(9) 한 상태니 dayBefore도 자동으로 9시가 됨.
 
-    await notifee.createTriggerNotification(
-      {
-        title: '키트 검사 예정일 알림',
-        body: '오늘은 키트 검사 예정일입니다. 콩팥 건강을 체크하세요!',
-        android: {
-          channelId: 'default',
-          smallIcon: 'hns',
-          color: '#4CAF50',
-        },
-        ios: {
-          sound: 'default',
-          badgeCount: 1,
-        },
-      },
-      trigger
-    );
+    // 현재 시각보다 과거면 알림이 뜨지 않으므로, 미래인 경우만 스케줄
+    const now = new Date();  
+
+    console.log('dayOf:', dayOf.toString());
+    console.log('now:', now.toString());
+    console.log('dayBefore:', dayBefore.toString());
+
+    // 하루 전 알림
+    if (dayBefore > now) {
+      const triggerBefore  = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: dayBefore.getTime(),
+      };
+      try {
+        const triggerId = await notifee.createTriggerNotification(
+          {
+            title: '키트 검사 예정일 알림',
+            body: '내일은 키트 검사일이에요! 키트가 준비되었는지 확인해보세요',
+            android: {
+              channelId: 'default',
+              smallIcon: 'hns',
+              color: '#4CAF50',
+            },
+            ios: {
+              sound: 'default',
+              badgeCount: 1,
+            },
+          },
+          triggerBefore
+        );
+        console.log('Created Trigger Notification ID (dayBefore):', triggerId);
+      } catch (error) {
+        console.error('Error creating trigger notification (dayBefore):', error);
+      }
+    }
+    
+    // 당일 알림
+    if (dayOf > now) {
+      const triggerDayOf  = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: dayOf.getTime(),
+      };
+      try {
+        const triggerId = await notifee.createTriggerNotification(
+          {
+            title: '키트 검사 예정일 알림',
+            body: '오늘은 키트 검사일이에요!',
+            android: {
+              channelId: 'default',
+              smallIcon: 'hns',
+              color: '#4CAF50',
+            },
+            ios: {
+              sound: 'default',
+              badgeCount: 1,
+            },
+          },
+          triggerDayOf
+        );
+        console.log('Created Trigger Notification ID (dayOf):', triggerId);
+      } catch (error) {
+        console.error('Error creating trigger notification (dayOf):', error);
+      }
+    }
   };
 
   // 알림 설정 저장
@@ -127,8 +181,14 @@ const SetPushAlarmScreen = ({ route }) => {
         })
       );
 
+      // 알람 On이면 검사일 전날+당일 알림 예약
       if (alarmEnabled) {
-        await scheduleNotification(nextAlarmDate);
+        // 기존 알림 모두 취소 후 다시 예약 (필요하다면)
+        await notifee.cancelAllNotifications();
+        await scheduleKitNotifications(nextAlarmDate);
+      } else {
+        // 알람 Off이면 예약된 알림 모두 취소
+        await notifee.cancelAllNotifications();
       }
 
       refreshHome();

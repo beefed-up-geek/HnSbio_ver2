@@ -83,9 +83,11 @@ const HomeScreen = () => {
   const calculateDaysToNextAlarm = () => {
     if (nextAlarmDate) {
       const currentDate = new Date();
-      const nextDate = new Date(nextAlarmDate);
-      const diffTime = nextDate.getTime() - currentDate.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      currentDate.setHours(0, 0, 0, 0);
+      const nextDateMidnight = new Date(nextAlarmDate);
+      nextDateMidnight.setHours(0, 0, 0, 0)
+      const diffTime = nextDateMidnight.getTime() - currentDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       setDaysToNextAlarm(diffDays); // 음수 값도 반영
     } else {
       setDaysToNextAlarm(null);
