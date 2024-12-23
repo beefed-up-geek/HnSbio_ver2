@@ -1,3 +1,5 @@
+//src/pushnotification/index.js
+
 import React, {useEffect} from 'react';
 import {
   View,
@@ -66,12 +68,16 @@ export async function onDisplayNotification() {
 
 const PushNotification = () => {
   useEffect(() => {
-    // 권한 요청 및 알림 초기화
     const initNotification = async () => {
-      // await checkApplicationPermission();
-      // await onDisplayNotification(); // 앱 시작 시 바로 알림 표시
+      await checkApplicationPermission();
+      const channelId = await notifee.createChannel({
+        id: 'default',
+        name: 'Default Channel',
+        importance: AndroidImportance.HIGH,
+      });
+      console.log('Notification channel created:', channelId);
     };
-
+  
     initNotification();
   }, []);
 

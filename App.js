@@ -1,3 +1,5 @@
+// App.js
+
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import React, { useEffect } from 'react';
@@ -22,6 +24,10 @@ const App = () => {
   useEffect(() => {
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
     LogBox.ignoreAllLogs();
+
+    const initNotification = async () => {
+      await checkApplicationPermission(); // 권한 요청
+    };
 
     const displayStoredUserData = async () => {
       try {

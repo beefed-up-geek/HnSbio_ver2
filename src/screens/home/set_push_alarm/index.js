@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Switch } from 'react-native-switch';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import notifee, {TimestampTrigger, TriggerType} from '@notifee/react-native';
 
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles.js';
@@ -42,37 +43,66 @@ const SetPushAlarmScreen = ({ route }) => {
   };
 
   // 사용자 데이터 불러오기
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setProviderId(parsedData.providerId);
+  const fetchUserData = async () => {
+    const userData = await AsyncStorage.getItem('user');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      setProviderId(parsedData.providerId);
 
-        const localSettings = parsedData.pushNotificationSettings;
-        if (localSettings) {
-          setAlarmEnabled(localSettings.alarmEnabled);
-          setNextAlarmDate(new Date(localSettings.nextAlarmDate) || new Date());
-          setInitialSettings({
-            alarmEnabled: localSettings.alarmEnabled,
-            nextAlarmDate: new Date(localSettings.nextAlarmDate) || new Date(),
-          });
-        } else {
-          setAlarmEnabled(false);
-          setNextAlarmDate(new Date());
-          setInitialSettings({
-            alarmEnabled: false,
-            nextAlarmDate: new Date(),
-          });
-        }
+      const localSettings = parsedData.pushNotificationSettings;
+      if (localSettings) {
+        setAlarmEnabled(localSettings.alarmEnabled);
+        setNextAlarmDate(new Date(localSettings.nextAlarmDate) || new Date(Date.now() + 24 * 60 * 60 * 1000));
+        setInitialSettings({
+          alarmEnabled: localSettings.alarmEnabled,
+          nextAlarmDate: new Date(localSettings.nextAlarmDate) || new Date(Date.now() + 24 * 60 * 60 * 1000),
+        });
+      } else {
+        setAlarmEnabled(false);
+        setNextAlarmDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+        setInitialSettings({
+          alarmEnabled: false,
+          nextAlarmDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        });
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
   }, []);
 
   // 알람 상태 토글
-  const toggleAlarm = () => setAlarmEnabled((prev) => !prev);
+  const toggleAlarm = async () => {
+    setAlarmEnabled((prev) => !prev);
+    if (!alarmEnabled) {
+      setNextAlarmDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    }
+  };
+
+  const scheduleNotification = async (date) => {
+    const trigger = {
+      type: TriggerType.TIMESTAMP,
+      timestamp: date.getTime(),
+    };
+
+    await notifee.createTriggerNotification(
+      {
+        title: '키트 검사 예정일 알림',
+        body: '오늘은 키트 검사 예정일입니다. 콩팥 건강을을 체크하세요!',
+        android: {
+          channelId: 'default',
+          smallIcon: 'hns',
+          color: '#4CAF50',
+        },
+        ios: {
+          sound: 'default',
+          badgeCount: 1,
+        },
+      },
+      trigger
+    );
+  };
 
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
@@ -85,7 +115,6 @@ const SetPushAlarmScreen = ({ route }) => {
       setConfirmationModalVisible(true);
       setInitialSettings({ alarmEnabled, nextAlarmDate });
 
-      // AsyncStorage에 데이터 저장
       await AsyncStorage.mergeItem(
         'user',
         JSON.stringify({
@@ -96,7 +125,10 @@ const SetPushAlarmScreen = ({ route }) => {
         })
       );
 
-      // "변경사항 저장" 시에만 홈 화면 갱신 함수 호출
+      if (alarmEnabled) {
+        await scheduleNotification(nextAlarmDate);
+      }
+
       refreshHome();
     } catch (error) {
       console.error('Error saving push notification settings:', error);
@@ -145,7 +177,7 @@ const SetPushAlarmScreen = ({ route }) => {
           />
         )}
       </View>
-      
+
       {/* 날짜 선택기 */}
       {showDatePicker && (
         <DateTimePicker
