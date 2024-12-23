@@ -218,12 +218,7 @@ const Examin_record_screen = ({ route }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#EBEFFE', '#B7C8FF']}
-      start={{ x: 0, y: 0.54 }}
-      end={{ x: 0, y: 1.2 }}
-      style={styles.gradient}
-    >
+    
       <View style={styles.container}>
         <View style={styles.fixedHeaderContainer}>
           <View style={styles.headerContainer}>
@@ -350,7 +345,7 @@ const Examin_record_screen = ({ route }) => {
           </View>
         </ScrollView>
       </View>
-    </LinearGradient>
+    
   );
 };
 

@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     marginBottom: 0,
     marginLeft: 'auto',
+    paddingTop: 0,
   },
   fixedHeaderContainer: {
     height: 76 * height_ratio,
