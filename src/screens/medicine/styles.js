@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalTitle: {
-        fontSize: 16,
+        fontSize: 16 * width_ratio,
         ...theme.fonts.Bold,
         marginBottom: 20,
         color: '#333',
