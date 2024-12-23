@@ -183,6 +183,11 @@ const MedicineScreen = () => {
         searchMedicine(text);    // 검색 실행
     };
 
+    const clearSearchText = () => {
+        setSearchText(''); // 입력값 초기화
+        setSuggestions([]); // 자동완성 목록 초기화
+    };
+
     return (
         <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSuggestions([]); }}>
             <View style={{ flex: 1 }}>
@@ -209,7 +214,12 @@ const MedicineScreen = () => {
                             keyboardType="default"
                             returnKeyType="search"
                         />
-    
+                        {/* 닫기 버튼 */}
+                        {searchText !== '' && (
+                            <TouchableOpacity onPress={clearSearchText}>
+                                <Image source={require('../../images/medicine/eraser.png')} style={styles.closeIcon} />
+                            </TouchableOpacity>
+                        )}
                         <TouchableOpacity onPress={() => {
                             if (searchText.trim() !== '') {
                                 Keyboard.dismiss();
