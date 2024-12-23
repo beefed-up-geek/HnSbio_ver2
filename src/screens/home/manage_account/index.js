@@ -115,7 +115,7 @@ const ManageAccountScreen = () => {
           await AsyncStorage.removeItem('user');
           Alert.alert('회원탈퇴가 완료되었습니다.');
           // 앱 재시작
-          BackHandler.exitApp();
+          navigation.navigate('Login1');
         } else {
           // 응답 콘텐츠 확인
           const contentType = response.headers.get('content-type');
