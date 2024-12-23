@@ -221,6 +221,7 @@ const HomeScreen = () => {
       <View
         style={{
           flex: 1,
+          backgroundColor: 'transparent',
           paddingTop: insets.top,
         }}>
         <View style={styles.logoContainer}>
