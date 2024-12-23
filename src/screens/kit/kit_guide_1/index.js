@@ -2,6 +2,9 @@
 import {useNavigation} from '@react-navigation/native';
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
+import {launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {useState} from 'react';
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
 
@@ -42,6 +45,33 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
     );
   }, [opacity]);
 
+  const ImageOrIcon = ({defaultIcon, defaultText}) => {
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImagePick = async () => {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
+
+      if (!result.didCancel && result.assets && result.assets.length > 0) {
+        setSelectedImage(result.assets[0].uri);
+      }
+    };
+
+    return (
+      <TouchableOpacity onPress={handleImagePick} style={styles.iconContainer}>
+        {selectedImage ? (
+          <Image source={{uri: selectedImage}} style={styles.iconImage} />
+        ) : defaultIcon ? (
+          <Icon name={defaultIcon} size={30} color="#666" />
+        ) : (
+          <Text style={styles.iconText}>{defaultText}</Text>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
@@ -60,59 +90,32 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
             </Text>
             <View style={styles.tipsWrapper}>
               <View style={styles.tip}>
-                <View style={styles.tipIconWrapper}>
-                  <ImageBackground
-                    style={styles.tipIcon}
-                    source={require('../assets/images/4c4569cb-5e5c-47bc-8d48-48e0b3e3d6f7.png')}
-                  />
-                </View>
-                <Text style={styles.tipText} numberOfLines={1}>
+                <ImageOrIcon defaultIcon="sun-o" defaultText="아침 소변" />
+                <Text style={styles.tipText}>
                   아침의 첫 소변이 가장 정확도가 높아요.
                 </Text>
               </View>
               <View style={styles.tip}>
-                <View style={styles.tipIconWrapper}>
-                  <ImageBackground
-                    style={styles.tipIcon}
-                    source={require('../assets/images/c6a4ae25-be3c-457f-a4fe-568dd7bceca6.png')}
-                  />
-                </View>
-                <Text style={styles.tipText} numberOfLines={1}>
-                  검사 전에는 비타민을 섭취하면 안 돼요.&nbsp;
+                <ImageOrIcon defaultIcon="cutlery" defaultText="비타민" />
+                <Text style={styles.tipText}>
+                  검사 전에는 비타민을 섭취하면 안 돼요.
                 </Text>
               </View>
               <View style={styles.tip}>
-                <View style={styles.tipIconWrapper}>
-                  <ImageBackground
-                    style={styles.tipIcon}
-                    source={require('../assets/images/79cccc81-c921-4288-8914-4da2b2f4475c.png')}
-                  />
-                </View>
-                <Text style={styles.tipText} numberOfLines={1}>
+                <ImageOrIcon defaultIcon="female" defaultText="임신/생리" />
+                <Text style={styles.tipText}>
                   임신 중이나 생리 중에는 검사 결과가 부정확해요.
                 </Text>
               </View>
               <View style={styles.tip}>
-                <View style={styles.tipIconWrapper}>
-                  <ImageBackground
-                    style={styles.tipIcon}
-                    source={require('../assets/images/44ed877c-47cd-4ce1-94b7-494684c8cac7.png')}
-                  />
-                </View>
-                <Text style={styles.tipText} numberOfLines={1}>
+                <ImageOrIcon defaultIcon="tint" defaultText="물 섭취" />
+                <Text style={styles.tipText}>
                   검사 전에 과도한 물 섭취는 피하세요.
                 </Text>
               </View>
               <View style={styles.tip}>
-                <View style={styles.tipIconWrapper}>
-                  <ImageBackground
-                    style={styles.tipIcon}
-                    source={require('../assets/images/fd75ea69-03eb-47f1-82a0-721c3defcb73.png')}
-                  />
-                </View>
-                <Text style={styles.tipText} numberOfLines={1}>
-                  60분 이내에 촬영하세요.
-                </Text>
+                <ImageOrIcon defaultIcon="clock-o" defaultText="60분" />
+                <Text style={styles.tipText}>60분 이내에 촬영하세요.</Text>
               </View>
             </View>
             <TouchableOpacity
@@ -129,54 +132,13 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
           <View style={styles.footerSpacer} />
           <View style={styles.footer}>
             <View style={styles.footerIconsWrapper}>
-              <View style={styles.footerIconWrapper}>
-                <View style={styles.footerIconBackground}>
-                  <View style={styles.footerIconImageWrapper}>
-                    <ImageBackground
-                      style={styles.footerIconImage}
-                      source={require('../assets/images/b86dfc01-3441-4689-8f2d-c7386a7d1669.png')}
-                    />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.footerIconButton}>
-                <View style={styles.footerIconWrapper}>
-                  <ImageBackground
-                    style={styles.footerIconImage}
-                    source={require('../assets/images/5020e8c8-66ca-4247-9aa9-e67addbc6044.png')}
-                  />
-                </View>
-                <Text style={styles.footerIconText} numberOfLines={1}>
-                  키트 결과
-                </Text>
-              </View>
-              <View style={styles.footerIconWrapper}>
-                <View style={styles.footerIconImageWrapper}>
-                  <ImageBackground
-                    style={styles.footerIconImage}
-                    source={require('../assets/images/bce61a0e-da28-493b-b63b-a6fc6e15c776.png')}
-                  />
-                </View>
-              </View>
-              <View style={styles.footerIconWrapper}>
-                <ImageBackground
-                  style={styles.footerIconImage}
-                  source={require('../assets/images/d274c04b-d15c-4fdf-85ba-6a02b0e0cc10.png')}
-                />
-              </View>
-              <View style={styles.footerIconWrapper}>
-                <ImageBackground
-                  style={styles.footerIconImage}
-                  source={require('../assets/images/0facc259-9130-4b57-bb25-eedd26f6442b.png')}
-                />
-              </View>
+              <ImageOrIcon defaultIcon="camera" defaultText="카메라" />
+              <ImageOrIcon defaultIcon="file-text" defaultText="결과" />
+              <ImageOrIcon defaultIcon="check" defaultText="확인" />
+              <ImageOrIcon defaultIcon="times" defaultText="취소" />
+              <ImageOrIcon defaultIcon="plus" defaultText="추가" />
             </View>
           </View>
-          <ImageBackground
-            style={styles.footerImage}
-            source={require('../assets/images/a1b5eba3-e8ae-4071-9dec-cbebd3c9cdc4.png')}
-            resizeMode="cover"
-          />
         </View>
       </ScrollView>
     </SafeAreaView>

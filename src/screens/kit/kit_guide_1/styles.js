@@ -237,6 +237,25 @@ const styles = StyleSheet.create({
     ...theme.fonts.Bold,
     zIndex: 24,
   },
+  iconContainer: {
+    width: 50 * scaleWidth,
+    height: 50 * scaleHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 25 * scaleWidth,
+    margin: 5 * scaleWidth,
+  },
+  iconImage: {
+    width: 40 * scaleWidth,
+    height: 40 * scaleHeight,
+    borderRadius: 20 * scaleWidth,
+  },
+  iconText: {
+    fontSize: 14 * scaleWidth,
+    color: '#666',
+    textAlign: 'center',
+  },
 });
 
 export default styles;

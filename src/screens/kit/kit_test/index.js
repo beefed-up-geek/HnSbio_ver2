@@ -7,6 +7,7 @@ import {
   Alert,
   PermissionsAndroid,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
 import {useNavigation} from '@react-navigation/native';
@@ -151,10 +152,12 @@ const KitTestScreen = ({navigation}) => {
   };
 
   // 최적의 포맷과 해상도를 선택
-  const optimalFormat = device?.formats.sort((a, b) => b.photoWidth - a.photoWidth)[0];
-  
+  const optimalFormat = device?.formats.sort(
+    (a, b) => b.photoWidth - a.photoWidth,
+  )[0];
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {photoUri ? (
         <View style={styles.imageContainer}>
           <Image source={{uri: 'file://' + photoUri}} style={styles.image} />
@@ -169,7 +172,6 @@ const KitTestScreen = ({navigation}) => {
             photo={true}
             format={optimalFormat} // 최적의 포맷 적용
           />
-
           <TouchableOpacity style={styles.captureButton} onPress={takePhoto}>
             <Text style={styles.captureButtonText}>촬영하기</Text>
           </TouchableOpacity>
@@ -177,7 +179,7 @@ const KitTestScreen = ({navigation}) => {
       ) : (
         <Text>카메라 권한이 필요합니다.</Text>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
