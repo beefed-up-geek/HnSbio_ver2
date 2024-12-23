@@ -169,7 +169,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
 
   return (
     <>
-      <SafeAreaView>
+      <View>
         <ScrollView
           scrollEnabled={true}
           contentInsetAdjustmentBehavior="automatic">
@@ -238,7 +238,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
             <View style={styles.bottomSpacing} />
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     </>
   );
 };

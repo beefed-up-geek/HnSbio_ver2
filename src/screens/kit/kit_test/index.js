@@ -157,7 +157,7 @@ const KitTestScreen = ({navigation}) => {
   )[0];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {photoUri ? (
         <View style={styles.imageContainer}>
           <Image source={{uri: 'file://' + photoUri}} style={styles.image} />
@@ -179,7 +179,7 @@ const KitTestScreen = ({navigation}) => {
       ) : (
         <Text>카메라 권한이 필요합니다.</Text>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

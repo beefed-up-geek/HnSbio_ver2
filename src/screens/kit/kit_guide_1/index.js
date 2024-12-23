@@ -79,7 +79,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
   });
 
   return (
-    <SafeAreaView>
+    <View>
       <ScrollView
         scrollEnabled={true}
         contentInsetAdjustmentBehavior="automatic">
@@ -141,7 +141,7 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

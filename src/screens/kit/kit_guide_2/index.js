@@ -78,7 +78,7 @@ const Kit_guide_2_screen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View style={styles.container}>
           <TouchableOpacity onPress={handleImagePick}>
@@ -125,7 +125,7 @@ const Kit_guide_2_screen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
