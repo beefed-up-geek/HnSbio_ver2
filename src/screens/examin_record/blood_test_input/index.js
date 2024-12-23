@@ -1,5 +1,3 @@
-// src/screens/examin_record/blood_test_input/index.js
-
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -40,7 +38,6 @@ const Blood_test_input_screen = ({ route }) => {
       prevDate.length > text.length && prevDate.endsWith('/') && !text.endsWith('/');
 
     if (text.length < prevDate.length) {
-      // 백스페이스 입력 처리
       setDate(text);
       setPrevDate(text);
       setIsBackspace(isDeletingSlash);
@@ -48,7 +45,6 @@ const Blood_test_input_screen = ({ route }) => {
     }
 
     if (isBackspace && text.length > prevDate.length) {
-      // 백스페이스 직후 숫자가 입력된 경우
       if (text.length === 5) {
         text = text.slice(0, 4) + '/' + text.slice(4);
       } else if (text.length === 8) {
@@ -69,38 +65,27 @@ const Blood_test_input_screen = ({ route }) => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
 
-    // 날짜 형식 검사
     if (!dateRegex.test(date)) {
       errors.push('date');
     } else {
-      // 연, 월, 일 각각 파싱
       const [yearStr, monthStr, dayStr] = date.split('/');
       const year = parseInt(yearStr, 10);
       const month = parseInt(monthStr, 10);
       const day = parseInt(dayStr, 10);
 
-      // 연, 월, 일 범위 검사
-      if (year < 1950) {
-        errors.push('date');
-      }
-      if (month < 1 || month > 12) {
-        errors.push('date');
-      }
-      if (day < 1 || day > 31) {
+      if (year < 1950 || month < 1 || month > 12 || day < 1 || day > 31) {
         errors.push('date');
       }
 
-      // 미래 날짜 검사
       const enteredDate = new Date(date.replace(/\//g, '-'));
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 0시로 설정
+      today.setHours(0, 0, 0, 0);
 
       if (enteredDate > today) {
         errors.push('date');
       }
     }
 
-    // 범위 검사
     if (!bun || isNaN(bun) || bun <= 0 || bun > 200) {
       errors.push('bun');
     }
@@ -116,7 +101,7 @@ const Blood_test_input_screen = ({ route }) => {
   };
 
   const addTestResult = async () => {
-    if (isSaving) return; // 중복 저장 방지
+    if (isSaving) return;
     if (!validateInputs()) {
       Alert.alert('오류', '입력값을 확인해주세요.');
       return;
@@ -144,7 +129,6 @@ const Blood_test_input_screen = ({ route }) => {
       const providerId = parsedData.providerId;
       let bloodTestResults = parsedData.blood_test_result || [];
 
-      // 중복 데이터 검사
       const isDuplicate = bloodTestResults.some(
         (result) =>
           result.date === newTestResult.date &&
@@ -170,7 +154,6 @@ const Blood_test_input_screen = ({ route }) => {
         ...newTestResult,
       });
 
-      // 화면 새로고침 및 이동
       refreshHealthData();
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' });
     } catch (error) {
@@ -272,12 +255,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14 * width_ratio,
     color: theme.colors.textGray,
-    marginBottom: 5 * height_ratio,
+    marginTop: 16 * height_ratio,
+    marginBottom: 8 * height_ratio,
     ...theme.fonts.Medium,
   },
   inputWrapper: {
     position: 'relative',
-    marginBottom: 15 * height_ratio,
   },
   input: {
     height: 50 * height_ratio,
