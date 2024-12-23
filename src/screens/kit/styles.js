@@ -184,6 +184,12 @@ const styles = StyleSheet.create({
     height: 130 * height_ratio,
     backgroundColor: 'transparent',
   },
+  resultsScroll: {
+    maxHeight: 300 * height_ratio, // 최대 높이를 제한 (조정 가능)
+  },
+  resultsScrollContent: {
+    paddingBottom: 20 * height_ratio, // 하단 패딩 추가
+  },
 });
 
 export default styles;

@@ -231,7 +231,13 @@ const Kit_screen = ({onPress, navigation, route}) => {
               </View>
               <View style={styles.resultsContainer}>
                 <Text style={styles.resultsTitle}>검사 결과</Text>
-                {renderResults()}
+                <ScrollView
+                  style={styles.resultsScroll}
+                  contentContainerStyle={styles.resultsScrollContent}
+                  nestedScrollEnabled={true} // 스크롤 뷰 중첩 가능하게 설정
+                >
+                  {renderResults()}
+                </ScrollView>
               </View>
             </View>
             <View style={styles.bottomSpacing} />
