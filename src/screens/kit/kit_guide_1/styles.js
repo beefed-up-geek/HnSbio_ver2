@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     width: 270 * scaleWidth,
-    fontSize: 12 * scaleWidth,
+    fontSize: 14 * scaleWidth,
     lineHeight: 18 * scaleHeight,
     color: theme.colors.textGray,
     textAlign: 'center',
