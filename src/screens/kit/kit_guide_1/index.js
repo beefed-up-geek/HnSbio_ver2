@@ -103,7 +103,10 @@ const Kit_guide_1_screen = ({navigation, onPress}) => {
               </View>
               <View style={styles.tip}>
                 <ImageOrIcon defaultIcon="female" defaultText="임신/생리" />
-                <Text style={styles.tipText}>
+                <Text
+                  style={styles.tipText}
+                  numberOfLines={2}
+                  ellipsizeMode="tail">
                   임신 중이나 생리 중에는 검사 결과가 부정확해요.
                 </Text>
               </View>

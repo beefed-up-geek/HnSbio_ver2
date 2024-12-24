@@ -188,12 +188,13 @@ const styles = StyleSheet.create({
     marginLeft: 2.25 * scaleWidth,
   },
   tipText: {
-    width: 270 * scaleWidth,
+    width: 230 * scaleWidth,
     fontSize: 14 * scaleWidth,
-    lineHeight: 18 * scaleHeight,
+    lineHeight: 20 * scaleHeight,
     color: theme.colors.textGray,
     textAlign: 'center',
     zIndex: 38,
+    flexWrap: 'wrap',
     ...theme.fonts.Regular,
   },
   confirmButton: {
