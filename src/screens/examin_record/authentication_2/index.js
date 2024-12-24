@@ -170,19 +170,6 @@ const Authentication_2_screen = () => {
      console.log("응답\n",response.data);
      const { result, data } = response.data;
      if (result.code === 'CF-03002') {
-        console.log({
-          providerId: providerId,
-         jti: data.jti,
-         twoWayTimestamp: data.twoWayTimestamp,
-         name: name,
-         birthdate: birthdate,
-         phoneNo: phoneNumber,
-         telecom: telecom,
-         loginTypeLevel: selectedValue.toString(),
-         selectedLabel: selectedLabel,
-         selectedImage: selectedImage,
-         refreshHealthData
-        });
        navigation.navigate('authentication_3', {
          providerId: providerId,
          jti: data.jti,

@@ -48,7 +48,7 @@ const Authentication_3_screen = () => {
         jti: jti,
         twoWayTimestamp: twoWayTimestamp,
       };
-      console.log(request_data);
+      //console.log(request_data);
       const response = await axios.post(
         'http://98.82.55.237/health_checkup/step2',
         request_data,
