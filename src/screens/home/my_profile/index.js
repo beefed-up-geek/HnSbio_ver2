@@ -22,7 +22,7 @@ import ModalComponent from '../../../components/ModalComponent';
 const My_profile_screen = () => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
-  const [providerId, setProviderId] = useState('');
+  const [id, setId] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [nickname, setNickname] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -52,7 +52,7 @@ const My_profile_screen = () => {
           const user = JSON.parse(userData);
 
           // 사용자 데이터 설정
-          setProviderId(user.providerId || '');
+          setId(user._id || '');
           setName(user.name || '');
           setGenderAsync(user.gender || '');
           setNickname(user.nickname || '');
@@ -182,14 +182,14 @@ const My_profile_screen = () => {
         formData.append('profileImage', {
           uri: profileImage,
           type: 'image/jpeg', // 파일 타입
-          name: `profile_${providerId}.jpg`, // 파일 이름
+          name: `profile_${id}.jpg`, // 파일 이름
         });
-        formData.append('providerId', providerId);
+        formData.append('_id', id);
 
         try {
           // 프로필 이미지 업로드 API 호출
           const apiResponse = await axios.put(
-            'http://98.82.55.237/user_info/uploadProfileImage',
+            'http://98.82.55.237/user_info/uploadProfileImageById',
             formData,
             {
               headers: {
@@ -209,7 +209,7 @@ const My_profile_screen = () => {
 
       // 사용자 정보 업데이트 API 호출
       await axios.put(
-        'http://98.82.55.237/user_info/updateUser',
+        'http://98.82.55.237/user_info/updateUserById',
         updatedUserData,
         {
           headers: {

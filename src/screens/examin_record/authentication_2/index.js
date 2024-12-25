@@ -43,7 +43,7 @@ const Authentication_2_screen = () => {
  const { selectedValue, selectedLabel, selectedImage, refreshHealthData } = route.params;
  const navigation = useNavigation();
 
- const [providerId, setProviderId] = useState(null);
+ const [_id, setId] = useState(null);
 
  useEffect(() => {
    const getProviderData = async () => {
@@ -51,13 +51,13 @@ const Authentication_2_screen = () => {
        const userDataString = await AsyncStorage.getItem('user');
        if (userDataString) {
          const userData = JSON.parse(userDataString);
-         const { providerId, birthdate, name } = userData;
+         const { _id, birthdate, name } = userData;
 
-         if (providerId) {
-           console.log('providerId를 성공적으로 가져옴:', providerId);
-           setProviderId(providerId);
+         if (_id) {
+           console.log('_id를 성공적으로 가져옴:', _id);
+           setId(_id);
          } else {
-           console.log('providerId가 존재하지 않음');
+           console.log('_id가 존재하지 않음');
          }
 
          if (birthdate) {
@@ -119,7 +119,7 @@ const Authentication_2_screen = () => {
      setFormValid(false);
    }
  }, [
-   providerId,
+   _id,
    name,
    birthdate,
    phoneNumber,
@@ -155,7 +155,7 @@ const Authentication_2_screen = () => {
      }
 
      const request_data = {
-       providerId: providerId,
+       _id: _id,
        userName: name,
        identity: birthdate,
        phoneNo: phoneNumber,
@@ -164,14 +164,14 @@ const Authentication_2_screen = () => {
      };
      console.log(request_data);
      const response = await axios.post(
-       'http://98.82.55.237/health_checkup/step1',
+       'http://98.82.55.237/health_checkup/step1ById',
        request_data,
      );
      console.log("응답\n",response.data);
      const { result, data } = response.data;
      if (result.code === 'CF-03002') {
        navigation.navigate('authentication_3', {
-         providerId: providerId,
+         _id: _id,
          jti: data.jti,
          twoWayTimestamp: data.twoWayTimestamp,
          name: name,
@@ -188,23 +188,24 @@ const Authentication_2_screen = () => {
        setPhoneNumberError(true);
      }
    } catch (error) {
-     if (error.response && error.response.status === 404) {
-       navigation.navigate('authentication_3', {
-         providerId: providerId,
-         jti: 'dummyJti',
-         twoWayTimestamp: Date.now().toString(),
-         name: name,
-         birthdate: birthdate,
-         phoneNo: phoneNumber,
-         telecom: telecom,
-         loginTypeLevel: selectedValue.toString(),
-         selectedLabel: selectedLabel,
-         selectedImage: selectedImage,
-         refreshHealthData,
-       });
-     } else {
-       console.error(error);
-     }
+    Alert.alert('네트워크 오류', '인터넷 연결을 확인해주세요.');
+    //  if (error.response && error.response.status === 404) {
+    //    navigation.navigate('authentication_3', {
+    //      _id: _id,
+    //      jti: 'dummyJti',
+    //      twoWayTimestamp: Date.now().toString(),
+    //      name: name,
+    //      birthdate: birthdate,
+    //      phoneNo: phoneNumber,
+    //      telecom: telecom,
+    //      loginTypeLevel: selectedValue.toString(),
+    //      selectedLabel: selectedLabel,
+    //      selectedImage: selectedImage,
+    //      refreshHealthData,
+    //    });
+    //  } else {
+    //    console.error(error);
+    //  }
    } finally {
      setLoading(false);
    }

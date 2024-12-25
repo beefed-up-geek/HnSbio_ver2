@@ -20,7 +20,7 @@ const Authentication_3_screen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const {
-    providerId,
+    _id,
     jti,
     twoWayTimestamp,
     name,
@@ -39,7 +39,7 @@ const Authentication_3_screen = () => {
     setLoading(true);
     try {
       const request_data = {
-        providerId: providerId,
+        _id: _id,
         userName: name,
         identity: birthdate,
         phoneNo: phoneNo,
@@ -50,7 +50,7 @@ const Authentication_3_screen = () => {
       };
       //console.log(request_data);
       const response = await axios.post(
-        'http://98.82.55.237/health_checkup/step2',
+        'http://98.82.55.237/health_checkup/step2ById',
         request_data,
       );
   
