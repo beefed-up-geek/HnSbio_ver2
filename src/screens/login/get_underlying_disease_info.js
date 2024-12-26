@@ -37,9 +37,8 @@ const GetUnderlyingDiseaseInfo = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Agreement options
   const agreementOptions = [
-    '모두 동의하기', // New option added at the top
+    '모두 동의하기',
     '이용 약관 동의',
     '개인정보 보호방침 동의',
     '민감정보수집 및 이용동의',
@@ -57,17 +56,13 @@ const GetUnderlyingDiseaseInfo = () => {
 
   const handleOptionToggle = (option) => {
     if (option === '해당사항 없음') {
-      if (selectedOptions.includes(option)) {
-        setSelectedOptions([]); // Deselect all if already selected
-      } else {
-        setSelectedOptions([option]); // Select only this option
-      }
+      setSelectedOptions(selectedOptions.includes(option) ? [] : [option]);
     } else {
       setSelectedOptions((prevSelectedOptions) => {
         if (prevSelectedOptions.includes(option)) {
           return prevSelectedOptions.filter((opt) => opt !== option);
         } else {
-          return [...prevSelectedOptions.filter(opt => opt !== '해당사항 없음'), option];
+          return [...prevSelectedOptions.filter((opt) => opt !== '해당사항 없음'), option];
         }
       });
     }
@@ -79,27 +74,24 @@ const GetUnderlyingDiseaseInfo = () => {
       return;
     }
 
-    setIsModalVisible(true); // Show modal after selections
+    setIsModalVisible(true);
   };
 
   const handleAgreementToggle = (index) => {
     const updatedAgreements = [...agreements];
 
-    if (index === 0) { // "모두 동의하기"를 눌렀을 때
+    if (index === 0) {
       const newValue = !updatedAgreements[0];
-      for (let i = 0; i < updatedAgreements.length; i++) {
-        updatedAgreements[i] = newValue;
-      }
+      updatedAgreements.fill(newValue);
     } else {
       updatedAgreements[index] = !updatedAgreements[index];
-      // 개별 항목이 모두 선택되었는지 확인하여 "모두 동의하기" 상태 업데이트
       updatedAgreements[0] = updatedAgreements.slice(1).every(Boolean);
     }
 
     setAgreements(updatedAgreements);
   };
 
-  const allAgreed = agreements.slice(1).every(Boolean); // Check if all agreements except "모두 동의하기" are checked
+  const allAgreed = agreements.slice(1).every(Boolean);
 
   const getFormattedDate = () => {
     const today = new Date();
@@ -139,19 +131,34 @@ const GetUnderlyingDiseaseInfo = () => {
     };
 
     try {
-      // register API 호출
-      const response = await axios.post('http://98.82.55.237/login/registerByBirthdateAndName', userData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.post(
+        'http://98.82.55.237/login/registerByBirthdateAndName',
+        userData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      // 응답에서 newUser 데이터를 AsyncStorage에 저장
-      const newUser = response.data.user;
-      await AsyncStorage.setItem('user', JSON.stringify(newUser));
+      if (response.status === 200) {
+        const newUser = response.data.user;
+        await AsyncStorage.setItem('user', JSON.stringify(newUser));
 
-      setIsModalVisible(false); // Hide modal
-      navigation.navigate('BottomNavigation');
+        const { provider, createdAt } = newUser.account[0];
+        const formattedDate = `20${createdAt.slice(0, 2)}년 ${parseInt(createdAt.slice(2, 4), 10)}월 ${parseInt(createdAt.slice(4, 6), 10)}일`;
+        Alert.alert(
+          '알림',
+          `${formattedDate}에 생성한 동일 명의의 ${provider} 계정과 통합합니다.`,
+
+          [
+            {
+              text: '확인',
+              onPress: () => navigation.navigate('BottomNavigation'),
+            },
+          ]
+        );
+      }
     } catch (error) {
       console.error('API 요청 오류:', error.message);
       Alert.alert('오류', '데이터 전송 중 문제가 발생했습니다.');
@@ -186,7 +193,6 @@ const GetUnderlyingDiseaseInfo = () => {
         <Text style={styles.nextButtonText}>다음</Text>
       </TouchableOpacity>
 
-      {/* Modal for Agreement */}
       <Modal
         transparent
         visible={isModalVisible}
@@ -201,7 +207,7 @@ const GetUnderlyingDiseaseInfo = () => {
               key={index}
               style={[
                 styles.agreementItem,
-                index === 0 && styles.allAgreeItem, // 스타일 추가
+                index === 0 && styles.allAgreeItem,
               ]}
               onPress={() => handleAgreementToggle(index)}
             >
@@ -216,7 +222,7 @@ const GetUnderlyingDiseaseInfo = () => {
               <Text
                 style={[
                   styles.agreementText,
-                  index === 0 && styles.allAgreeText, // 스타일 추가
+                  index === 0 && styles.allAgreeText,
                 ]}
               >
                 {item}
