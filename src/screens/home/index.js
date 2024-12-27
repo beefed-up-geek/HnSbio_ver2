@@ -440,10 +440,17 @@ const HomeScreen = () => {
                     style={styles.kidneyImage}
                   />
                 ) : (
-                  <Image
-                    source={require('../../images/home/음성.png')} // 음성일 때 표시
-                    style={styles.kidneyImage}
-                  />
+                  latestKitTest.result === 0 ? (
+                    <Image
+                      source={require('../../images/home/음성.png')} // 양성일 때 표시
+                      style={styles.kidneyImage}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../../images/home/알수없음.png')} // 음성일 때 표시
+                      style={styles.kidneyImage}
+                    />
+                  )
                 )
               ) : (
                 <Image
