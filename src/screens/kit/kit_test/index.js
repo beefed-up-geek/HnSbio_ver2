@@ -170,6 +170,8 @@ const KitTestScreen = ({navigation}) => {
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);
       await AsyncStorage.setItem('@kit_results', JSON.stringify(results));
+      // 최근 검사 날짜를 별도로 저장
+      await AsyncStorage.setItem('@recent_test_date', newResult.date);
       console.log('저장된 데이터:', results); // 디버깅용 로그
     } catch (error) {
       console.error('결과 저장 중 오류:', error);

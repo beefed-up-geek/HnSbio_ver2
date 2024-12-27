@@ -27,6 +27,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
   const [results, setResults] = useState([
     // 여기에 실제 검사 결과를 넣을 수 있음
   ]);
+  const [recentDate, setRecentDate] = useState('아직 검사하지 않음');
 
   const getCurrentDate = () => {
     if (results.length === 0) {
@@ -34,6 +35,24 @@ const Kit_screen = ({onPress, navigation, route}) => {
     }
     return results[0].dateDay; // 날짜만 표시
   };
+
+  const loadRecentDate = async () => {
+    try {
+      const date = await AsyncStorage.getItem('@recent_test_date');
+      if (date) {
+        setRecentDate(formatDate(date)); // 날짜 포맷팅
+      } else {
+        setRecentDate('아직 검사하지 않음');
+      }
+    } catch (error) {
+      console.error('최근 검사 날짜 로드 중 오류:', error);
+      setRecentDate('아직 검사하지 않음');
+    }
+  };
+
+  useEffect(() => {
+    loadRecentDate(); // 최근 날짜 로드
+  }, []);
 
   const formatDateTime = isoDate => {
     const date = new Date(isoDate);
@@ -167,83 +186,81 @@ const Kit_screen = ({onPress, navigation, route}) => {
   };
 
   return (
-      <View>
-        <ScrollView
-          scrollEnabled={true}
-          //contentInsetAdjustmentBehavior="automatic"
-          >
-          <View style={styles.container}>
-            {/* <View style={styles.fixedHeaderContainer}>
+    <View>
+      <ScrollView
+        scrollEnabled={true}
+        //contentInsetAdjustmentBehavior="automatic"
+      >
+        <View style={styles.container}>
+          {/* <View style={styles.fixedHeaderContainer}>
               <View style={styles.headerContainer}>
                 <Text style={styles.headerTitle}>키트 검사</Text>
                 <View style={styles.headerBorder} />
               </View>
             </View> */}
-            <View style={styles.innerContainer}>
-              <View style={styles.topRow} />
-              <View style={styles.secondRow} />
-              <View style={styles.cardContainer}>
-                <ImageBackground
-                  style={styles.profileImage}
-                  source={require('../../images/kitMain.png')}
-                  resizeMode="cover"
-                />
-                <View style={styles.card}>
-                  <View style={styles.cardContent}>
-                    <View style={styles.cardHeader}>
-                      <Text style={styles.cardHeaderText}>
-                        키트 검사하러 가기
-                      </Text>
-                    </View>
-                    <View style={styles.cardDate}>
-                      <Text style={styles.cardDateText}>최근 검사한 날짜</Text>
-                      <Text style={styles.cardDateText}>
-                        {getCurrentDate()}
-                      </Text>
-                    </View>
+          <View style={styles.innerContainer}>
+            <View style={styles.topRow} />
+            <View style={styles.secondRow} />
+            <View style={styles.cardContainer}>
+              <ImageBackground
+                style={styles.profileImage}
+                source={require('../../images/kitMain.png')}
+                resizeMode="cover"
+              />
+              <View style={styles.card}>
+                <View style={styles.cardContent}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardHeaderText}>
+                      키트 검사하러 가기
+                    </Text>
+                  </View>
+                  <View style={styles.cardDate}>
+                    <Text style={styles.cardDateText}>최근 검사한 날짜</Text>
+                    <Text style={styles.cardDateText}>{recentDate}</Text>
                   </View>
                 </View>
-                <View style={styles.roundButtonContainer}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
-                    }>
-                    <View style={styles.roundButton}>
-                      <View style={styles.roundButtonInner}>
-                        <ImageBackground
-                          style={styles.roundButtonImage}
-                          source={require('../../images/arrowRight.png')}
-                          resizeMode="cover"
-                        />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
+              </View>
+              <View style={styles.roundButtonContainer}>
                 <TouchableOpacity
-                  style={styles.storeButton}
-                  onPress={handleKitPurchase}>
-                  <Image
-                    style={styles.linkIcon}
-                    source={require('../../images/store.png')}
-                  />
-                  <Text style={styles.linkText}>스토어 바로가기</Text>
+                  onPress={() =>
+                    navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
+                  }>
+                  <View style={styles.roundButton}>
+                    <View style={styles.roundButtonInner}>
+                      <ImageBackground
+                        style={styles.roundButtonImage}
+                        source={require('../../images/arrowRight.png')}
+                        resizeMode="cover"
+                      />
+                    </View>
+                  </View>
                 </TouchableOpacity>
               </View>
-              <View style={styles.resultsContainer}>
-                <Text style={styles.resultsTitle}>검사 결과</Text>
-                <ScrollView
-                  style={styles.resultsScroll}
-                  contentContainerStyle={styles.resultsScrollContent}
-                  nestedScrollEnabled={true} // 스크롤 뷰 중첩 가능하게 설정
-                >
-                  {renderResults()}
-                </ScrollView>
-              </View>
+              <TouchableOpacity
+                style={styles.storeButton}
+                onPress={handleKitPurchase}>
+                <Image
+                  style={styles.linkIcon}
+                  source={require('../../images/store.png')}
+                />
+                <Text style={styles.linkText}>스토어 바로가기</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.bottomSpacing} />
+            <View style={styles.resultsContainer}>
+              <Text style={styles.resultsTitle}>검사 결과</Text>
+              <ScrollView
+                style={styles.resultsScroll}
+                contentContainerStyle={styles.resultsScrollContent}
+                nestedScrollEnabled={true} // 스크롤 뷰 중첩 가능하게 설정
+              >
+                {renderResults()}
+              </ScrollView>
+            </View>
           </View>
-        </ScrollView>
-      </View>
+          <View style={styles.bottomSpacing} />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
