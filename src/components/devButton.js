@@ -19,15 +19,15 @@ const DevButton = ({ loadUserData }) => {
     const newCount = buttonPressCount + 1;
     setButtonPressCount(newCount);
     console.log(newCount);
-    let providerId = '';
+    let _id = '';
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
         const parsedData = JSON.parse(userData);
-        providerId = parsedData.providerId;
+        _id = parsedData._id;
       }
     } catch (error) {
-      console.error('Error getting providerId:', error);
+      console.error('Error getting _id:', error);
       return;
     }
 
@@ -36,9 +36,9 @@ const DevButton = ({ loadUserData }) => {
         if (newCount % 14 === 7) {
           console.log(`\n=== ${newCount}번째 클릭: 데이터 설정 ===`);
 
-          const kitResponse = await axios.post('http://98.82.55.237/kit/setTestResultsDev', { providerId });
-          const healthResponse = await axios.post('http://98.82.55.237/health_checkup/healthCheckupDev', { providerId });
-          const bloodResponse = await axios.post('http://98.82.55.237/blood_test/setBloodTestResultsDev', { providerId });
+          const kitResponse = await axios.post('http://98.82.55.237/kit/setTestResultsDevById', { _id });
+          const healthResponse = await axios.post('http://98.82.55.237/health_checkup/healthCheckupDevById', { _id });
+          const bloodResponse = await axios.post('http://98.82.55.237/blood_test/setBloodTestResultsDevById', { _id });
 
           const updatedUserData = await AsyncStorage.getItem('user');
           const parsedData = JSON.parse(updatedUserData);
@@ -55,9 +55,9 @@ const DevButton = ({ loadUserData }) => {
         } else {
           console.log(`\n=== ${newCount}번째 클릭: 데이터 제거 ===`);
 
-          await axios.post('http://98.82.55.237/kit/clearTestResultsDev', { providerId });
-          await axios.post('http://98.82.55.237/health_checkup/healthCheckupDevRemove', { providerId });
-          await axios.post('http://98.82.55.237/blood_test/clearBloodTestResultsDev', { providerId });
+          await axios.post('http://98.82.55.237/kit/clearTestResultsDevById', { _id });
+          await axios.post('http://98.82.55.237/health_checkup/healthCheckupDevRemoveById', { _id });
+          await axios.post('http://98.82.55.237/blood_test/clearBloodTestResultsDevById', { _id });
 
           const updatedUserData = await AsyncStorage.getItem('user');
           const parsedData = JSON.parse(updatedUserData);

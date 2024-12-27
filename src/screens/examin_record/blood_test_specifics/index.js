@@ -107,18 +107,12 @@ const Blood_test_specifics_screen = () => {
       const userData = await AsyncStorage.getItem('user');
       let parsedData = userData ? JSON.parse(userData) : {};
 
-      if (!parsedData.providerId) {
-        Alert.alert('오류', 'providerId를 찾을 수 없습니다.');
-        setIsSaving(false);
-        return;
-      }
-
-      const providerId = parsedData.providerId;
+      const _id = parsedData._id;
       const originalDate = bloodTestResult.date; // 기존 날짜
 
       // 서버에 업데이트 요청
-      await axios.put('http://98.82.55.237/blood_test/editBloodTestResult', {
-        providerId,
+      await axios.put('http://98.82.55.237/blood_test/editBloodTestResultById', {
+        _id,
         originalDate,
         ...updatedTestResult,
       });
@@ -171,18 +165,13 @@ const Blood_test_specifics_screen = () => {
               const userData = await AsyncStorage.getItem('user');
               let parsedData = userData ? JSON.parse(userData) : {};
 
-              if (!parsedData.providerId) {
-                Alert.alert('오류', 'providerId를 찾을 수 없습니다.');
-                return;
-              }
-
-              const providerId = parsedData.providerId;
+              const _id = parsedData._id;
               const dateToDelete = bloodTestResult.date;
 
               // 서버에 삭제 요청
-              await axios.delete('http://98.82.55.237/blood_test/deleteBloodTestResult', {
+              await axios.delete('http://98.82.55.237/blood_test/deleteBloodTestResultById', {
                 data: {
-                  providerId,
+                  _id,
                   date: dateToDelete,
                 },
               });

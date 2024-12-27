@@ -156,6 +156,16 @@ const KitTestScreen = ({navigation}) => {
         status,
         date: new Date().toISOString(),
       };
+      //키트 검사 결과를 백엔드에 저장 (이 부분은 테스트를 해볼 수가 없었음)========================
+      const userDataString = await AsyncStorage.getItem('user');
+      const userData = JSON.parse(userDataString);
+      const { _id } = userData;
+      const testResult = status;
+      const response = await axios.post(
+        'http://98.82.55.237/kit/addTestResultById',
+        _id,testResult
+      );
+      //=============================================================================
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);

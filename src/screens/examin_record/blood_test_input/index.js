@@ -120,13 +120,7 @@ const Blood_test_input_screen = ({ route }) => {
       const userData = await AsyncStorage.getItem('user');
       let parsedData = userData ? JSON.parse(userData) : {};
 
-      if (!parsedData.providerId) {
-        Alert.alert('오류', 'providerId를 찾을 수 없습니다.');
-        setIsSaving(false);
-        return;
-      }
-
-      const providerId = parsedData.providerId;
+      const _id = parsedData._id;
       let bloodTestResults = parsedData.blood_test_result || [];
 
       const isDuplicate = bloodTestResults.some(
@@ -149,8 +143,8 @@ const Blood_test_input_screen = ({ route }) => {
 
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-      await axios.put('http://98.82.55.237/blood_test/addBloodTestResult', {
-        providerId,
+      await axios.put('http://98.82.55.237/blood_test/addTestResultById', {
+        _id,
         ...newTestResult,
       });
 
