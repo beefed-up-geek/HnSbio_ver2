@@ -144,7 +144,7 @@ const NavigationWithoutTabs = () => {
       <Stack.Screen
         name="blood_test_specifics"
         component={Blood_test_specifics_screen}
-        options={{title: ''}}
+        options={{title: '혈액검사 상세 정보'}}
       />
       <Stack.Screen
         name="blood_test_input"
