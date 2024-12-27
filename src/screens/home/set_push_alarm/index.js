@@ -1,21 +1,31 @@
-//src\screens\home\set_push_alarm\index.js
+// src/screens/home/set_push_alarm/index.js
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, Alert, Modal } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { 
+  View, 
+  Text, 
+  Image, 
+  TouchableOpacity, 
+  Alert, 
+  Modal 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Switch } from 'react-native-switch';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, {TimestampTrigger, TriggerType} from '@notifee/react-native';
+import notifee, { TimestampTrigger, TriggerType } from '@notifee/react-native';
 
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles.js';
 
-const SetPushAlarmScreen = ({ route }) => {
-  const navigation = useNavigation();
+// ★ Context import
+import { HomeContext } from '../../../components/homeContext';
 
-  // 전달된 refreshHome 함수: "변경사항 저장" 버튼에서만 호출
-  const refreshHome = route.params?.refreshHome || (() => {});
+const SetPushAlarmScreen = () => {
+  const navigation = useNavigation();
+  
+  // ★ HomeContext에서 전역 변수/함수 가져오기
+  const { rerenderHome, setRerenderHome } = useContext(HomeContext);
 
   // 화면 상태 변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
@@ -23,7 +33,7 @@ const SetPushAlarmScreen = ({ route }) => {
   const [initialSettings, setInitialSettings] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-  const [providerId, setProviderId] = useState('');
+  const [_id, setId] = useState('');
 
   // 날짜 포맷 함수
   const formatDate = (date) => {
@@ -36,7 +46,7 @@ const SetPushAlarmScreen = ({ route }) => {
     return `${year}-${month}-${day}`;
   };
 
-  // 변경 사항이 있는지 확인
+  // 변경 사항 여부
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
@@ -49,15 +59,19 @@ const SetPushAlarmScreen = ({ route }) => {
     const userData = await AsyncStorage.getItem('user');
     if (userData) {
       const parsedData = JSON.parse(userData);
-      setProviderId(parsedData.providerId);
+      setId(parsedData._id);
 
       const localSettings = parsedData.pushNotificationSettings;
       if (localSettings) {
         setAlarmEnabled(localSettings.alarmEnabled);
-        setNextAlarmDate(new Date(localSettings.nextAlarmDate) || new Date(Date.now() + 24 * 60 * 60 * 1000));
+        setNextAlarmDate(
+          new Date(localSettings.nextAlarmDate) || 
+          new Date(Date.now() + 24 * 60 * 60 * 1000)
+        );
         setInitialSettings({
           alarmEnabled: localSettings.alarmEnabled,
-          nextAlarmDate: new Date(localSettings.nextAlarmDate) || new Date(Date.now() + 24 * 60 * 60 * 1000),
+          nextAlarmDate: new Date(localSettings.nextAlarmDate) || 
+                         new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
       } else {
         setAlarmEnabled(false);
@@ -78,32 +92,27 @@ const SetPushAlarmScreen = ({ route }) => {
   const toggleAlarm = async () => {
     setAlarmEnabled((prev) => !prev);
     if (!alarmEnabled) {
-      // default는 다음날
       setNextAlarmDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
     }
   };
 
-  const scheduleKitNotifications  = async (date) => {
-    const dayOf = new Date(nextAlarmDate); 
-    // 자정 기준으로 날짜만 추출
-    dayOf.setHours(0, 0, 0, 0); 
-    // 당일 9시
+  // 키트 알림 스케줄
+  const scheduleKitNotifications = async (date) => {
+    const dayOf = new Date(nextAlarmDate);
+    dayOf.setHours(0, 0, 0, 0);
     dayOf.setHours(9);
-    
+
     const dayBefore = new Date(dayOf);
-    dayBefore.setDate(dayBefore.getDate() - 1); // 하루 전
-    // 이미 dayOf.setHours(9) 한 상태니 dayBefore도 자동으로 9시가 됨.
+    dayBefore.setDate(dayBefore.getDate() - 1);
 
-    // 현재 시각보다 과거면 알림이 뜨지 않으므로, 미래인 경우만 스케줄
     const now = new Date();  
-
     console.log('dayOf:', dayOf.toString());
     console.log('now:', now.toString());
     console.log('dayBefore:', dayBefore.toString());
 
     // 하루 전 알림
     if (dayBefore > now) {
-      const triggerBefore  = {
+      const triggerBefore = {
         type: TriggerType.TIMESTAMP,
         timestamp: dayBefore.getTime(),
       };
@@ -112,15 +121,8 @@ const SetPushAlarmScreen = ({ route }) => {
           {
             title: '키트 검사 예정일 알림',
             body: '내일은 키트 검사일이에요! 키트가 준비되었는지 확인해보세요',
-            android: {
-              channelId: 'default',
-              smallIcon: 'hns',
-              color: '#4CAF50',
-            },
-            ios: {
-              sound: 'default',
-              badgeCount: 1,
-            },
+            android: { channelId: 'default', smallIcon: 'hns', color: '#4CAF50' },
+            ios: { sound: 'default', badgeCount: 1 },
           },
           triggerBefore
         );
@@ -129,10 +131,9 @@ const SetPushAlarmScreen = ({ route }) => {
         console.error('Error creating trigger notification (dayBefore):', error);
       }
     }
-    
     // 당일 알림
     if (dayOf > now) {
-      const triggerDayOf  = {
+      const triggerDayOf = {
         type: TriggerType.TIMESTAMP,
         timestamp: dayOf.getTime(),
       };
@@ -141,15 +142,8 @@ const SetPushAlarmScreen = ({ route }) => {
           {
             title: '키트 검사 예정일 알림',
             body: '오늘은 키트 검사일이에요!',
-            android: {
-              channelId: 'default',
-              smallIcon: 'hns',
-              color: '#4CAF50',
-            },
-            ios: {
-              sound: 'default',
-              badgeCount: 1,
-            },
+            android: { channelId: 'default', smallIcon: 'hns', color: '#4CAF50' },
+            ios: { sound: 'default', badgeCount: 1 },
           },
           triggerDayOf
         );
@@ -162,7 +156,7 @@ const SetPushAlarmScreen = ({ route }) => {
 
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
-    if (!providerId) {
+    if (!_id) {
       Alert.alert('Error', 'Provider ID를 찾을 수 없습니다.');
       return;
     }
@@ -171,6 +165,7 @@ const SetPushAlarmScreen = ({ route }) => {
       setConfirmationModalVisible(true);
       setInitialSettings({ alarmEnabled, nextAlarmDate });
 
+      // AsyncStorage에 저장
       await AsyncStorage.mergeItem(
         'user',
         JSON.stringify({
@@ -183,7 +178,6 @@ const SetPushAlarmScreen = ({ route }) => {
 
       // 알람 On이면 검사일 전날+당일 알림 예약
       if (alarmEnabled) {
-        // 기존 알림 모두 취소 후 다시 예약 (필요하다면)
         await notifee.cancelAllNotifications();
         await scheduleKitNotifications(nextAlarmDate);
       } else {
@@ -191,7 +185,9 @@ const SetPushAlarmScreen = ({ route }) => {
         await notifee.cancelAllNotifications();
       }
 
-      refreshHome();
+      // ★ 여기에서 HomeContext의 rerenderHome을 토글 => 홈화면 재렌더 트리거
+      setRerenderHome((prev) => !prev);
+
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
@@ -240,7 +236,6 @@ const SetPushAlarmScreen = ({ route }) => {
         )}
       </View>
 
-      {/* 날짜 선택기 */}
       {showDatePicker && (
         <DateTimePicker
           value={nextAlarmDate}
@@ -302,6 +297,7 @@ const SetPushAlarmScreen = ({ route }) => {
   );
 };
 
+// DetailRow 컴포넌트
 const DetailRow = ({ icon, label, value, last, onPress }) => (
   <View style={last ? styles.detailLastRow : styles.detailRow}>
     <View style={styles.labelContainer}>

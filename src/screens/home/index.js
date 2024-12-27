@@ -275,9 +275,7 @@ const HomeScreen = () => {
                       onPress={() =>
                         navigation.navigate('NoTabs', {
                           screen: 'set_push_alarm',
-                          params: {
-                            refreshHome: loadUserData,
-                          },
+                          
                         })
                       }>
                       <Image
@@ -301,10 +299,7 @@ const HomeScreen = () => {
                       style={styles.setPushAlarmButton}
                       onPress={() =>
                         navigation.navigate('NoTabs', {
-                          screen: 'set_push_alarm',
-                          params: {
-                            refreshHome: loadUserData,
-                          },
+                          screen: 'set_push_alarm'
                         })
                       }>
                       <Image
@@ -329,9 +324,7 @@ const HomeScreen = () => {
                       onPress={() =>
                         navigation.navigate('NoTabs', {
                           screen: 'set_push_alarm',
-                          params: {
-                            refreshHome: loadUserData,
-                          },
+                          
                         })
                       }>
                       <Image
@@ -357,9 +350,7 @@ const HomeScreen = () => {
                   onPress={() =>
                     navigation.navigate('NoTabs', {
                       screen: 'set_push_alarm',
-                      params: {
-                        refreshHome: loadUserData,
-                      },
+                      
                     })
                   }>
                   <Image
@@ -383,9 +374,7 @@ const HomeScreen = () => {
                   onPress={() =>
                     navigation.navigate('NoTabs', {
                       screen: 'set_push_alarm',
-                      params: {
-                        refreshHome: loadUserData,
-                      },
+                      
                     })
                   }>
                   <Image
@@ -508,9 +497,7 @@ const HomeScreen = () => {
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'daily_check',
-                params: {
-                  refreshHome: loadUserData,
-                },
+                
               })
             }>
             <View style={styles.titleContainer}>

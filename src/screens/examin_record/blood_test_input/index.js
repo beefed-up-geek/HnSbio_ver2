@@ -1,17 +1,22 @@
-import React, { useState, useRef } from 'react';
+// src/screens/examin_record/blood_test_input/index.js
+import React, { useState, useRef, useContext } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Alert,
-  StyleSheet,
   Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import theme from '../../../theme.js';
+
+// Context import
+import { HomeContext } from '../../../components/homeContext';
+
+// 스타일 (기존 styles.js를 쓰고 있다면 import 그대로 유지)
+import styles from './styles.js';
 
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -20,6 +25,10 @@ const Blood_test_input_screen = ({ route }) => {
   const navigation = useNavigation();
   const { refreshHealthData } = route.params || {};
 
+  // Context
+  const { setRerenderHome } = useContext(HomeContext);
+
+  // 입력값 상태
   const [date, setDate] = useState('');
   const [bun, setBun] = useState('');
   const [creatinine, setCreatinine] = useState('');
@@ -29,10 +38,12 @@ const Blood_test_input_screen = ({ route }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isBackspace, setIsBackspace] = useState(false);
 
+  // ref
   const bunRef = useRef(null);
   const creatinineRef = useRef(null);
   const gfrRef = useRef(null);
 
+  // 날짜 입력 가공
   const handleDateChange = (text) => {
     const isDeletingSlash =
       prevDate.length > text.length && prevDate.endsWith('/') && !text.endsWith('/');
@@ -45,6 +56,7 @@ const Blood_test_input_screen = ({ route }) => {
     }
 
     if (isBackspace && text.length > prevDate.length) {
+      // 백스페이스 직후 숫자가 입력된 경우
       if (text.length === 5) {
         text = text.slice(0, 4) + '/' + text.slice(4);
       } else if (text.length === 8) {
@@ -61,6 +73,7 @@ const Blood_test_input_screen = ({ route }) => {
     setPrevDate(text);
   };
 
+  // 입력값 검증
   const validateInputs = () => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
@@ -73,14 +86,14 @@ const Blood_test_input_screen = ({ route }) => {
       const month = parseInt(monthStr, 10);
       const day = parseInt(dayStr, 10);
 
+      // 유효 범위 검사
       if (year < 1950 || month < 1 || month > 12 || day < 1 || day > 31) {
         errors.push('date');
       }
-
+      // 미래 날짜 제한
       const enteredDate = new Date(date.replace(/\//g, '-'));
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       if (enteredDate > today) {
         errors.push('date');
       }
@@ -100,6 +113,7 @@ const Blood_test_input_screen = ({ route }) => {
     return errors.length === 0;
   };
 
+  // "검사 결과 추가" 버튼
   const addTestResult = async () => {
     if (isSaving) return;
     if (!validateInputs()) {
@@ -117,38 +131,40 @@ const Blood_test_input_screen = ({ route }) => {
     };
 
     try {
+      // 1) 로컬(AsyncStorage)에서 user 불러옴
       const userData = await AsyncStorage.getItem('user');
       let parsedData = userData ? JSON.parse(userData) : {};
 
       const _id = parsedData._id;
       let bloodTestResults = parsedData.blood_test_result || [];
 
-      const isDuplicate = bloodTestResults.some(
-        (result) =>
-          result.date === newTestResult.date &&
-          result.BUN === newTestResult.BUN &&
-          result.creatinine === newTestResult.creatinine &&
-          result.GFR === newTestResult.GFR
-      );
-
-      if (isDuplicate) {
-        Alert.alert('오류', '이미 동일한 데이터가 존재합니다.');
-        setIsSaving(false);
-        return;
-      }
-
+      // 2) 로컬에 새 검사 결과 추가
       bloodTestResults.push(newTestResult);
-      bloodTestResults.sort((a, b) => new Date(b.date) - new Date(a.date));
-      parsedData.blood_test_result = bloodTestResults;
 
+      // 3) 최근 날짜가 앞에 오도록 내림차순 정렬
+      bloodTestResults.sort((a, b) => {
+        const dateA = new Date(a.date.replace(/\//g, '-'));
+        const dateB = new Date(b.date.replace(/\//g, '-'));
+        return dateB - dateA; // 날짜가 더 큰(최근) 쪽이 앞
+      });
+
+      // 4) AsyncStorage에 업데이트
+      parsedData.blood_test_result = bloodTestResults;
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-      await axios.put('http://98.82.55.237/blood_test/addTestResultById', {
+      // 5) 백엔드에 검사 결과 추가 (중복 방지: 여기서만 한 번)
+      await axios.put('http://98.82.55.237/blood_test/addBloodTestResultById', {
         _id,
         ...newTestResult,
       });
 
-      refreshHealthData();
+      // 6) 다른 화면을 새로 갱신하는 함수(데이터 추가 X)
+      refreshHealthData?.();
+
+      // 7) 홈화면이 다시 렌더링되도록 Context 토글
+      setRerenderHome((prev) => !prev);
+
+      // 8) 이동
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' });
     } catch (error) {
       console.error('Error adding blood test result:', error);
@@ -173,7 +189,7 @@ const Blood_test_input_screen = ({ route }) => {
         keyboardType="numeric"
         maxLength={10}
         returnKeyType="next"
-        onSubmitEditing={() => bunRef.current.focus()}
+        onSubmitEditing={() => bunRef.current?.focus()}
       />
 
       <Text style={styles.label}>BUN</Text>
@@ -190,7 +206,7 @@ const Blood_test_input_screen = ({ route }) => {
           onChangeText={setBun}
           keyboardType="numeric"
           returnKeyType="next"
-          onSubmitEditing={() => creatinineRef.current.focus()}
+          onSubmitEditing={() => creatinineRef.current?.focus()}
         />
         <Text style={styles.unitText}>mg/dL</Text>
       </View>
@@ -209,7 +225,7 @@ const Blood_test_input_screen = ({ route }) => {
           onChangeText={setCreatinine}
           keyboardType="numeric"
           returnKeyType="next"
-          onSubmitEditing={() => gfrRef.current.focus()}
+          onSubmitEditing={() => gfrRef.current?.focus()}
         />
         <Text style={styles.unitText}>mg/dL</Text>
       </View>
@@ -233,64 +249,15 @@ const Blood_test_input_screen = ({ route }) => {
         <Text style={styles.unitText}>mL/min/1.73m²</Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={addTestResult} disabled={isSaving}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={addTestResult}
+        disabled={isSaving}
+      >
         <Text style={styles.buttonText}>검사 결과 추가</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20 * width_ratio,
-    backgroundColor: '#FFFFFF',
-  },
-  label: {
-    fontSize: 14 * width_ratio,
-    color: theme.colors.textGray,
-    marginTop: 16 * height_ratio,
-    marginBottom: 8 * height_ratio,
-    ...theme.fonts.Medium,
-  },
-  inputWrapper: {
-    position: 'relative',
-  },
-  input: {
-    height: 50 * height_ratio,
-    borderRadius: 10 * width_ratio,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 15 * width_ratio,
-    fontSize: 14 * width_ratio,
-    borderWidth: 1,
-    borderColor: '#F1F1F1',
-    color: '#333',
-    ...theme.fonts.Regular,
-  },
-  invalidInput: {
-    borderColor: '#F53E50',
-  },
-  unitText: {
-    position: 'absolute',
-    right: 15 * width_ratio,
-    top: 15 * height_ratio,
-    fontSize: 14 * width_ratio,
-    color: '#828287',
-    ...theme.fonts.Regular,
-  },
-  button: {
-    height: 50 * height_ratio,
-    borderRadius: 25 * width_ratio,
-    backgroundColor: '#E8EFFD',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20 * height_ratio,
-  },
-  buttonText: {
-    fontSize: 16 * width_ratio,
-    color: theme.colors.mainBlue,
-    ...theme.fonts.SemiBold,
-  },
-});
 
 export default Blood_test_input_screen;
