@@ -18,6 +18,9 @@ import { LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+import { HomeProvider } from './src/components/homeContext';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -63,7 +66,8 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaProvider>
+    <HomeProvider>
+      <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent'}} edges={['top', 'bottom']}>
         <NavigationContainer>
           <PushNotification />
@@ -82,6 +86,8 @@ const App = () => {
         </NavigationContainer>
       </SafeAreaView>
     </SafeAreaProvider> 
+    </HomeProvider>
+    
   );
 };
 

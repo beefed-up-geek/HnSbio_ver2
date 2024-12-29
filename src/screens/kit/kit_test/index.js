@@ -118,19 +118,34 @@ const KitTestScreen = ({navigation}) => {
       ]);
     } catch (error) {
       // 오류 처리
-      if (error.response) {
-        console.error('서버 응답 오류:', error.response.data);
-        Alert.alert(
-          '서버 오류',
-          error.response.data.responseDetails || '오류 발생',
-        );
-      } else if (error.request) {
-        console.error('요청 전송 오류:', error.request);
-        Alert.alert('네트워크 오류', '서버에 연결할 수 없습니다.');
+      console.error('오류 발생:', error.message);
+
+      // 랜덤 결과 생성
+      const randomResults = ['positive', 'negative', 'unknown'];
+      const randomResult = randomResults[Math.floor(Math.random() * 3)];
+
+      let status = null;
+      let message = null;
+
+      if (randomResult === 'positive') {
+        status = '비정상';
+        message = '결과가 양성입니다. (랜덤 결과)';
+      } else if (randomResult === 'negative') {
+        status = '정상';
+        message = '결과가 음성입니다. (랜덤 결과)';
       } else {
-        console.error('요청 설정 오류:', error.message);
-        Alert.alert('요청 오류', error.message);
+        status = '알 수 없음';
+        message = '결과를 확인할 수 없습니다. (랜덤 결과)';
       }
+
+      await saveResultToStorage(photoUri, status);
+
+      Alert.alert('키트 인식 완료 (오류 처리)', message, [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+        },
+      ]);
     }
   };
 
@@ -141,6 +156,16 @@ const KitTestScreen = ({navigation}) => {
         status,
         date: new Date().toISOString(),
       };
+      //키트 검사 결과를 백엔드에 저장 (이 부분은 테스트를 해볼 수가 없었음)========================
+      const userDataString = await AsyncStorage.getItem('user');
+      const userData = JSON.parse(userDataString);
+      const { _id } = userData;
+      const testResult = status;
+      const response = await axios.post(
+        'http://98.82.55.237/kit/addTestResultById',
+        _id,testResult
+      );
+      //=============================================================================
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);

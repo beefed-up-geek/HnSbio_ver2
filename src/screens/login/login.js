@@ -132,7 +132,7 @@ const Login2 = () => {
 
       try {
         const response = await axios.post(
-          'http://98.82.55.237/login/login',
+          'http://98.82.55.237/login/login_',
           {
             provider,
             providerId,
@@ -166,7 +166,7 @@ const Login2 = () => {
 
       try {
         const response = await axios.post(
-          'http://98.82.55.237/login/login',
+          'http://98.82.55.237/login/login_',
           {
             provider,
             providerId,
@@ -199,7 +199,7 @@ const Login2 = () => {
       const provider = 'kakao';
       try {
         const response = await axios.post(
-          'http://98.82.55.237/login/login',
+          'http://98.82.55.237/login/login_',
           {
             provider,
             providerId,
@@ -233,7 +233,7 @@ const Login2 = () => {
 
       try {
         const response = await axios.post(
-          'http://98.82.55.237/login/login',
+          'http://98.82.55.237/login/login_',
           {
             provider,
             providerId,

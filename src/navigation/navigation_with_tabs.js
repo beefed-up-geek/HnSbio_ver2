@@ -1,5 +1,5 @@
 // src/navigation/navigation_with_tabs.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Dimensions,
@@ -14,6 +14,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import styles from './navigation_with_tabs_styles';
+
+// ★ Context import
+import { HomeContext } from '../components/homeContext';
 
 import Examin_record_screen from '../screens/examin_record/index';
 import Home_screen from '../screens/home/index';
@@ -44,6 +47,9 @@ const selectedIconSources = {
 
 const BottomNavigation = () => {
   const insets = useSafeAreaInsets();
+  
+  // ★ Context 사용 (원한다면)
+  const { rerenderHome, setRerenderHome } = useContext(HomeContext);
 
   return (
     <Tab.Navigator
@@ -78,7 +84,7 @@ const BottomNavigation = () => {
           backgroundColor: '#fff',
           height: 64,
         },
-        unmountOnBlur: true,
+        // unmountOnBlur: true, // => 제거 or false
       }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
@@ -94,7 +100,7 @@ const BottomNavigation = () => {
         name="Kit"
         component={Kit_screen}
         options={{
-          title: '키트 검사', // 헤더 제목 설정
+          title: '키트 검사',
           headerShown: true,
         }}
       />
@@ -102,7 +108,7 @@ const BottomNavigation = () => {
         name="Examin_record"
         component={Examin_record_screen}
         options={{
-          title: '검진 기록', // 헤더 제목 설정
+          title: '검진 기록',
           headerShown: true,
         }}
       />
@@ -110,7 +116,7 @@ const BottomNavigation = () => {
         name="Hospital"
         component={Hospital_screen}
         options={{
-          title: '병원 검색', // 헤더 제목 설정
+          title: '병원 검색',
           headerShown: true,
         }}
       />
@@ -118,7 +124,7 @@ const BottomNavigation = () => {
         name="Medicine"
         component={Medicine_screen}
         options={{
-          title: '약 검색', // 헤더 제목 설정
+          title: '약 검색',
           headerShown: true,
         }}
       />
