@@ -516,7 +516,7 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
           {hospital.rating ? `${hospital.rating}등급` : '등급 없음'}
         </Text>
         
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => handleFavoritePress(hospital)}
           style={styles.favoriteButton}>
           <Image
@@ -527,7 +527,7 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
             }
             style={styles.starIcon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.hospitalInfoContainer}>
         <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
