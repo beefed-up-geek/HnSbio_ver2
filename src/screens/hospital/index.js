@@ -27,7 +27,7 @@ export default function Hospital_Screen({navigation}) {
   const [loading, setLoading] = useState(true);
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
-    distance: 100,
+    distance: 20,
     rating: [],
     type: '모든 병원',
     info: [],
@@ -299,9 +299,8 @@ export default function Hospital_Screen({navigation}) {
     const newActiveFilters = [];
     
     // 거리 필터
-    if (filters.distance !== 100) {
       newActiveFilters.push(`${filters.distance}km 이내`);
-    }
+
     
     // 병원 종류 필터
     if (filters.type !== '모든 병원') {
