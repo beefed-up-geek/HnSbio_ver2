@@ -3,7 +3,6 @@ import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   View,
-  SafeAreaView,
   TextInput,
   FlatList,
   ActivityIndicator,
@@ -138,9 +137,8 @@ export default function Hospital_Screen({navigation}) {
   const fetchHospitalData = async () => {
     try {
       setIsFetchingMore(true);
-  
       const response = await axios.post(
-        'http://98.82.55.237/hospital',
+        `http://98.82.55.237/hospital`,
         {
           hospitalName: searchQuery,
           user_latitude: latitude,
@@ -160,57 +158,31 @@ export default function Hospital_Screen({navigation}) {
           },
         },
       );
-      console.log('[FETCH]', { page, offset: (page - 1) * ITEMS_PER_PAGE, filters });
+
       const filteredData = response.data.results;
-  
-      // AsyncStorage에서 "즐겨찾기된 병원 ID 목록" 가져오기
+      
+      // Get favorite hospital IDs from AsyncStorage
       const jsonValue = await AsyncStorage.getItem('favoriteHospitals');
       const favoriteHospitals = jsonValue != null ? JSON.parse(jsonValue) : [];
-  
-      // 병원 목록에 "고정 ID"와 "isFavorite" 및 "정렬용 originalIndex" 추가
+
+      // Generate unique IDs and add isFavorite and originalIndex properties
       const hospitalDataWithFavorites = filteredData.map((hospital, index) => {
-        // (1) 병원 고유 ID 생성
-        const stableId = generateUniqueId(hospital);
-        
-        // (2) "이번 페이지"에서 몇 번째인지 (정렬용 임시 값)
-        const globalIndex = (page - 1) * ITEMS_PER_PAGE + index;
-  
-        // (3) 즐겨찾기 여부
-        const isFavorite = favoriteHospitals.includes(stableId);
-  
-        return {
-          ...hospital,
-          id: stableId,           // 고유 ID
-          isFavorite,
-          originalIndex: globalIndex, 
-        };
+        const id = generateUniqueId(hospital, index);
+        const isFavorite = favoriteHospitals.includes(id);
+        return {...hospital, id, isFavorite, originalIndex: index};
       });
-  
+
       setTotalItems(response.data.total);
-  
-      // 페이지가 1이면 새로 세팅, 아니면 기존 데이터 뒤에 이어붙임
-      setHospitalData(prevData => {
-        const merged = page === 1
-          ? hospitalDataWithFavorites
-          : [...prevData, ...hospitalDataWithFavorites];
-      
-        // stableId(=hospital.id) 기준 중복 제거
-        const deduplicated = merged.filter(
-          (item, idx, self) => self.findIndex(el => el.id === item.id) === idx
-        );
-      
-        return deduplicated;
-      });
-      
-  
+      setHospitalData(prevData =>
+        page === 1 ? hospitalDataWithFavorites : [...prevData, ...hospitalDataWithFavorites],
+      );
+
       setIsFetchingMore(false);
-  
     } catch (error) {
       console.error('Error fetching hospital data:', error);
       setIsFetchingMore(false);
     }
   };
-  
 
   const handleSearchQueryChange = text => {
     setSearchQuery(text);
@@ -231,11 +203,10 @@ export default function Hospital_Screen({navigation}) {
   };
   
 
-  function generateUniqueId(hospital) {
-    // "병원명-전화번호" 형태로 ID를 만든다.
-    return `${hospital['요양기관명']}-${hospital['전화번호']}`;
-  }
-  
+  const generateUniqueId = (hospital, index) => {
+    // Use hospital name and phone number to generate a unique ID
+    return `${hospital['요양기관명']}-${hospital['전화번호']}-${index}`;
+  };
 
   const toggleHospitalStatus = hospital => {
     setHospitalStatus(prevStatus => ({
@@ -244,77 +215,61 @@ export default function Hospital_Screen({navigation}) {
     }));
   };
 
-  const handleFavoritePress = async (hospital) => {
-    try {
-      // 토글할 병원의 id
-      const hospitalId = hospital.id;
-  
-      // 로컬 스토리지에서 즐겨찾기 목록 불러오기
-      const jsonValue = await AsyncStorage.getItem('favoriteHospitals');
-      let favoriteHospitals = jsonValue != null ? JSON.parse(jsonValue) : [];
-  
-      let isCurrentlyFavorite = favoriteHospitals.includes(hospitalId);
-      if (isCurrentlyFavorite) {
-        // 이미 즐겨찾기면 제거
-        favoriteHospitals = favoriteHospitals.filter(id => id !== hospitalId);
+  const handleFavoritePress = async hospital => {
+    // Update the isFavorite status
+    const updatedHospitalData = hospitalData.map(h => {
+      if (h.id === hospital.id) {
+        const newFavoriteStatus = !h.isFavorite;
+        // Save the new favorite status to AsyncStorage
+        saveFavoriteStatus(h.id, newFavoriteStatus);
+        return {...h, isFavorite: newFavoriteStatus};
       } else {
-        // 즐겨찾기가 아니면 추가
-        favoriteHospitals.push(hospitalId);
-      }
-  
-      // 업데이트된 배열을 저장
-      await AsyncStorage.setItem('favoriteHospitals', JSON.stringify(favoriteHospitals));
-  
-      // 프론트 state도 업데이트
-      const updatedHospitalData = hospitalData.map(h => {
-        if (h.id === hospitalId) {
-          return { ...h, isFavorite: !isCurrentlyFavorite };
-        }
         return h;
-      });
-  
-      // 정렬 후 setState
-      const sorted = sortHospitals(updatedHospitalData);
-      setHospitalData(sorted);
-  
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-    }
+      }
+    });
+    // Re-order the hospitalData array
+    const sortedHospitalData = sortHospitals(updatedHospitalData);
+    // Update state
+    setHospitalData(sortedHospitalData);
   };
-  
-  
+
   const saveFavoriteStatus = async (hospitalId, isFavorite) => {
     try {
-      // AsyncStorage에서 즐겨찾기 데이터 가져오기
+      // Get the existing favorites from AsyncStorage
       const jsonValue = await AsyncStorage.getItem('favoriteHospitals');
       let favoriteHospitals = jsonValue != null ? JSON.parse(jsonValue) : [];
-  
       if (isFavorite) {
+        // Add to favorites if not already there
         if (!favoriteHospitals.includes(hospitalId)) {
           favoriteHospitals.push(hospitalId);
         }
       } else {
+        // Remove from favorites
         favoriteHospitals = favoriteHospitals.filter(id => id !== hospitalId);
       }
-  
-      // 업데이트된 즐겨찾기 데이터 저장
-      await AsyncStorage.setItem('favoriteHospitals', JSON.stringify(favoriteHospitals));
-    } catch (error) {
-      console.error('Error saving favorite status:', error);
+      // Save updated favorites to AsyncStorage
+      await AsyncStorage.setItem(
+        'favoriteHospitals',
+        JSON.stringify(favoriteHospitals),
+      );
+    } catch (e) {
+      console.error('Error saving favorite status', e);
     }
   };
-  
+
   const sortHospitals = hospitals => {
     return hospitals.sort((a, b) => {
-      // isFavorite=true가 먼저
       if (a.isFavorite && !b.isFavorite) return -1;
       if (!a.isFavorite && b.isFavorite) return 1;
-      // 둘 다 즐겨찾기거나 둘 다 일반이면, originalIndex 오름차순
-      return a.originalIndex - b.originalIndex;
+      if (a.isFavorite && b.isFavorite) {
+        // Both are favorites, maintain original order
+        return a.originalIndex - b.originalIndex;
+      } else {
+        // Neither is favorite, maintain original order
+        return a.originalIndex - b.originalIndex;
+      }
     });
   };
-  
-  
 
   const handleLoadMore = () => {
     if (!isFetchingMore && (totalItems === null || hospitalData.length < totalItems)) {
@@ -330,6 +285,14 @@ export default function Hospital_Screen({navigation}) {
       </View>
     );
   };
+
+  // if (loading) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <ActivityIndicator size="large" color="#0000ff" />
+  //     </View>
+  //   );
+  // }
 
   // 필터 적용 시 활성화된 필터 업데이트
   const updateActiveFilters = (filters) => {
@@ -364,6 +327,7 @@ export default function Hospital_Screen({navigation}) {
   setPage(1); // 페이지를 초기화합니다.
   setHospitalData([]); // 기존 병원 데이터를 초기화합니다.
   updateActiveFilters(newFilters); // 활성화된 필터 목록 업데이트
+  fetchHospitalData(); // 필터를 적용하여 데이터를 다시 가져옵니다.
 };
 
 const filterLabels = {
@@ -383,6 +347,7 @@ const filterLabels = {
 
 return (
   <View style={styles.container}>
+
     {/* 항상 표시되는 검색 섹션 */}
     <View style={styles.searchSection}>
       <View style={styles.searchInputContainer}>

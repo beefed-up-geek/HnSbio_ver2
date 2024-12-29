@@ -50,7 +50,7 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
   // 필터 초기화 핸들러
   const resetFilters = async () => {
     const reset = {
-      distance:  100,
+      distance: 20,
       rating: [],
       type: '모든 병원',
       info: [],
