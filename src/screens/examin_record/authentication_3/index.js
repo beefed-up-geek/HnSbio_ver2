@@ -97,7 +97,7 @@ const Authentication_3_screen = () => {
       }
     } catch (error) {
       console.error('Error in handleCompleteAuth:', error);
-      Alert.alert('오류', '인증 과정에서 문제가 발생했습니다.');
+      Alert.alert('오류', '본인인증 완료 후 "인증 완료"를 눌러주세요.');
 
       if (error.response) {
         console.log('Error data:', error.response.data);
