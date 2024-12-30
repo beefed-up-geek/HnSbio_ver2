@@ -436,18 +436,18 @@ const HomeScreen = () => {
               {latestKitTest ? (
                 latestKitTest.result === 1 ? (
                   <Image
-                    source={require('../../images/home/양성.png')} // 양성일 때 표시
+                    source={require('../../images/home/_pos.png')} // 양성일 때 표시
                     style={styles.kidneyImage}
                   />
                 ) : (
                   latestKitTest.result === 0 ? (
                     <Image
-                      source={require('../../images/home/음성.png')} // 양성일 때 표시
+                      source={require('../../images/home/_neg.png')} // 양성일 때 표시
                       style={styles.kidneyImage}
                     />
                   ) : (
                     <Image
-                      source={require('../../images/home/알수없음.png')} // 음성일 때 표시
+                      source={require('../../images/home/_unkn.png')} // 음성일 때 표시
                       style={styles.kidneyImage}
                     />
                   )

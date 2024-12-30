@@ -58,7 +58,10 @@ const Authentication_3_screen = () => {
 
       const response = await axios.post(
         'http://98.82.55.237/health_checkup/step2ById',
-        request_data
+        request_data,
+        {
+          timeout: 180000, // 3 minutes in milliseconds
+        }
       );
 
       if (!response || !response.data) {
