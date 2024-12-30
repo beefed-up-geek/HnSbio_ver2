@@ -33,7 +33,6 @@
     "expo-modules-core": "^2.0.4",
     "firebase": "^10.12.5",
     "https": "^1.0.0",
-    "lottie-react-native": "^6.7.2",
     "openai": "^4.55.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
