@@ -158,6 +158,10 @@ const GetUnderlyingDiseaseInfo = () => {
             },
           ]
         );
+      }else {
+        const newUser = response.data.user;
+        await AsyncStorage.setItem('user', JSON.stringify(newUser));
+        navigation.navigate('BottomNavigation');
       }
     } catch (error) {
       console.error('API 요청 오류:', error.message);
