@@ -22,6 +22,18 @@ const KitTestScreen = ({navigation}) => {
   const device = useCameraDevice('back');
   const camera = useRef(null);
 
+  const formatMyDateTime = (dateObject = new Date()) => {
+    // JS에서 월(Month)은 0부터 시작하므로 +1 필요
+    const yyyy = dateObject.getFullYear();
+    const mm = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const dd = String(dateObject.getDate()).padStart(2, '0');
+    const hh = String(dateObject.getHours()).padStart(2, '0');
+    const min = String(dateObject.getMinutes()).padStart(2, '0');
+    const ss = String(dateObject.getSeconds()).padStart(2, '0');
+    // "YYYY/MM/DD HH:mm:ss" 형태로 리턴
+    return `${yyyy}/${mm}/${dd} ${hh}:${min}:${ss}`;
+  };
+
   useEffect(() => {
     console.log('Document Directory Path:', RNFS.DocumentDirectoryPath);
 
@@ -151,27 +163,45 @@ const KitTestScreen = ({navigation}) => {
 
   const saveResultToStorage = async (photoUri, status) => {
     try {
+      // 1) status를 숫자로 변환
+      let numericResult = -1;
+      if (status === '비정상') {
+        numericResult = 1;
+      } else if (status === '정상') {
+        numericResult = 0;
+      }
+      // -1은 '알 수 없음' 처리
+
+      // 2) 날짜 포맷팅
+      const now = new Date();
+      const formattedDate = formatMyDateTime(now);
+
+      // 3) 최종 저장할 객체 만들기
       const newResult = {
+        // photo 저장 여부는 필요하다면 추가. “photo” 제거도 가능
         photo: photoUri,
-        status,
-        date: new Date().toISOString(),
+        datetime: formattedDate,
+        result: numericResult,
       };
       //키트 검사 결과를 백엔드에 저장 (이 부분은 테스트를 해볼 수가 없었음)========================
       const userDataString = await AsyncStorage.getItem('user');
       const userData = JSON.parse(userDataString);
-      const { _id } = userData;
+      const {_id} = userData;
       const testResult = status;
-      const response = await axios.post(
+      /*const response = await axios.post(
         'http://98.82.55.237/kit/addTestResultById',
-        _id,testResult
-      );
+        _id,
+        testResult,
+      );*/
       //=============================================================================
+      // 만약 기존 배열에 추가하는 방식이 필요하다면:
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);
       await AsyncStorage.setItem('@kit_results', JSON.stringify(results));
       // 최근 검사 날짜를 별도로 저장
-      await AsyncStorage.setItem('@recent_test_date', newResult.date);
+      await AsyncStorage.setItem('@recent_test_date', formattedDate);
+      console.log('저장된 최근 검사 날짜:', formattedDate); // 로그 확인
       console.log('저장된 데이터:', results); // 디버깅용 로그
     } catch (error) {
       console.error('결과 저장 중 오류:', error);

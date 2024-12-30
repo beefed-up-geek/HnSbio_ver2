@@ -85,7 +85,7 @@ const HomeScreen = () => {
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0);
       const nextDateMidnight = new Date(nextAlarmDate);
-      nextDateMidnight.setHours(0, 0, 0, 0)
+      nextDateMidnight.setHours(0, 0, 0, 0);
       const diffTime = nextDateMidnight.getTime() - currentDate.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       setDaysToNextAlarm(diffDays); // 음수 값도 반영
@@ -275,7 +275,6 @@ const HomeScreen = () => {
                       onPress={() =>
                         navigation.navigate('NoTabs', {
                           screen: 'set_push_alarm',
-                          
                         })
                       }>
                       <Image
@@ -299,7 +298,7 @@ const HomeScreen = () => {
                       style={styles.setPushAlarmButton}
                       onPress={() =>
                         navigation.navigate('NoTabs', {
-                          screen: 'set_push_alarm'
+                          screen: 'set_push_alarm',
                         })
                       }>
                       <Image
@@ -324,7 +323,6 @@ const HomeScreen = () => {
                       onPress={() =>
                         navigation.navigate('NoTabs', {
                           screen: 'set_push_alarm',
-                          
                         })
                       }>
                       <Image
@@ -350,7 +348,6 @@ const HomeScreen = () => {
                   onPress={() =>
                     navigation.navigate('NoTabs', {
                       screen: 'set_push_alarm',
-                      
                     })
                   }>
                   <Image
@@ -374,7 +371,6 @@ const HomeScreen = () => {
                   onPress={() =>
                     navigation.navigate('NoTabs', {
                       screen: 'set_push_alarm',
-                      
                     })
                   }>
                   <Image
@@ -439,18 +435,16 @@ const HomeScreen = () => {
                     source={require('../../images/home/_pos.png')} // 양성일 때 표시
                     style={styles.kidneyImage}
                   />
+                ) : latestKitTest.result === 0 ? (
+                  <Image
+                    source={require('../../images/home/_neg.png')} // 양성일 때 표시
+                    style={styles.kidneyImage}
+                  />
                 ) : (
-                  latestKitTest.result === 0 ? (
-                    <Image
-                      source={require('../../images/home/_neg.png')} // 양성일 때 표시
-                      style={styles.kidneyImage}
-                    />
-                  ) : (
-                    <Image
-                      source={require('../../images/home/알수없음.png')} // 음성일 때 표시
-                      style={styles.kidneyImage}
-                    />
-                  )
+                  <Image
+                    source={require('../../images/home/알수없음.png')} // 음성일 때 표시
+                    style={styles.kidneyImage}
+                  />
                 )
               ) : (
                 <Image
@@ -504,7 +498,6 @@ const HomeScreen = () => {
             onPress={() =>
               navigation.navigate('NoTabs', {
                 screen: 'daily_check',
-                
               })
             }>
             <View style={styles.titleContainer}>

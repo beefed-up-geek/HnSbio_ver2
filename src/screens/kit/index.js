@@ -19,6 +19,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; //스타일 불러오기 // 개발 규칙: stylesheet 분리
 import {useState, useEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCallback} from 'react';
+import dayjs from 'dayjs';
 
 const width_ratio = Dimensions.get('screen').width / 390; // 개발 규칙: 상대 크기 적용
 const height_ratio = Dimensions.get('screen').height / 844; // 개발 규칙: 상대 크기 적용
@@ -27,28 +30,32 @@ const Kit_screen = ({onPress, navigation, route}) => {
   const [results, setResults] = useState([
     // 여기에 실제 검사 결과를 넣을 수 있음
   ]);
-  const [recentDate, setRecentDate] = useState('아직 검사하지 않음');
-
-  const getCurrentDate = () => {
-    if (results.length === 0) {
-      return '아직 검사하지 않음';
-    }
-    return results[0].dateDay; // 날짜만 표시
-  };
+  const [recentDate, setRecentDate] = useState('');
 
   const loadRecentDate = async () => {
     try {
-      const date = await AsyncStorage.getItem('@recent_test_date');
-      if (date) {
-        setRecentDate(formatDate(date)); // 날짜 포맷팅
+      const dateRecent = await AsyncStorage.getItem('@recent_test_date');
+      if (dateRecent) {
+        const dateRecent = dayjs(dateRecent, 'YYYY/MM/DD HH:mm:ss').format(
+          'YYYY/MM/DD',
+        );
+        setRecentDate(dateRecent); // 포맷팅된 값을 그대로 사용
       } else {
         setRecentDate('아직 검사하지 않음');
+        console.log('최근 검사한 날짜 : ', dateRecent);
       }
     } catch (error) {
       console.error('최근 검사 날짜 로드 중 오류:', error);
       setRecentDate('아직 검사하지 않음');
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadRecentDate();
+      loadResults();
+    }, []),
+  );
 
   useEffect(() => {
     loadRecentDate(); // 최근 날짜 로드
