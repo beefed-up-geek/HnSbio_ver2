@@ -120,12 +120,16 @@ const KitTestScreen = ({navigation}) => {
         throw new Error('Unexpected result value');
       }
 
-      await saveResultToStorage(photoUri, status);
-
+      const {newResult} = await saveResultToStorage(photoUri, status);
       Alert.alert('키트 인식 완료', message, [
         {
           text: '확인',
-          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+          onPress: () =>
+            navigation.navigate('Kit', {
+              photo: photoUri,
+              status,
+              id: newResult.id, // ★
+            }),
         },
       ]);
     } catch (error) {
@@ -150,12 +154,16 @@ const KitTestScreen = ({navigation}) => {
         message = '결과를 확인할 수 없습니다. (랜덤 결과)';
       }
 
-      await saveResultToStorage(photoUri, status);
-
+      const {newResult} = await saveResultToStorage(photoUri, status);
       Alert.alert('키트 인식 완료 (오류 처리)', message, [
         {
           text: '확인',
-          onPress: () => navigation.navigate('Kit', {photo: photoUri, status}),
+          onPress: () =>
+            navigation.navigate('Kit', {
+              photo: photoUri,
+              status,
+              id: newResult.id, // ★
+            }),
         },
       ]);
     }
@@ -163,52 +171,57 @@ const KitTestScreen = ({navigation}) => {
 
   const saveResultToStorage = async (photoUri, status) => {
     try {
-      // 1) status를 숫자로 변환
+      // (1) 숫자 변환
       let numericResult = -1;
-      if (status === '비정상') {
-        numericResult = 1;
-      } else if (status === '정상') {
-        numericResult = 0;
-      }
-      // -1은 '알 수 없음' 처리
+      if (status === '비정상') numericResult = 1;
+      else if (status === '정상') numericResult = 0;
 
-      // 2) 날짜 포맷팅
+      // (2) 날짜 포맷
       const now = new Date();
       const formattedDate = formatMyDateTime(now);
 
-      // 3) 최종 저장할 객체 만들기
+      // (3) 고유 ID (간단히 Date.now + random)
+      const resultId =
+        Date.now().toString() + Math.random().toString(36).substring(2);
+
       const newResult = {
-        datetime: formattedDate,
+        id: resultId, // 고유 ID
+        datetime: formattedDate, // "YYYY/MM/DD HH:mm:ss"
         result: numericResult,
       };
-      // 4) 기존 user 데이터 가져오기
+
+      // (4) userData (최신 1개만)
       const userDataString = await AsyncStorage.getItem('user');
       let userData = userDataString ? JSON.parse(userDataString) : {};
-
-      // 5) kit_result 리스트 업데이트 (항상 추가)
       userData.kit_result = [newResult];
 
-      // 6) 업데이트된 user 데이터를 저장
       await AsyncStorage.setItem('user', JSON.stringify(userData));
-      /*const response = await axios.post(
-        'http://98.82.55.237/kit/addTestResultById',
-        _id,
-        testResult,
-      );*/
-      //=============================================================================
-      // 만약 기존 배열에 추가하는 방식이 필요하다면:
+
+      // (5) @kit_results (누적)
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
       results.unshift(newResult);
       await AsyncStorage.setItem('@kit_results', JSON.stringify(results));
-      // 최근 검사 날짜를 별도로 저장
+
+      // (6) @recent_test_date
       await AsyncStorage.setItem('@recent_test_date', formattedDate);
-      console.log('저장된 최근 검사 날짜:', formattedDate); // 로그 확인
+
+      console.log('저장된 최근 검사 날짜:', formattedDate);
       console.log('업데이트된 user 데이터:', userData);
+      return {newResult};
     } catch (error) {
       console.error('결과 저장 중 오류:', error);
+      return null;
     }
   };
+
+  /*const response = await axios.post(
+        'http://98.82.55.237/kit/addTestResultById',
+        _id,
+        testResult,
+      );*/
+  //=============================================================================
+  // 만약 기존 배열에 추가하는 방식이 필요하다면:
 
   // 최적의 포맷과 해상도를 선택
   const optimalFormat = device?.formats.sort(

@@ -96,18 +96,23 @@ const Kit_screen = ({onPress, navigation, route}) => {
     Linking.openURL('https://hnsbiolab.com/device');
   };
 
+  // Kit_screen
   useEffect(() => {
-    loadResults();
-
     if (route.params) {
-      const {status, photo} = route.params; // 매개변수 추출
-      if (status && photo) {
-        // 안전한 조건 검사
+      const {status, photo, id} = route.params;
+      if (status && photo && id) {
         const isoDate = new Date().toISOString();
-        const newResult = {date: isoDate, status, photoUri: photo};
+
+        const newResult = {
+          id: id, // 여기 추가!
+          date: isoDate, // ISO 날짜
+          status,
+          photoUri: photo,
+        };
+
         const updatedResults = [newResult, ...results];
-        setResults(updatedResults); // 새 결과 추가
-        saveResults(updatedResults); // AsyncStorage에 저장
+        setResults(updatedResults);
+        saveResults(updatedResults);
       }
     }
   }, [route.params]);
@@ -248,57 +253,41 @@ const Kit_screen = ({onPress, navigation, route}) => {
     return parsedDate.toISOString();
   }
 
-  // 예시: deleteResult 함수 내 로직
-  const deleteResult = async index => {
+  // 인자로 index 대신 id를 받는 형태도 가능
+  const deleteResult = async idToDelete => {
     try {
-      const deletedResult = results[index];
-
-      const updatedResults = results.filter((_, i) => i !== index);
+      // 1) results에서 해당 ID 삭제
+      const updatedResults = results.filter(item => item.id !== idToDelete);
       setResults(updatedResults);
       await saveResults(updatedResults);
 
+      // 2) userData 확인
       const userDataString = await AsyncStorage.getItem('user');
-      if (!userDataString) return;
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
 
-      const userData = JSON.parse(userDataString);
-      const userKitResult = userData.kit_result?.[0];
-
-      // ★ 여기서 parseCustomDate로 각각 ISO 문자열을 만들어줌
-      const userKitDateISO = parseCustomDate(userKitResult?.datetime);
-      const delResDateISO = parseCustomDate(deletedResult?.date);
-
-      // 상태 값 매핑
-      const mapStatusToResult = status => {
-        if (status === '양성') return 1;
-        if (status === '음성') return 0;
-        return -1; // '알 수 없음'
-      };
-
-      // 5초 이내 시각 차이 & 결과 상태가 일치하면 삭제
-      const sameTime = isAlmostSameTime(userKitDateISO, delResDateISO, 5);
-      const sameResult =
-        userKitResult?.result === mapStatusToResult(deletedResult.status);
-
-      if (sameTime && sameResult) {
-        console.log('5초 이내 시각이며, 상태도 동일하므로 kit_result 초기화');
-        userData.kit_result = [];
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-      } else {
-        console.log('삭제 조건 불일치: 초기화 안 함');
+        // userData.kit_result[0]이 존재하고
+        // 그 ID가 idToDelete와 같다면 삭제(또는 빈배열)
+        const currentKit = userData.kit_result?.[0];
+        if (currentKit && currentKit.id === idToDelete) {
+          // 해당 검사 결과를 초기화
+          userData.kit_result = [];
+          await AsyncStorage.setItem('user', JSON.stringify(userData));
+          console.log('userData.kit_result 삭제 완료');
+        }
       }
     } catch (error) {
       console.error('결과 삭제 중 오류:', error);
     }
   };
 
-  // 결과 삭제 확인
-  const confirmDelete = index => {
+  const confirmDelete = id => {
     Alert.alert(
       '삭제 확인',
       '이 결과를 삭제하시겠습니까?',
       [
         {text: '취소', style: 'cancel'},
-        {text: '삭제', onPress: () => deleteResult(index)},
+        {text: '삭제', onPress: () => deleteResult(id)},
       ],
       {cancelable: true},
     );
@@ -332,7 +321,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
             : '알 수 없음'}
         </Text>
         <TouchableOpacity
-          onPress={() => confirmDelete(index)}
+          onPress={() => confirmDelete(result.id)}
           style={styles.deleteButton}>
           <Text style={styles.deleteButtonText}>삭제</Text>
         </TouchableOpacity>
