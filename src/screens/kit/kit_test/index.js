@@ -178,16 +178,21 @@ const KitTestScreen = ({navigation}) => {
 
       // 3) 최종 저장할 객체 만들기
       const newResult = {
-        // photo 저장 여부는 필요하다면 추가. “photo” 제거도 가능
-        photo: photoUri,
         datetime: formattedDate,
         result: numericResult,
       };
-      //키트 검사 결과를 백엔드에 저장 (이 부분은 테스트를 해볼 수가 없었음)========================
+      // 4) 기존 user 데이터 가져오기
       const userDataString = await AsyncStorage.getItem('user');
-      const userData = JSON.parse(userDataString);
-      const {_id} = userData;
-      const testResult = status;
+      let userData = userDataString ? JSON.parse(userDataString) : {};
+
+      // 5) kit_result 리스트 업데이트 (항상 추가)
+      if (!userData.kit_result) {
+        userData.kit_result = []; // 초기화
+      }
+      userData.kit_result.unshift(newResult); // 새로운 데이터를 리스트 맨 앞에 추가
+
+      // 6) 업데이트된 user 데이터를 저장
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
       /*const response = await axios.post(
         'http://98.82.55.237/kit/addTestResultById',
         _id,
@@ -202,7 +207,7 @@ const KitTestScreen = ({navigation}) => {
       // 최근 검사 날짜를 별도로 저장
       await AsyncStorage.setItem('@recent_test_date', formattedDate);
       console.log('저장된 최근 검사 날짜:', formattedDate); // 로그 확인
-      console.log('저장된 데이터:', results); // 디버깅용 로그
+      console.log('업데이트된 user 데이터:', userData);
     } catch (error) {
       console.error('결과 저장 중 오류:', error);
     }
