@@ -136,11 +136,159 @@ const Kit_screen = ({onPress, navigation, route}) => {
       console.error('Failed to load results:', error);
     }
   };
+  // 기본값을 2로 두고, 필요할 때 5를 넘길 수도 있음.
+  /**
+   * "YYYY/MM/DD HH:mm:ss"를 KST 기준으로 보고, 이를 UTC로 변환한 뒤 ISO 8601 형태로 반환.
+   * 예) "2024/12/30 20:15:31" (KST) -> "2024-12-30T11:15:31.000Z" (UTC)
+   */
+  function parseKSTtoUTC(dateStr) {
+    if (!dateStr) return null;
 
+    // 날짜 문자열이 ISO 형식("2024-12-30T11:03:25.429Z")일 수도 있으니,
+    // 먼저 'T' 또는 '-'가 있는지 확인해서 바로 new Date() -> toISOString() 가능하게 할 수 있음.
+    if (dateStr.includes('T') || dateStr.includes('-')) {
+      // 이미 ISO 8601로 들어온 경우
+      const parsed = new Date(dateStr);
+      if (isNaN(parsed.getTime())) {
+        console.error('유효하지 않은 ISO 날짜:', dateStr);
+        return null;
+      }
+      return parsed.toISOString(); // 그대로 반환
+    }
+
+    // -----------------------------
+    // 이제 슬래시(`/`) 형식인 경우 ("YYYY/MM/DD HH:mm:ss") 처리
+    // -----------------------------
+    const [datePart, timePart] = dateStr.split(' ');
+    if (!datePart || !timePart) {
+      console.error('유효하지 않은 날짜 형식:', dateStr);
+      return null;
+    }
+
+    const [year, month, day] = datePart.split('/');
+    const [hour, min, sec] = timePart.split(':');
+
+    // 한국 시각(KST)이라고 가정
+    // Android/iOS가 로컬 시간을 KST로 인식한다면,
+    //  new Date(y, m, d, hh, mm, ss)는 이미 KST를 기준으로 내부 UTC를 계산할 수도 있습니다.
+    // 하지만 환경별 차이가 있을 수 있으므로,
+    //  9시간을 빼 주어 강제로 UTC로 만드는 것이 가장 확실합니다.
+    //
+    // Step 1) JS Date 객체 생성 (로컬 시간)
+    const kstDate = new Date(
+      parseInt(year, 10),
+      parseInt(month, 10) - 1,
+      parseInt(day, 10),
+      parseInt(hour, 10),
+      parseInt(min, 10),
+      parseInt(sec, 10),
+    );
+
+    // Step 2) kstDate.getTime()은 JS 내부적으로 UTC 타임스탬프
+    //         만약 로컬 타임존이 KST가 아니라면 값이 다를 수 있음.
+    //         따라서 강제로 9시간 차이를 조정해 UTC로 맞춰 줌.
+    const utcTime = kstDate.getTime() - 9 * 3600000;
+    const utcDate = new Date(utcTime);
+
+    return utcDate.toISOString(); // "2024-12-30T11:15:31.000Z" 형태
+  }
+
+  /**
+   * 두 ISO 문자열(UTC) 간의 시간 차이가 특정 초 이하인지 판단
+   * 기본값: 5초
+   */
+  function isAlmostSameTime(isoStr1, isoStr2, toleranceSeconds = 5) {
+    if (!isoStr1 || !isoStr2) return false;
+
+    const date1 = new Date(isoStr1).getTime();
+    const date2 = new Date(isoStr2).getTime();
+
+    const diff = Math.abs(date1 - date2);
+    return diff <= toleranceSeconds * 1000;
+  }
+
+  function parseCustomDate(dateStr) {
+    if (!dateStr) return null;
+
+    // 1) ISO 형식인지 확인 (예: "2024-12-30T11:03:25.429Z")
+    if (dateStr.includes('T') || dateStr.includes('-')) {
+      // 그냥 new Date()로 파싱
+      const parsed = new Date(dateStr);
+      if (isNaN(parsed.getTime())) {
+        console.error('유효하지 않은 ISO 날짜:', dateStr);
+        return null;
+      }
+      return parsed.toISOString();
+    }
+
+    // 2) 슬래시(`/`) 기반인지 확인 (예: "2024/12/30 20:03:24")
+    //    아예 분해해서 파싱
+    const [datePart, timePart] = dateStr.split(' ');
+    if (!datePart || !timePart) {
+      console.error('유효하지 않은 날짜 형식:', dateStr);
+      return null;
+    }
+
+    const [year, month, day] = datePart.split('/');
+    const [hour, min, sec] = timePart.split(':');
+
+    const y = parseInt(year, 10);
+    const m = parseInt(month, 10) - 1;
+    const d = parseInt(day, 10);
+    const hh = parseInt(hour, 10);
+    const mm = parseInt(min, 10);
+    const ss = parseInt(sec, 10);
+
+    const parsedDate = new Date(y, m, d, hh, mm, ss);
+    if (isNaN(parsedDate.getTime())) {
+      console.error('유효하지 않은 슬래시 날짜:', dateStr);
+      return null;
+    }
+
+    return parsedDate.toISOString();
+  }
+
+  // 예시: deleteResult 함수 내 로직
   const deleteResult = async index => {
-    const updatedResults = results.filter((_, i) => i !== index);
-    setResults(updatedResults);
-    await saveResults(updatedResults); // 삭제 후 AsyncStorage에 업데이트
+    try {
+      const deletedResult = results[index];
+
+      const updatedResults = results.filter((_, i) => i !== index);
+      setResults(updatedResults);
+      await saveResults(updatedResults);
+
+      const userDataString = await AsyncStorage.getItem('user');
+      if (!userDataString) return;
+
+      const userData = JSON.parse(userDataString);
+      const userKitResult = userData.kit_result?.[0];
+
+      // ★ 여기서 parseCustomDate로 각각 ISO 문자열을 만들어줌
+      const userKitDateISO = parseCustomDate(userKitResult?.datetime);
+      const delResDateISO = parseCustomDate(deletedResult?.date);
+
+      // 상태 값 매핑
+      const mapStatusToResult = status => {
+        if (status === '양성') return 1;
+        if (status === '음성') return 0;
+        return -1; // '알 수 없음'
+      };
+
+      // 5초 이내 시각 차이 & 결과 상태가 일치하면 삭제
+      const sameTime = isAlmostSameTime(userKitDateISO, delResDateISO, 5);
+      const sameResult =
+        userKitResult?.result === mapStatusToResult(deletedResult.status);
+
+      if (sameTime && sameResult) {
+        console.log('5초 이내 시각이며, 상태도 동일하므로 kit_result 초기화');
+        userData.kit_result = [];
+        await AsyncStorage.setItem('user', JSON.stringify(userData));
+      } else {
+        console.log('삭제 조건 불일치: 초기화 안 함');
+      }
+    } catch (error) {
+      console.error('결과 삭제 중 오류:', error);
+    }
   };
 
   // 결과 삭제 확인

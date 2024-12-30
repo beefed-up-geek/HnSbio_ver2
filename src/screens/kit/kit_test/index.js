@@ -186,10 +186,7 @@ const KitTestScreen = ({navigation}) => {
       let userData = userDataString ? JSON.parse(userDataString) : {};
 
       // 5) kit_result 리스트 업데이트 (항상 추가)
-      if (!userData.kit_result) {
-        userData.kit_result = []; // 초기화
-      }
-      userData.kit_result.unshift(newResult); // 새로운 데이터를 리스트 맨 앞에 추가
+      userData.kit_result = [newResult];
 
       // 6) 업데이트된 user 데이터를 저장
       await AsyncStorage.setItem('user', JSON.stringify(userData));
