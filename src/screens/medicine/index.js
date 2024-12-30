@@ -205,6 +205,26 @@ const MedicineScreen = () => {
         searchMedicine(text);    // 검색 실행
     };
 
+    const incrementSearchCount = async (selectedItem) => {
+        try {
+            await fetch('http://98.82.55.237/medicine/increment-search-count', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedItem }),
+            });
+            console.log(`Search count incremented for: ${selectedItem}`);
+        } catch (error) {
+            console.error('Error incrementing search count:', error);
+        }
+    };
+
+    const handleSuggestionClick = async (item) => {
+        setSearchText(item);
+        setSuggestions([]);
+        await incrementSearchCount(item); // 검색량 증가
+        searchMedicine(item);
+    };
+
     return (
         <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSuggestions([]); }}>
             <View style={{ flex: 1 }}>
@@ -257,14 +277,7 @@ const MedicineScreen = () => {
                                     keyExtractor={(item, index) => index.toString()}
                                     // onScroll={() => setSuggestions([])} // 스크롤 시 자동완성 목록 숨기기
                                     renderItem={({ item }) => (
-                                        <TouchableOpacity 
-                                            onPress={() => {
-                                                setSearchText(item);  // 선택한 항목으로 검색어 설정
-                                                setSuggestions([]);    // 자동완성 목록 지우기
-                                                searchMedicine();      // 검색 실행
-                                                addRecentSearch(item);
-                                            }}
-                                        >
+                                        <TouchableOpacity onPress={() => handleSuggestionClick(item)}>
                                             <Text style={styles.suggestionItem}>{item}</Text>
                                         </TouchableOpacity>
                                     )}
