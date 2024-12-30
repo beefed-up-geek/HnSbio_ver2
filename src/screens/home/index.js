@@ -447,7 +447,7 @@ const HomeScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require('../../images/home/_unkn.png')} // 음성일 때 표시
+                      source={require('../../images/home/알수없음.png')} // 음성일 때 표시
                       style={styles.kidneyImage}
                     />
                   )
