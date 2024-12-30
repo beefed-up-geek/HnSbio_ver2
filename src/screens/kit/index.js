@@ -253,27 +253,31 @@ const Kit_screen = ({onPress, navigation, route}) => {
     return parsedDate.toISOString();
   }
 
-  // 인자로 index 대신 id를 받는 형태도 가능
   const deleteResult = async idToDelete => {
     try {
-      // 1) results에서 해당 ID 삭제
+      // 1) (현재 화면에서) results 배열에서 해당 id 삭제
       const updatedResults = results.filter(item => item.id !== idToDelete);
       setResults(updatedResults);
       await saveResults(updatedResults);
 
-      // 2) userData 확인
+      // 2) userData 에서도 동일한 id를 가진 항목 삭제
       const userDataString = await AsyncStorage.getItem('user');
       if (userDataString) {
         const userData = JSON.parse(userDataString);
 
-        // userData.kit_result[0]이 존재하고
-        // 그 ID가 idToDelete와 같다면 삭제(또는 빈배열)
-        const currentKit = userData.kit_result?.[0];
-        if (currentKit && currentKit.id === idToDelete) {
-          // 해당 검사 결과를 초기화
-          userData.kit_result = [];
+        // (a) userData.kit_result가 배열인지 확인
+        if (Array.isArray(userData.kit_result)) {
+          // (b) 필터링하여 idToDelete를 가진 아이템 제거
+          const updatedUserKitResult = userData.kit_result.filter(
+            item => item.id !== idToDelete,
+          );
+          // (c) 다시 userData에 넣고 저장
+          userData.kit_result = updatedUserKitResult;
           await AsyncStorage.setItem('user', JSON.stringify(userData));
-          console.log('userData.kit_result 삭제 완료');
+
+          console.log(
+            `ID=${idToDelete}인 결과가 userData.kit_result에서 삭제되었습니다.`,
+          );
         }
       }
     } catch (error) {

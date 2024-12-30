@@ -190,10 +190,16 @@ const KitTestScreen = ({navigation}) => {
         result: numericResult,
       };
 
-      // (4) userData (최신 1개만)
       const userDataString = await AsyncStorage.getItem('user');
       let userData = userDataString ? JSON.parse(userDataString) : {};
-      userData.kit_result = [newResult];
+
+      // ★ 기존: userData.kit_result = [newResult];
+      //    -> 누적하려면 배열 형태로 계속 추가해야 함
+      if (!Array.isArray(userData.kit_result)) {
+        userData.kit_result = [];
+      }
+      // 가장 최근 결과가 맨 앞으로 오도록 unshift 사용
+      userData.kit_result.unshift(newResult);
 
       await AsyncStorage.setItem('user', JSON.stringify(userData));
 
