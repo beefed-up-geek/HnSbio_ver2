@@ -110,14 +110,14 @@ const ManageAccountScreen = () => {
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
-        const { providerId } = JSON.parse(userData);
+        const { _id } = JSON.parse(userData);
 
-        const response = await fetch('http://98.82.55.237/user_info/deleteUser', {
+        const response = await fetch('http://98.82.55.237/user_info/deleteUserById', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ providerId }),
+          body: JSON.stringify({ _id }),
         });
 
         if (response.ok) {
