@@ -169,11 +169,10 @@ const savePushNotificationSettings = async () => {
           },
           body: JSON.stringify({
               _id,
-              pushNotificationSettings: {
-                  alarmEnabled,
-                  nextAlarmDate,
+              alarmEnabled,
+              nextAlarmDate
               },
-          }),
+          ),
       });
 
       const result = await response.json();
