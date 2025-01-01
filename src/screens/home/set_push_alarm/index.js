@@ -156,10 +156,6 @@ const SetPushAlarmScreen = () => {
 
 // 알림 설정 저장
 const savePushNotificationSettings = async () => {
-  if (!_id) {
-      Alert.alert('Error', 'Provider ID를 찾을 수 없습니다.');
-      return;
-  }
 
   try {
       setConfirmationModalVisible(true);
