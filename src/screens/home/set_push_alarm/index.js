@@ -154,45 +154,62 @@ const SetPushAlarmScreen = () => {
     }
   };
 
-  // 알림 설정 저장
-  const savePushNotificationSettings = async () => {
-    if (!_id) {
-      Alert.alert('Error', 'Provider ID를 찾을 수 없습니다.');
-      return;
-    }
+// 알림 설정 저장
+const savePushNotificationSettings = async () => {
 
-    try {
+  try {
       setConfirmationModalVisible(true);
       setInitialSettings({ alarmEnabled, nextAlarmDate });
 
+      // 백엔드에 설정 업데이트 요청
+      const response = await fetch('http://98.82.55.237/user_info/updatePushNotificationSettingsById', {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              _id,
+              alarmEnabled,
+              nextAlarmDate
+              },
+          ),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+          console.error('Error updating push notification settings:', result.error);
+          Alert.alert('Error', '푸시 알림 설정을 업데이트하는 중 오류가 발생했습니다.');
+          return;
+      }
+
       // AsyncStorage에 저장
       await AsyncStorage.mergeItem(
-        'user',
-        JSON.stringify({
-          pushNotificationSettings: {
-            alarmEnabled,
-            nextAlarmDate,
-          },
-        })
+          'user',
+          JSON.stringify({
+              pushNotificationSettings: {
+                  alarmEnabled,
+                  nextAlarmDate,
+              },
+          })
       );
 
       // 알람 On이면 검사일 전날+당일 알림 예약
       if (alarmEnabled) {
-        await notifee.cancelAllNotifications();
-        await scheduleKitNotifications(nextAlarmDate);
+          await notifee.cancelAllNotifications();
+          await scheduleKitNotifications(nextAlarmDate);
       } else {
-        // 알람 Off이면 예약된 알림 모두 취소
-        await notifee.cancelAllNotifications();
+          // 알람 Off이면 예약된 알림 모두 취소
+          await notifee.cancelAllNotifications();
       }
 
-      // ★ 여기에서 HomeContext의 rerenderHome을 토글 => 홈화면 재렌더 트리거
+      // HomeContext의 rerenderHome을 토글하여 홈화면 재렌더 트리거
       setRerenderHome((prev) => !prev);
-
-    } catch (error) {
+  } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
-    }
-  };
+  }
+};
 
   return (
     <View style={styles.container}>
