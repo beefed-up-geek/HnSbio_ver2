@@ -107,7 +107,7 @@ const Health_checkup_specifics_screen = () => {
     const cardLayout = cardRefs.current[cardKey];
     if (cardLayout && scrollViewRef.current) {
       scrollViewRef.current.scrollTo({
-        y: cardLayout.y - 20, // 조금 위로 여유
+        y: cardLayout.y + 65, // 조금 위로 여유
         animated: true,
       });
     }
@@ -221,7 +221,11 @@ const Health_checkup_specifics_screen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
-      <ScrollView ref={scrollViewRef} style={{ flex: 1 }}>
+      <ScrollView 
+        ref={scrollViewRef} 
+        style={{ flex: 1 }}
+        stickyHeaderIndices={[1]}
+      >
         {/* PDF 보기 버튼 */}
         <TouchableOpacity style={styles.pdfButton} onPress={openPDFInBrowser}>
           <Image
@@ -232,74 +236,110 @@ const Health_checkup_specifics_screen = () => {
         </TouchableOpacity>
 
         {/* 요약 섹션 */}
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryHeader}>
-            <Text style={styles.summaryTitle}>요약</Text>
-            <View style={styles.indicators}>
-              <View style={styles.indicator}>
-                <View style={styles.circleRed} />
-                <Text style={styles.indicatorText}>비정상</Text>
+        <View style={{ backgroundColor: '#FFFFFF', paddingVertical: 20 }}>
+          <View style={styles.summaryContainer}>
+            {/* 요약 헤더 부분 */} 
+            <View style={styles.summaryHeader}>
+              <Text style={styles.summaryTitle}>요약</Text>
+              <View style={styles.indicators}>
+                <View style={styles.indicator}>
+                  <View style={styles.circleRed} />
+                  <Text style={styles.indicatorText}>주의</Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.diseaseGrid}>
-            {/* 첫 번째 줄 */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 12 * height_ratio,
-              }}
-            >
-              <TouchableOpacity onPress={() => scrollToCard('kidneyDisease')}>
-                <DiseaseBox title="신장질환" isActive={diseases.kidneyDisease} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('chronicKidneyDisease')}>
-                <DiseaseBox
-                  title="만성신장질환"
-                  isActive={diseases.chronicKidneyDisease}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('hypertension')}>
-                <DiseaseBox title="고혈압" isActive={diseases.hypertension} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('diabetes')}>
-                <DiseaseBox title="당뇨" isActive={diseases.diabetes} />
-              </TouchableOpacity>
-            </View>
+            <View style={styles.diseaseGrid}>
+              {/* 첫 번째 줄 */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 12 * height_ratio,
+                }}
+              >
+                <TouchableOpacity onPress={() => scrollToCard('kidneyDisease')}>
+                  <DiseaseBox title="신장질환" isActive={diseases.kidneyDisease} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('chronicKidneyDisease')}>
+                  <DiseaseBox
+                    title="만성신장질환"
+                    isActive={diseases.chronicKidneyDisease}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('hypertension')}>
+                  <DiseaseBox title="고혈압" isActive={diseases.hypertension} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('diabetes')}>
+                  <DiseaseBox title="당뇨" isActive={diseases.diabetes} />
+                </TouchableOpacity>
+              </View>
 
-            {/* 두 번째 줄 */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
-            >
-              <TouchableOpacity onPress={() => scrollToCard('dyslipidemia')}>
-                <DiseaseBox
-                  title="이상지질혈증"
-                  isActive={diseases.dyslipidemia}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('obesity')}>
-                <DiseaseBox title="비만" isActive={diseases.obesity} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('anemia')}>
-                <DiseaseBox title="빈혈" isActive={diseases.anemia} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToCard('liverDisease')}>
-                <DiseaseBox
-                  title="간장질환"
-                  isActive={diseases.liverDisease}
-                />
-              </TouchableOpacity>
+              {/* 두 번째 줄 */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <TouchableOpacity onPress={() => scrollToCard('dyslipidemia')}>
+                  <DiseaseBox
+                    title="이상지질혈증"
+                    isActive={diseases.dyslipidemia}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('obesity')}>
+                  <DiseaseBox title="비만" isActive={diseases.obesity} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('anemia')}>
+                  <DiseaseBox title="빈혈" isActive={diseases.anemia} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToCard('liverDisease')}>
+                  <DiseaseBox
+                    title="간장질환"
+                    isActive={diseases.liverDisease}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
 
         {/* 세부 카드들 */}
         <View style={[styles.cardsContainer, { marginTop: 16 * height_ratio }]}>
+          
+          <View
+            style={{
+              flexDirection: 'row', // 가로 방향 배치
+              alignItems: 'center', // 세로 가운데 정렬
+              justifyContent: 'flex-end', // 가로 중앙 정렬
+              marginBottom: 16 * height_ratio, // 아래 요소와 간격
+              marginRight: 10,
+            }}
+          >
+            {/* 사각형 */}
+            <View
+              style={{
+                width: 10 * width_ratio, // 사각형 가로 크기
+                height: 10 * height_ratio, // 사각형 세로 크기
+                backgroundColor: '#CCEB75', // 사각형 색상
+                marginRight: 8, // 텍스트와 간격
+              }}
+            />
+
+            {/* 텍스트 */}
+            <Text
+              style={{
+                ...theme.fonts.Bold,
+                fontSize: 10 * width_ratio, // 텍스트 크기
+                color: '#72777A', // 텍스트 색상
+              }}
+            >
+              참고치
+            </Text>
+          </View>
+          
+          
           {/* 신장질환 */}
           <View
             onLayout={(event) =>
@@ -363,6 +403,10 @@ const Health_checkup_specifics_screen = () => {
           >
             <LiverDiseaseCard healthData={healthData} gender={gender} />
           </View>
+          
+          <Text style={styles.footerText}>
+            각 항목의 참고치는 실제 병원에서 제공하는 표준값을 기반으로 제공됩니다.
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
