@@ -74,13 +74,11 @@ android {
         pickFirst 'lib/armeabi-v7a/libc++_shared.so'
         pickFirst 'lib/arm64-v8a/libc++_shared.so'
         pickFirst '**/libc.so'
-        pickFirst '**/libtensorflowlite_jni.so'
     }
 }
 
 dependencies {
     implementation("com.facebook.react:react-android")
-    implementation('org.tensorflow:tensorflow-lite:2.9.0')
     
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
