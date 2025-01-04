@@ -160,21 +160,20 @@ export default function Hospital_Screen({navigation}) {
       );
 
       const filteredData = response.data.results;
-      
-      // Get favorite hospital IDs from AsyncStorage
-      const jsonValue = await AsyncStorage.getItem('favoriteHospitals');
-      const favoriteHospitals = jsonValue != null ? JSON.parse(jsonValue) : [];
+      setTotalItems(response.data.total);
 
-      // Generate unique IDs and add isFavorite and originalIndex properties
-      const hospitalDataWithFavorites = filteredData.map((hospital, index) => {
+      // 고유 ID 생성
+      const hospitalDataWithId = filteredData.map((hospital, index) => {
         const id = generateUniqueId(hospital, index);
-        const isFavorite = favoriteHospitals.includes(id);
-        return {...hospital, id, isFavorite, originalIndex: index};
+        return {
+          ...hospital,
+          id,
+          originalIndex: index,
+        };
       });
 
-      setTotalItems(response.data.total);
       setHospitalData(prevData =>
-        page === 1 ? hospitalDataWithFavorites : [...prevData, ...hospitalDataWithFavorites],
+        page === 1 ? hospitalDataWithId : [...prevData, ...hospitalDataWithId],
       );
 
       setIsFetchingMore(false);
@@ -195,16 +194,8 @@ export default function Hospital_Screen({navigation}) {
     }, 500);
   };
 
-  const applyFilters = () => {
-    setPage(1); // 페이지를 초기화합니다.
-    setHospitalData([]); // 기존 병원 데이터를 초기화합니다.
-    fetchHospitalData(); // 새로운 데이터를 불러옵니다.
-    closeFilter(); // 필터 모달을 닫습니다.
-  };
-  
-
   const generateUniqueId = (hospital, index) => {
-    // Use hospital name and phone number to generate a unique ID
+    // 병원 이름과 전화번호, 인덱스를 이용하여 고유 ID를 생성
     return `${hospital['요양기관명']}-${hospital['전화번호']}-${index}`;
   };
 
@@ -215,61 +206,6 @@ export default function Hospital_Screen({navigation}) {
     }));
   };
 
-  const handleFavoritePress = async hospital => {
-    // Update the isFavorite status
-    const updatedHospitalData = hospitalData.map(h => {
-      if (h.id === hospital.id) {
-        const newFavoriteStatus = !h.isFavorite;
-        // Save the new favorite status to AsyncStorage
-        saveFavoriteStatus(h.id, newFavoriteStatus);
-        return {...h, isFavorite: newFavoriteStatus};
-      } else {
-        return h;
-      }
-    });
-    // Re-order the hospitalData array
-    const sortedHospitalData = sortHospitals(updatedHospitalData);
-    // Update state
-    setHospitalData(sortedHospitalData);
-  };
-
-  const saveFavoriteStatus = async (hospitalId, isFavorite) => {
-    try {
-      // Get the existing favorites from AsyncStorage
-      const jsonValue = await AsyncStorage.getItem('favoriteHospitals');
-      let favoriteHospitals = jsonValue != null ? JSON.parse(jsonValue) : [];
-      if (isFavorite) {
-        // Add to favorites if not already there
-        if (!favoriteHospitals.includes(hospitalId)) {
-          favoriteHospitals.push(hospitalId);
-        }
-      } else {
-        // Remove from favorites
-        favoriteHospitals = favoriteHospitals.filter(id => id !== hospitalId);
-      }
-      // Save updated favorites to AsyncStorage
-      await AsyncStorage.setItem(
-        'favoriteHospitals',
-        JSON.stringify(favoriteHospitals),
-      );
-    } catch (e) {
-      console.error('Error saving favorite status', e);
-    }
-  };
-
-  const sortHospitals = hospitals => {
-    return hospitals.sort((a, b) => {
-      if (a.isFavorite && !b.isFavorite) return -1;
-      if (!a.isFavorite && b.isFavorite) return 1;
-      if (a.isFavorite && b.isFavorite) {
-        // Both are favorites, maintain original order
-        return a.originalIndex - b.originalIndex;
-      } else {
-        // Neither is favorite, maintain original order
-        return a.originalIndex - b.originalIndex;
-      }
-    });
-  };
 
   const handleLoadMore = () => {
     if (!isFetchingMore && (totalItems === null || hospitalData.length < totalItems)) {
@@ -291,8 +227,7 @@ export default function Hospital_Screen({navigation}) {
     const newActiveFilters = [];
     
     // 거리 필터
-      newActiveFilters.push(`${filters.distance}km 이내`);
-
+    newActiveFilters.push(`${filters.distance}km 이내`);
     
     // 병원 종류 필터
     if (filters.type !== '모든 병원') {
@@ -312,121 +247,120 @@ export default function Hospital_Screen({navigation}) {
     setActiveFilters(newActiveFilters);
   };
 
-  // FilterModal onApply 수정
   const handleFilterApply = (newFilters) => {
-  setFilters(newFilters); // 새로운 필터를 저장합니다.
-  setPage(1); // 페이지를 초기화합니다.
-  setHospitalData([]); // 기존 병원 데이터를 초기화합니다.
-  updateActiveFilters(newFilters); // 활성화된 필터 목록 업데이트
-  fetchHospitalData(); // 필터를 적용하여 데이터를 다시 가져옵니다.
-};
+    setFilters(newFilters); // 새로운 필터를 저장
+    setPage(1); // 페이지를 초기화
+    setHospitalData([]); // 기존 병원 데이터를 초기화
+    updateActiveFilters(newFilters); // 활성화된 필터 목록 업데이트
+    fetchHospitalData(); // 필터를 적용하여 데이터를 다시 가져옴옴
+  };
 
-const filterLabels = {
-  '1': '1등급',
-  '2': '2등급',
-  '3': '3등급',
-  '4': '4등급',
-  '5': '5등급',
-  '5km': '5km 이내',
-  '10km': '10km 이내',
-  '20km': '20km 이내',
-  '50km': '50km 이내',
-  '100km': '100km 이내',
-  '전국': '전국',
-  // 필요한 다른 필터들도 여기에 추가할 수 있습니다.
-};
+  const filterLabels = {
+    '1': '1등급',
+    '2': '2등급',
+    '3': '3등급',
+    '4': '4등급',
+    '5': '5등급',
+    '5km': '5km 이내',
+    '10km': '10km 이내',
+    '20km': '20km 이내',
+    '50km': '50km 이내',
+    '100km': '100km 이내',
+    '전국': '전국',
+    // 필요한 다른 필터들도 여기에 추가
+  };
 
-return (
-  <View style={styles.container}>
+  return (
+    <View style={styles.container}>
 
-    {/* 항상 표시되는 검색 섹션 */}
-    <View style={styles.searchSection}>
-      <View style={styles.searchInputContainer}>
-        <Image
-          source={require('../../images/hospital/search.png')}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="병원 이름을 검색하세요"
-          placeholderTextColor="#8E9098"
-          onChangeText={handleSearchQueryChange}
-        />
-      </View>
-    </View>
-
-    {/* 항상 표시되는 필터 섹션 */}
-    <View style={styles.filtersection}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScrollView}
-      >
-        <View style={styles.filterChipsContainer}>
-          <View style={styles.filterChip}>
-            <Icon name="gps-fixed" size={20} color="#5D5D62" />
-            <Text style={styles.filterChipText}>{address}</Text>
-          </View>
-          {activeFilters.map((filter, index) => (
-            <View key={index} style={styles.filterChip}>
-              <Text style={styles.filterChipText}>
-                {filterLabels[filter] || filter}
-              </Text>
-            </View>
-          ))}
+      {/* 항상 표시되는 검색 섹션 */}
+      <View style={styles.searchSection}>
+        <View style={styles.searchInputContainer}>
+          <Image
+            source={require('../../images/hospital/search.png')}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="병원 이름을 검색하세요"
+            placeholderTextColor="#8E9098"
+            onChangeText={handleSearchQueryChange}
+          />
         </View>
-      </ScrollView>
-      <TouchableOpacity onPress={openFilter} style={styles.filterButton}>
-        <Image
-          source={require('../../images/hospital/filter_icon.png')}
-          style={styles.filterIcon}
-        />
-      </TouchableOpacity>
-    </View>
-    <Image
+      </View>
+
+      {/* 항상 표시되는 필터 섹션 */}
+      <View style={styles.filtersection}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterScrollView}
+        >
+          <View style={styles.filterChipsContainer}>
+            <View style={styles.filterChip}>
+              <Icon name="gps-fixed" size={20} color="#5D5D62" />
+              <Text style={styles.filterChipText}>{address}</Text>
+            </View>
+            {activeFilters.map((filter, index) => (
+              <View key={index} style={styles.filterChip}>
+                <Text style={styles.filterChipText}>
+                  {filterLabels[filter] || filter}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+        <TouchableOpacity onPress={openFilter} style={styles.filterButton}>
+          <Image
+            source={require('../../images/hospital/filter_icon.png')}
+            style={styles.filterIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      
+      <Image
         source={require('../../images/hospital/background.png')} // 배경 이미지 경로
         style={styles.backgroundImage}
       />
-    {/* 로딩 상태에 따라 병원 목록 렌더링 */}
-    {loading ? (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    ) : (
-      <FlatList
-        data={hospitalData}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <HospitalCard
-            hospital={item}
-            isFavorite={item.isFavorite}
-            handleFavoritePress={handleFavoritePress}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.blankBox}>
-            <Text style={styles.noHospitalText}>병원을 검색하세요!</Text>
-          </View>
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-      />
-    )}
 
-    {/* 필터 모달 */}
-    <FilterModal
-      visible={isFilterVisible}
-      onClose={closeFilter}
-      filters={filters}
-      setFilters={setFilters}
-      onApply={handleFilterApply}
-    />
-  </View>
-);
+      {/* 로딩 상태에 따라 병원 목록 렌더링 */}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        <FlatList
+          data={hospitalData}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <HospitalCard
+              hospital={item}
+            />
+          )}
+          ListEmptyComponent={
+            <View style={styles.blankBox}>
+              <Text style={styles.noHospitalText}>병원을 검색하세요!</Text>
+            </View>
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+        />
+      )}
+
+      {/* 필터 모달 */}
+      <FilterModal
+        visible={isFilterVisible}
+        onClose={closeFilter}
+        filters={filters}
+        setFilters={setFilters}
+        onApply={handleFilterApply}
+      />
+    </View>
+  );
 }
 
-function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
+function HospitalCard({hospital}) {
   const getGradeColor = rating => {
     switch (rating) {
       case 1:
@@ -504,10 +438,10 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
             {backgroundColor: getGradeColor(hospital.rating)},
             {color: getGradeTextColor(hospital.rating)},
             {borderColor: getGradeBorderColor(hospital.rating)},
-          ]}>
+          ]}
+        >
           {hospital.rating ? `${hospital.rating}등급` : '등급 없음'}
         </Text>
-        
       </View>
       <View style={styles.hospitalInfoContainer}>
         <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
@@ -524,9 +458,9 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
       </View>
       <TouchableOpacity onPress={handlePhonePress} style={styles.phonecontainer}>
         <Icon name="phone" size={20} color="#5D5D62"/>
-          <Text style={styles.phone}>
-            {hospital['전화번호']} 전화걸기
-          </Text>
+        <Text style={styles.phone}>
+          {hospital['전화번호']} 전화걸기
+        </Text>
       </TouchableOpacity>
     </View>
   );
