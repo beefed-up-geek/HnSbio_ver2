@@ -126,6 +126,9 @@ const FilterModal = ({visible, onClose, filters, setFilters, onApply}) => {
               />
             ))}
           </View>
+          <Text style={styles.infoText}>
+            {'❖ '}병원 등급은 건강보험심사평가원의 2021년(7차) 혈액 적정성 평가 데이터를 기반으로 합니다.
+          </Text>
 
           {/* 병원 정보 (다중 선택) */}
           <Text style={styles.sectionTitle}>병원 정보</Text>
@@ -247,6 +250,14 @@ const styles = StyleSheet.create({
     marginTop: 10 * height_ratio,
     marginBottom: 10 * height_ratio,
     color: '#000',
+  },
+  infoText:{
+    fontSize: 12 * width_ratio,
+    fontFamily: 'Pretendard-SemiBold',
+    color: '#333333', // 원하는 색상
+    textAlign: 'left', // 텍스트 정렬
+    paddingHorizontal: 5 * width_ratio, // 좌우 여백
+    opacity : 0.55,
   },
   buttonGroup: {
     flexDirection: 'row',
