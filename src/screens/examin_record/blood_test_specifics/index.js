@@ -1,24 +1,23 @@
 // src/screens/examin_record/blood_test_specifics/index.js
 
-import React, { useState, useContext } from 'react';           // ←★ useContext 추가
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Alert,
-  StyleSheet,
   Dimensions,
   ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import theme from '../../../theme.js';
 
-// ★ HomeContext import
+// Context
 import { HomeContext } from '../../../components/homeContext';
 
+// 스타일
 import styles from './styles.js';
 const width_ratio = Dimensions.get('screen').width / 390;
 const height_ratio = Dimensions.get('screen').height / 844;
@@ -28,9 +27,10 @@ const Blood_test_specifics_screen = () => {
   const route = useRoute();
   const { bloodTestResult, index, refreshHealthData } = route.params;
 
-  // ★ 전역 Context에서 rerenderHome 세터 가져오기
+  // 전역 Context
   const { setRerenderHome } = useContext(HomeContext);
 
+  // state
   const [date, setDate] = useState(bloodTestResult.date || '');
   const [bun, setBun] = useState(bloodTestResult.BUN.toString() || '');
   const [creatinine, setCreatinine] = useState(bloodTestResult.creatinine.toString() || '');
@@ -40,6 +40,7 @@ const Blood_test_specifics_screen = () => {
   const [isBackspace, setIsBackspace] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  // 날짜 입력
   const handleDateChange = (text) => {
     const isDeletingSlash =
       prevDate.length > text.length && prevDate.endsWith('/') && !text.endsWith('/');
@@ -68,6 +69,7 @@ const Blood_test_specifics_screen = () => {
     setPrevDate(text);
   };
 
+  // 입력값 검증
   const validateInputs = () => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
@@ -92,9 +94,9 @@ const Blood_test_specifics_screen = () => {
     return errors.length === 0;
   };
 
-  // "저장하기" 버튼 로직
+  // "저장하기"
   const saveTestResult = async () => {
-    if (isSaving) return; // 중복 저장 방지
+    if (isSaving) return; 
     if (!validateInputs()) {
       Alert.alert('오류', '입력값을 확인해주세요.');
       return;
@@ -102,7 +104,9 @@ const Blood_test_specifics_screen = () => {
 
     setIsSaving(true);
 
+    // 수정될 결과
     const updatedTestResult = {
+      id: bloodTestResult.id,     // 기존 결과의 id
       date,
       BUN: parseFloat(bun),
       creatinine: parseFloat(creatinine),
@@ -110,23 +114,27 @@ const Blood_test_specifics_screen = () => {
     };
 
     try {
-      // 기존 데이터 가져오기
-      const userData = await AsyncStorage.getItem('user');
-      let parsedData = userData ? JSON.parse(userData) : {};
+      // (1) 로컬 userData 가져오기
+      const userDataString = await AsyncStorage.getItem('user');
+      let parsedData = userDataString ? JSON.parse(userDataString) : {};
 
       const _id = parsedData._id;
-      const originalDate = bloodTestResult.date; // 기존 날짜
 
-      // 서버에 업데이트 요청
+      // (2) 서버에 업데이트 요청 (id 기준)
       await axios.put('http://98.82.55.237/blood_test/editBloodTestResultById', {
         _id,
-        originalDate,
-        ...updatedTestResult,
+        id: bloodTestResult.id,  // 기존 혈액검사 결과의 식별자
+        ...updatedTestResult,    // date, BUN, creatinine, GFR
       });
 
-      // 로컬 검사 결과 업데이트
+      // (3) 로컬 DB 수정
       let bloodTestResults = parsedData.blood_test_result || [];
-      bloodTestResults[index] = updatedTestResult;
+
+      // index 대신 id로 찾기 (혹시 order가 변했을 수도 있음)
+      const targetIndex = bloodTestResults.findIndex(item => item.id === bloodTestResult.id);
+      if (targetIndex >= 0) {
+        bloodTestResults[targetIndex] = updatedTestResult;
+      }
 
       // 날짜 내림차순 정렬
       bloodTestResults.sort((a, b) => {
@@ -138,12 +146,13 @@ const Blood_test_specifics_screen = () => {
       parsedData.blood_test_result = bloodTestResults;
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-      // 기존 콜백(리스트 화면 새로고침 등)
+      // (4) refreshHealthData (리스트 화면 새로고침)
       refreshHealthData?.();
 
-      // ★ 홈화면 재렌더링 트리거
+      // (5) 홈화면 재렌더링
       setRerenderHome((prev) => !prev);
 
+      // (6) 이전 화면 복귀
       navigation.goBack();
     } catch (error) {
       console.error('Error saving blood test result:', error);
@@ -153,7 +162,7 @@ const Blood_test_specifics_screen = () => {
     }
   };
 
-  // "기록 삭제" 버튼 로직
+  // "기록 삭제"
   const deleteTestResult = async () => {
     Alert.alert(
       '삭제 확인',
@@ -168,28 +177,28 @@ const Blood_test_specifics_screen = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              const userData = await AsyncStorage.getItem('user');
-              let parsedData = userData ? JSON.parse(userData) : {};
+              // (1) 로컬 userData
+              const userDataString = await AsyncStorage.getItem('user');
+              let parsedData = userDataString ? JSON.parse(userDataString) : {};
 
               const _id = parsedData._id;
-              const dateToDelete = bloodTestResult.date;
 
-              // 서버에 삭제 요청
+              // (2) 서버에 삭제 요청 (id 기준)
               await axios.delete('http://98.82.55.237/blood_test/deleteBloodTestResultById', {
-                data: { _id, date: dateToDelete },
+                data: { _id, id: bloodTestResult.id },
               });
 
-              // 로컬 검사 결과 삭제
+              // (3) 로컬에서 해당 항목 제거
               let bloodTestResults = parsedData.blood_test_result || [];
-              bloodTestResults.splice(index, 1);
-              parsedData.blood_test_result = bloodTestResults;
+              bloodTestResults = bloodTestResults.filter(item => item.id !== bloodTestResult.id);
 
+              parsedData.blood_test_result = bloodTestResults;
               await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-              // 기존 콜백(리스트 화면 새로고침 등)
+              // (4) refreshHealthData
               refreshHealthData?.();
 
-              // ★ 홈화면 재렌더링 트리거
+              // (5) 홈화면 재렌더링
               setRerenderHome((prev) => !prev);
 
               navigation.goBack();

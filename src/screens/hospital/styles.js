@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchSection: {
-    marginTop: 40 * height_ratio*0.9,
+    marginTop: 20 * height_ratio*0.9,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',

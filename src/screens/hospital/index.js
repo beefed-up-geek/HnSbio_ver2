@@ -286,14 +286,6 @@ export default function Hospital_Screen({navigation}) {
     );
   };
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
-
   // 필터 적용 시 활성화된 필터 업데이트
   const updateActiveFilters = (filters) => {
     const newActiveFilters = [];
@@ -386,13 +378,13 @@ return (
       </ScrollView>
       <TouchableOpacity onPress={openFilter} style={styles.filterButton}>
         <Image
-          source={require('./assets/filter_icon.png')}
+          source={require('../../images/hospital/filter_icon.png')}
           style={styles.filterIcon}
         />
       </TouchableOpacity>
     </View>
     <Image
-        source={require('./assets/background.png')} // 배경 이미지 경로
+        source={require('../../images/hospital/background.png')} // 배경 이미지 경로
         style={styles.backgroundImage}
       />
     {/* 로딩 상태에 따라 병원 목록 렌더링 */}
@@ -516,18 +508,6 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
           {hospital.rating ? `${hospital.rating}등급` : '등급 없음'}
         </Text>
         
-        {/* <TouchableOpacity
-          onPress={() => handleFavoritePress(hospital)}
-          style={styles.favoriteButton}>
-          <Image
-            source={
-              isFavorite
-                ? require('../../images/hospital/filledStar.png')
-                : require('../../images/hospital/emptyStar.png')
-            }
-            style={styles.starIcon}
-          />
-        </TouchableOpacity> */}
       </View>
       <View style={styles.hospitalInfoContainer}>
         <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
@@ -537,7 +517,7 @@ function HospitalCard({hospital, isFavorite, handleFavoritePress}) {
       </View>
       <View style={styles.hospitalAddressContainer}>
         <Image
-          source={require('./assets/location.png')}
+          source={require('../../images/hospital/location.png')}
           style={styles.locationImage}
         />
         <Text style={styles.hospitalAddress}>{hospital['주소']}</Text>
