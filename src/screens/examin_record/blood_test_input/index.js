@@ -1,4 +1,5 @@
 // src/screens/examin_record/blood_test_input/index.js
+
 import React, { useState, useRef, useContext } from 'react';
 import {
   View,
@@ -78,6 +79,7 @@ const Blood_test_input_screen = ({ route }) => {
     const errors = [];
     const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
 
+    // 1) 날짜 포맷 확인
     if (!dateRegex.test(date)) {
       errors.push('date');
     } else {
@@ -99,12 +101,17 @@ const Blood_test_input_screen = ({ route }) => {
       }
     }
 
+    // 2) BUN
     if (!bun || isNaN(bun) || bun <= 0 || bun > 200) {
       errors.push('bun');
     }
+
+    // 3) Creatinine
     if (!creatinine || isNaN(creatinine) || creatinine <= 0 || creatinine > 20) {
       errors.push('creatinine');
     }
+
+    // 4) GFR
     if (!gfr || isNaN(gfr) || gfr <= 0 || gfr > 300) {
       errors.push('gfr');
     }
@@ -113,9 +120,9 @@ const Blood_test_input_screen = ({ route }) => {
     return errors.length === 0;
   };
 
-  // "검사 결과 추가" 버튼
+  // "검사 결과 추가" 버튼 핸들러
   const addTestResult = async () => {
-    if (isSaving) return;
+    if (isSaving) return; // 중복 저장 방지
     if (!validateInputs()) {
       Alert.alert('오류', '입력값을 확인해주세요.');
       return;
@@ -123,48 +130,57 @@ const Blood_test_input_screen = ({ route }) => {
 
     setIsSaving(true);
 
-    const newTestResult = {
-      date,
-      BUN: parseFloat(bun),
-      creatinine: parseFloat(creatinine),
-      GFR: parseFloat(gfr),
-    };
-
     try {
-      // 1) 로컬(AsyncStorage)에서 user 불러옴
-      const userData = await AsyncStorage.getItem('user');
-      let parsedData = userData ? JSON.parse(userData) : {};
+      // (1) AsyncStorage에서 user 불러오기
+      const userDataString = await AsyncStorage.getItem('user');
+      let parsedData = userDataString ? JSON.parse(userDataString) : {};
 
       const _id = parsedData._id;
-      let bloodTestResults = parsedData.blood_test_result || [];
+      // 고유 식별자 생성 (문자열)
+      const uniqueId = Date.now().toString() + Math.random().toString(36).substring(2);
 
-      // 2) 로컬에 새 검사 결과 추가
+      // (2) 새로운 검사 결과 객체
+      const newTestResult = {
+        id: uniqueId,            // 고유 식별자
+        date,                    // "YYYY/MM/DD"
+        BUN: parseFloat(bun),
+        creatinine: parseFloat(creatinine),
+        GFR: parseFloat(gfr),
+      };
+
+      // (3) 로컬에서 blood_test_result 배열 가져오고, 새 검사 결과 푸시
+      let bloodTestResults = parsedData.blood_test_result || [];
       bloodTestResults.push(newTestResult);
 
-      // 3) 최근 날짜가 앞에 오도록 내림차순 정렬
+      // (4) 최근 날짜가 앞에 오도록 내림차순 정렬
       bloodTestResults.sort((a, b) => {
         const dateA = new Date(a.date.replace(/\//g, '-'));
         const dateB = new Date(b.date.replace(/\//g, '-'));
-        return dateB - dateA; // 날짜가 더 큰(최근) 쪽이 앞
+        return dateB - dateA;
       });
 
-      // 4) AsyncStorage에 업데이트
       parsedData.blood_test_result = bloodTestResults;
+
+      // (5) AsyncStorage에 다시 저장
       await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
-      // 5) 백엔드에 검사 결과 추가 (중복 방지: 여기서만 한 번)
+      // (6) 백엔드 API 호출 (PUT) - _id와 함께 id 속성도 전달
       await axios.put('http://98.82.55.237/blood_test/addBloodTestResultById', {
         _id,
-        ...newTestResult,
+        id: uniqueId,
+        BUN: parseFloat(bun),
+        creatinine: parseFloat(creatinine),
+        GFR: parseFloat(gfr),
+        date,
       });
 
-      // 6) 다른 화면을 새로 갱신하는 함수(데이터 추가 X)
+      // (7) refreshHealthData (다른 화면 재갱신)
       refreshHealthData?.();
 
-      // 7) 홈화면이 다시 렌더링되도록 Context 토글
+      // (8) 홈화면이 다시 렌더링되도록 Context 토글
       setRerenderHome((prev) => !prev);
 
-      // 8) 이동
+      // (9) 검사 결과 입력 완료 후 이동
       navigation.navigate('BottomNavigation', { screen: 'Examin_record_screen' });
     } catch (error) {
       console.error('Error adding blood test result:', error);
