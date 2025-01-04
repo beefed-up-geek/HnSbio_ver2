@@ -37,19 +37,19 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     gradientHeader: {  // 기존 headerContainer 대신 새로 추가된 그라데이션 헤더 스타일
-        height: 153 * height_ratio,
+        minHeight: 153 * height_ratio,  // 최소 높이로 변경
         borderRadius: 12,
         paddingHorizontal: 22,
         marginVertical: 22,
         justifyContent: 'center', // 수직 중앙 정렬
     },
     koreanName: {
-        fontSize: 24 * height_ratio,
+        fontSize: 24 * width_ratio,
         color: '#FFFFFF',
         ...theme.fonts.SemiBold,
     },
     englishName: {
-        fontSize: 18 * height_ratio,
+        fontSize: 18 * width_ratio,
         color: '#FFFFFF',
         marginTop: 10,
         ...theme.fonts.Regular,
