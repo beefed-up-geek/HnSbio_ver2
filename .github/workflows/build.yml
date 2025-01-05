@@ -73,6 +73,9 @@ jobs:
           pod install
 
       # 6. iOS 빌드
+      - name: Print Working Directory
+        run: echo $PWD
+
       - name: Build iOS App
         env:
           XCODE_WORKSPACE: ios/sanhak_2.xcworkspace  # 워크스페이스 이름 (변경 필요)
