@@ -111,10 +111,8 @@ const styles = StyleSheet.create({
     padding: 20 * width_ratio * 0.95,
     backgroundColor: '#fafafa',
     borderRadius: 13 * width_ratio * 0.95,
-    marginBottom: 10 * height_ratio * 0.9,
-    marginLeft: 10 * width_ratio,
-    width: '95%',
-    position: 'relative',
+    marginTop: 10 * height_ratio * 0.9,
+    marginHorizontal: 0 * width_ratio,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -179,6 +177,9 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: 5.8 * width_ratio,
     marginBottom: 4 * height_ratio * 0.9,
+  },
+  blank: {
+    height: 20 * height_ratio,
   },
 });
 

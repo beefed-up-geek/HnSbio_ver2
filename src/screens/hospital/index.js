@@ -11,7 +11,8 @@ import {
   Platform,
   Image,
   Linking,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -20,7 +21,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FilterModal from './FilterModal';
 import styles from './styles';
 
+const height_ratio = Dimensions.get('screen').height / 844;
+
 export default function Hospital_Screen({navigation}) {
+  
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [address, setAddress] = useState('');
@@ -345,6 +349,7 @@ export default function Hospital_Screen({navigation}) {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          contentContainerStyle={{ paddingBottom: 90 * height_ratio }}
         />
       )}
 
