@@ -60,7 +60,7 @@ jobs:
 
       # 3. CocoaPods 설치
       - name: Install CocoaPods
-        run: sudo gem install cocoapods
+        run: sudo gem install cocoapods -v '1.11.3'
 
       # 4. 의존성 설치
       - name: Install dependencies
