@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   roundedButtonBox: {
     backgroundColor: 'white',
     borderRadius: 24 * width_ratio,
-    marginHorizontal: 22 * width_ratio,
+    marginHorizontal: 18 * width_ratio,
     paddingRight: 22 * width_ratio,
     paddingLeft: 22 * width_ratio,
     paddingVertical: 22.5 * height_ratio,
