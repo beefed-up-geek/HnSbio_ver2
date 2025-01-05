@@ -1,13 +1,13 @@
 // src/screens/home/set_push_alarm/index.js
 
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  Alert, 
-  Modal 
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  Modal
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Switch } from 'react-native-switch';
@@ -23,7 +23,7 @@ import { HomeContext } from '../../../components/homeContext';
 
 const SetPushAlarmScreen = () => {
   const navigation = useNavigation();
-  
+
   // ★ HomeContext에서 전역 변수/함수 가져오기
   const { rerenderHome, setRerenderHome } = useContext(HomeContext);
 
@@ -46,7 +46,7 @@ const SetPushAlarmScreen = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // 변경 사항 여부
+  // 변경 사항 여부 확인
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
@@ -65,13 +65,14 @@ const SetPushAlarmScreen = () => {
       if (localSettings) {
         setAlarmEnabled(localSettings.alarmEnabled);
         setNextAlarmDate(
-          new Date(localSettings.nextAlarmDate) || 
+          new Date(localSettings.nextAlarmDate) ||
           new Date(Date.now() + 24 * 60 * 60 * 1000)
         );
         setInitialSettings({
           alarmEnabled: localSettings.alarmEnabled,
-          nextAlarmDate: new Date(localSettings.nextAlarmDate) || 
-                         new Date(Date.now() + 24 * 60 * 60 * 1000),
+          nextAlarmDate:
+            new Date(localSettings.nextAlarmDate) ||
+            new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
       } else {
         setAlarmEnabled(false);
@@ -105,7 +106,7 @@ const SetPushAlarmScreen = () => {
     const dayBefore = new Date(dayOf);
     dayBefore.setDate(dayBefore.getDate() - 1);
 
-    const now = new Date();  
+    const now = new Date();
     console.log('dayOf:', dayOf.toString());
     console.log('now:', now.toString());
     console.log('dayBefore:', dayBefore.toString());
@@ -131,6 +132,7 @@ const SetPushAlarmScreen = () => {
         console.error('Error creating trigger notification (dayBefore):', error);
       }
     }
+
     // 당일 알림
     if (dayOf > now) {
       const triggerDayOf = {
@@ -154,62 +156,63 @@ const SetPushAlarmScreen = () => {
     }
   };
 
-// 알림 설정 저장
-const savePushNotificationSettings = async () => {
-
-  try {
+  // 알림 설정 저장
+  const savePushNotificationSettings = async () => {
+    try {
       setConfirmationModalVisible(true);
       setInitialSettings({ alarmEnabled, nextAlarmDate });
 
       // 백엔드에 설정 업데이트 요청
-      const response = await fetch('http://98.82.55.237/user_info/updatePushNotificationSettingsById', {
+      const response = await fetch(
+        'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
+        {
           method: 'PUT',
           headers: {
-              'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              _id,
-              alarmEnabled,
-              nextAlarmDate
-              },
-          ),
-      });
+            _id,
+            alarmEnabled,
+            nextAlarmDate,
+          }),
+        }
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-          console.error('Error updating push notification settings:', result.error);
-          Alert.alert('Error', '푸시 알림 설정을 업데이트하는 중 오류가 발생했습니다.');
-          return;
+        console.error('Error updating push notification settings:', result.error);
+        Alert.alert('Error', '푸시 알림 설정을 업데이트하는 중 오류가 발생했습니다.');
+        return;
       }
 
       // AsyncStorage에 저장
       await AsyncStorage.mergeItem(
-          'user',
-          JSON.stringify({
-              pushNotificationSettings: {
-                  alarmEnabled,
-                  nextAlarmDate,
-              },
-          })
+        'user',
+        JSON.stringify({
+          pushNotificationSettings: {
+            alarmEnabled,
+            nextAlarmDate,
+          },
+        })
       );
 
       // 알람 On이면 검사일 전날+당일 알림 예약
       if (alarmEnabled) {
-          await notifee.cancelAllNotifications();
-          await scheduleKitNotifications(nextAlarmDate);
+        await notifee.cancelAllNotifications();
+        await scheduleKitNotifications(nextAlarmDate);
       } else {
-          // 알람 Off이면 예약된 알림 모두 취소
-          await notifee.cancelAllNotifications();
+        // 알람 Off이면 예약된 알림 모두 취소
+        await notifee.cancelAllNotifications();
       }
 
       // HomeContext의 rerenderHome을 토글하여 홈화면 재렌더 트리거
       setRerenderHome((prev) => !prev);
-  } catch (error) {
+    } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
-  }
-};
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -257,7 +260,8 @@ const savePushNotificationSettings = async () => {
         <DateTimePicker
           value={nextAlarmDate}
           mode="date"
-          display="default"
+          // 여기서 display를 'spinner'로 변경
+          display="inline"
           minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);
