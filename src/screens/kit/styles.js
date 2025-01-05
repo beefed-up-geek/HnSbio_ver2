@@ -182,13 +182,14 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 130 * height_ratio,
-    backgroundColor: 'transparent',
+    backgroundColor: theme.colors.background || '#ffffff',
   },
   resultsScroll: {
     maxHeight: 300 * height_ratio, // 최대 높이를 제한 (조정 가능)
   },
   resultsScrollContent: {
     paddingBottom: 20 * height_ratio, // 하단 패딩 추가
+    backgroundColor: theme.colors.background || '#ffffff', // 흰색 배경 추가
   },
 });
 

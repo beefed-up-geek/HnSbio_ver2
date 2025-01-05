@@ -18,6 +18,7 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'; // 백엔드 API 호출을 위해 axios 추가
 import dayjs from 'dayjs';
+import {SafeAreaView} from 'react-native';
 
 import theme from '../../theme'; // 개발 규칙: 폰트 적용
 import styles from './styles.js'; // stylesheet 분리
@@ -34,7 +35,10 @@ const Kit_screen = ({onPress, navigation, route}) => {
     try {
       const dateRecentStr = await AsyncStorage.getItem('@recent_test_date');
       if (dateRecentStr) {
-        const dateRecentFormatted = dayjs(dateRecentStr, 'YYYY/MM/DD HH:mm:ss').format('YYYY/MM/DD');
+        const dateRecentFormatted = dayjs(
+          dateRecentStr,
+          'YYYY/MM/DD HH:mm:ss',
+        ).format('YYYY/MM/DD');
         setRecentDate(dateRecentFormatted);
       } else {
         setRecentDate('아직 검사하지 않음');
@@ -81,8 +85,8 @@ const Kit_screen = ({onPress, navigation, route}) => {
       return {
         ...result,
         photoUri: result.photoUri || result.photo, // photoUri와 photo 통합
-        dateFormatted: formatDateTime(dateObj),     // 년, 월, 일, 시, 분까지 표시
-        dateDay: formatDate(dateObj),              // 년, 월, 일까지만 표시
+        dateFormatted: formatDateTime(dateObj), // 년, 월, 일, 시, 분까지 표시
+        dateDay: formatDate(dateObj), // 년, 월, 일까지만 표시
       };
     });
   };
@@ -149,7 +153,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
         return;
       }
       const userData = JSON.parse(userDataString);
-      const { _id } = userData;
+      const {_id} = userData;
       if (!_id) {
         console.log('user._id가 없습니다.');
         return;
@@ -229,8 +233,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               : result.status === '정상'
               ? styles.statusNormal
               : styles.statusUnknown,
-          ]}
-        >
+          ]}>
           {result.status === '비정상'
             ? '양성'
             : result.status === '정상'
@@ -239,8 +242,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
         </Text>
         <TouchableOpacity
           onPress={() => confirmDelete(result.id)}
-          style={styles.deleteButton}
-        >
+          style={styles.deleteButton}>
           <Text style={styles.deleteButtonText}>삭제</Text>
         </TouchableOpacity>
       </View>
@@ -248,9 +250,9 @@ const Kit_screen = ({onPress, navigation, route}) => {
   };
 
   return (
-    <View>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <ScrollView>
-        <View style={styles.container}>
+        <View style={[styles.container, {flex: 1}]}>
           <View style={styles.innerContainer}>
             <View style={styles.topRow} />
             <View style={styles.secondRow} />
@@ -263,7 +265,9 @@ const Kit_screen = ({onPress, navigation, route}) => {
               <View style={styles.card}>
                 <View style={styles.cardContent}>
                   <View style={styles.cardHeader}>
-                    <Text style={styles.cardHeaderText}>키트 검사하러 가기</Text>
+                    <Text style={styles.cardHeaderText}>
+                      키트 검사하러 가기
+                    </Text>
                   </View>
                   <View style={styles.cardDate}>
                     <Text style={styles.cardDateText}>최근 검사한 날짜</Text>
@@ -275,8 +279,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('NoTabs', {screen: 'kit_guide_1'})
-                  }
-                >
+                  }>
                   <View style={styles.roundButton}>
                     <View style={styles.roundButtonInner}>
                       <ImageBackground
@@ -290,8 +293,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               </View>
               <TouchableOpacity
                 style={styles.storeButton}
-                onPress={handleKitPurchase}
-              >
+                onPress={handleKitPurchase}>
                 <Image
                   style={styles.linkIcon}
                   source={require('../../images/store.png')}
@@ -304,8 +306,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
               <ScrollView
                 style={styles.resultsScroll}
                 contentContainerStyle={styles.resultsScrollContent}
-                nestedScrollEnabled={true}
-              >
+                nestedScrollEnabled={true}>
                 {renderResults()}
               </ScrollView>
             </View>
@@ -313,7 +314,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
           <View style={styles.bottomSpacing} />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
