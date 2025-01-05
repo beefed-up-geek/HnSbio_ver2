@@ -75,15 +75,15 @@ jobs:
       # 6. iOS 빌드
       - name: Build iOS App
         env:
-          XCODE_WORKSPACE: ios/YourAppName.xcworkspace  # 워크스페이스 이름 (변경 필요)
-          XCODE_SCHEME: YourAppName                     # 스킴 이름 (변경 필요)
+          XCODE_WORKSPACE: ios/sanhak_2.xcworkspace  # 워크스페이스 이름 (변경 필요)
+          XCODE_SCHEME: sanhak_2                    # 스킴 이름 (변경 필요)
         run: |
           xcodebuild \
             -workspace $XCODE_WORKSPACE \
             -scheme $XCODE_SCHEME \
             -configuration Release \
             -sdk iphoneos \
-            -archivePath $PWD/build/YourAppName.xcarchive \
+            -archivePath $PWD/build/sanhak_2.xcarchive \
             archive
 
       # 7. IPA 업로드
@@ -91,4 +91,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-release-ipa
-          path: ios/build/YourAppName.xcarchive
+          path: ios/build/sanhak_2.xcarchive
