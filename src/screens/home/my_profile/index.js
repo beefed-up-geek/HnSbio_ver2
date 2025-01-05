@@ -285,7 +285,7 @@ const My_profile_screen = () => {
           onPress={() => toggleModal('weight')}
         />
         <DetailRow
-          label="콩팥병 상태"
+          label="만성콩팥병 상태"
           value={kidneyStatus}
           onPress={() => toggleModal('kidneyStatus')}
         />
