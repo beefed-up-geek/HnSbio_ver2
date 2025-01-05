@@ -46,7 +46,7 @@ const SetPushAlarmScreen = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // 변경 사항 여부 확인
+  // 변경 사항 여부
   const hasChanges = () => {
     return (
       initialSettings.alarmEnabled !== alarmEnabled ||
@@ -260,8 +260,11 @@ const SetPushAlarmScreen = () => {
         <DateTimePicker
           value={nextAlarmDate}
           mode="date"
-          // 여기서 display를 'spinner'로 변경
           display="inline"
+          // iOS14+에서 텍스트/배경 색상을 지정
+          textColor="#000"                // 텍스트를 검정색으로
+          themeVariant="light"           // 라이트 모드로 고정 (다크 모드 이슈 방지)
+          style={{ backgroundColor: '#fff' }}  // 캘린더 배경 흰색
           minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);
