@@ -80,10 +80,15 @@ jobs:
           XCODE_WORKSPACE: ios/sanhak_2.xcworkspace
           XCODE_SCHEME: sanhak_2
         run: |
-          xcodebuild \
+          # 1) xcpretty 설치
+          gem install xcpretty
+
+          # 2) xcodebuild 결과를 xcpretty로 파이프
+          set -o pipefail && xcodebuild \
             -workspace $XCODE_WORKSPACE \
             -scheme $XCODE_SCHEME \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
-            clean build
+            clean build \
+          | xcpretty --no-color --simple
