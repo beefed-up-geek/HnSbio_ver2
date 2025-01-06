@@ -102,5 +102,5 @@ jobs:
             -archivePath $PWD/build/sanhak_2.xcarchive \
             -destination 'generic/platform=iOS' \
             archive \
-            -verbose
+            -allowProvisioningUpdates
 
