@@ -1,5 +1,5 @@
 platform :ios, '15.0'
-use_modular_headers!
+use_frameworks! :linkage => :dynamic  # 동적 프레임워크로 빌드
 
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
@@ -22,7 +22,7 @@ target 'sanhak_2' do
     react_native_post_install(installer)
 
     # 필요 시 ReactCommon.modulemap을 지워야 할 수도 있음
-    system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
+    # system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
 
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
