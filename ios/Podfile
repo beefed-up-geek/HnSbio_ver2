@@ -37,6 +37,11 @@ target 'sanhak_2' do
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0' # 경고를 무시할 배포 대상 설정
       end
     end
+
+    # 중복 파일 경고 무시
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64' # 시뮬레이터에서 arm64 빌드 제외
+    end
   end
 end
 
