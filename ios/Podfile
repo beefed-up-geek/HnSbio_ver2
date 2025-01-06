@@ -31,6 +31,12 @@ target 'sanhak_2' do
     react_native_post_install(installer)
     # Flipper 초기화가 필요하면 아래 주석을 풀어서 사용
     # flipper_post_install(installer)
+    # 배포 대상 경고 무시 설정 추가
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0' # 경고를 무시할 배포 대상 설정
+      end
+    end
   end
 end
 
