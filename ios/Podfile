@@ -20,22 +20,20 @@ target 'sanhak_2' do
 
   post_install do |installer|
     react_native_post_install(installer)
-
+  
     installer.pods_project.targets.each do |target|
-      # `react-native-video` 타겟을 찾아서
       if target.name == 'react-native-video'
         target.build_configurations.each do |config|
           other_ldflags = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
   
-          # -ObjC 플래그 추가
-          unless other_ldflags.include?('-ObjC')
-            other_ldflags << '-ObjC'
+          # 1) 이미 -ObjC 추가해봤으니, 추가로 -force_load 적용
+          unless other_ldflags.any? { |f| f.include?('-force_load') }
+            # 예시: React-Core
+            other_ldflags << '-force_load Pods/React-Core/libReact-Core.a'
+            
+            # 또는 실제 라이브러리 경로/이름이 조금 다를 수 있으니 확인 필요
+            # ex) other_ldflags << '-force_load Pods/React-RCTEventDispatcher/libReact-RCTEventDispatcher.a'
           end
-  
-          # 필요하면 -force_load 로 특정 라이브러리를 강제 로드
-          # unless other_ldflags.any? { |flag| flag.include?('-force_load') }
-          #   other_ldflags << '-force_load Pods/React-Core/libReact-Core.a'
-          # end
   
           config.build_settings['OTHER_LDFLAGS'] = other_ldflags
         end
