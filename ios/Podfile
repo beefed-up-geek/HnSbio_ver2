@@ -33,3 +33,4 @@ target 'sanhak_2' do
     # flipper_post_install(installer)
   end
 end
+
