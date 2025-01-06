@@ -57,13 +57,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.12.1'
+
+      - name: Install Node.js dependencies
+        run: |
+          npm install
   
       # 3. CocoaPods 설치
       - name: Install CocoaPods
         run: sudo gem install cocoapods
-  
-      - name: Print Working Directory
-        run: echo $PWD
 
       # 4. 의존성 설치 및 정리
       - name: Prepare iOS Dependencies
