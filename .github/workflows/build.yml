@@ -75,11 +75,6 @@ jobs:
       - name: Clean Derived Data
         run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
   
-      - name: Install Provisioning Profile
-        run: |
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          echo "${{ secrets.PROVISIONING_PROFILE }}" > ~/Library/MobileDevice/Provisioning\ Profiles/sanhak_2.mobileprovision
-  
       - name: Build iOS App
         env:
           XCODE_WORKSPACE: ios/sanhak_2.xcworkspace
@@ -88,14 +83,7 @@ jobs:
           xcodebuild \
             -workspace $XCODE_WORKSPACE \
             -scheme $XCODE_SCHEME \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath $PWD/build/sanhak_2.xcarchive \
-            -destination 'generic/platform=iOS' \
-            -allowProvisioningUpdates \
-            -verbose \
-            archive
-
-
-
-
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            clean build
