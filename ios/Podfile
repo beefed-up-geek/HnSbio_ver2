@@ -1,6 +1,6 @@
 platform :ios, '15.0'
-
-# use_modular_headers!
+# 전역 modular_headers!는 쓰지 않음
+use_frameworks! :linkage => :dynamic
 
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
@@ -8,39 +8,27 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'sanhak_2' do
   config = use_native_modules!
 
-  # Firebase 관련 Pods 추가
-  pod 'Firebase/Core', :modular_headers => true
-  pod 'Firebase/Auth', :modular_headers => true
-  pod 'Firebase/Database', :modular_headers => true
+  # Firebase 관련 Pods (모듈 헤더 지정 없이도 됨)
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
 
-  # React Native 설정
   use_react_native!(
     :path => config[:reactNativePath],
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :hermes_enabled => false,
   )
 
-  # 테스트 타겟
-  target 'sanhak_2Tests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
-  # post_install 단계에서 Flipper 설정 추가
   post_install do |installer|
     react_native_post_install(installer)
-    # Flipper 초기화가 필요하면 아래 주석을 풀어서 사용
-    # flipper_post_install(installer)
 
-    # (1) ReactCommon.modulemap 제거 → 'redefinition of module ReactCommon' 우회
+    # 필요 시 ReactCommon.modulemap을 지워야 할 수도 있음
     system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
 
-    # 배포 대상 경고 무시 설정 추가
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0' # 경고를 무시할 배포 대상 설정
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       end
     end
   end
 end
-
