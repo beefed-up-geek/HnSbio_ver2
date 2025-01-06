@@ -43,6 +43,7 @@ jobs:
         with:
           name: app-release-apk
           path: android/app/build/outputs/apk/release/app-release.apk
+          
   ios-build:
     runs-on: macos-latest
   
@@ -82,10 +83,3 @@ jobs:
             -sdk iphoneos \
             -archivePath $PWD/build/sanhak_2.xcarchive \
             archive
-  
-      # 6. IPA 업로드
-      - name: Upload IPA
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-ipa
-          path: ios/build/sanhak_2.xcarchive
