@@ -4,6 +4,7 @@ use_modular_headers!
 
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../node_modules/react-native/scripts/flipper_pods'
 
 target 'sanhak_2' do
   config = use_native_modules!
