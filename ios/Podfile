@@ -26,8 +26,24 @@ target 'sanhak_2' do
     system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
 
     installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      # react-native-video만 특정
+      if target.name == 'react-native-video'
+        target.build_configurations.each do |config|
+          other_ldflags = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
+  
+          # 1) -ObjC 플래그 추가
+          unless other_ldflags.include?('-ObjC')
+            other_ldflags << '-ObjC'
+          end
+  
+          # 2) -force_load 로 라이브러리 경로를 강제 로드할 수도 있음
+          # (라이브러리 경로는 프로젝트 구성에 따라 다를 수 있음)
+          # unless other_ldflags.any? { |f| f.include?('-force_load') }
+          #   other_ldflags << '-force_load Pods/Pods.build/Debug-iphonesimulator/React-Core/libReact-Core.a'
+          # end
+  
+          config.build_settings['OTHER_LDFLAGS'] = other_ldflags
+        end
       end
     end
   end
