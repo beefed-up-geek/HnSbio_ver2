@@ -9,9 +9,9 @@ target 'sanhak_2' do
   config = use_native_modules!
 
   # Firebase 관련 Pods 추가
-  pod 'Firebase/Core', :modular_headers => false
-  pod 'Firebase/Auth', :modular_headers => false
-  pod 'Firebase/Database', :modular_headers => false
+  pod 'Firebase/Core', :modular_headers => true
+  pod 'Firebase/Auth', :modular_headers => true
+  pod 'Firebase/Database', :modular_headers => true
 
   # React Native 설정
   use_react_native!(
@@ -31,6 +31,10 @@ target 'sanhak_2' do
     react_native_post_install(installer)
     # Flipper 초기화가 필요하면 아래 주석을 풀어서 사용
     # flipper_post_install(installer)
+
+    # (1) ReactCommon.modulemap 제거 → 'redefinition of module ReactCommon' 우회
+    system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
+
     # 배포 대상 경고 무시 설정 추가
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
