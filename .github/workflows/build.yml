@@ -71,7 +71,7 @@ jobs:
           cd ios
           rm -rf Pods Podfile.lock
           pod repo update
-          pod install
+          pod install --verbose
   
       # 5. iOS 빌드
       - name: Build iOS App
