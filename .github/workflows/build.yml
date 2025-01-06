@@ -81,12 +81,14 @@ jobs:
           rm -rf ~/Library/Developer/Xcode/DerivedData/*
   
       # 7. Xcode 버전 설정
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@v2
-        with:
-          xcode-version: '15.4'
+      - name: Set Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
   
-      # 8. iOS 빌드
+      # 8. Xcode Version 확인 (디버깅용, 선택사항)
+      - name: Check Xcode Version
+        run: xcodebuild -version
+  
+      # 9. iOS 빌드
       - name: Build iOS App
         env:
           XCODE_WORKSPACE: ios/sanhak_2.xcworkspace  # 워크스페이스 이름
@@ -101,3 +103,4 @@ jobs:
             -destination 'generic/platform=iOS' \
             archive \
             -verbose
+
