@@ -75,6 +75,11 @@ jobs:
       - name: Clean Derived Data
         run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
   
+      - name: Install Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "${{ secrets.PROVISIONING_PROFILE }}" > ~/Library/MobileDevice/Provisioning\ Profiles/sanhak_2.mobileprovision
+  
       - name: Build iOS App
         env:
           XCODE_WORKSPACE: ios/sanhak_2.xcworkspace
@@ -90,5 +95,6 @@ jobs:
             -allowProvisioningUpdates \
             -verbose \
             archive
+
 
 
