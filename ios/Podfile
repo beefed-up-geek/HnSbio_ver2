@@ -8,6 +8,14 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'sanhak_2' do
   config = use_native_modules!
 
+  # use_flipper!({
+  #   'Flipper' => '0.93.0',
+  #   'Flipper-Folly' => '2.6.7',
+  #   'Flipper-Glog' => '0.3.5',
+  #   'Flipper-PeerTalk' => '0.0.0',
+  #   'Flipper-RSocket' => '1.4.3',
+  # })
+
   # Firebase 관련 Pods 추가
   pod 'Firebase/Core', :modular_headers => true
   pod 'Firebase/Auth', :modular_headers => true
@@ -29,7 +37,6 @@ target 'sanhak_2' do
   # post_install 단계에서 Flipper 설정 추가
   post_install do |installer|
     react_native_post_install(installer)
-    # flipper_post_install(installer) # Flipper 초기화
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
