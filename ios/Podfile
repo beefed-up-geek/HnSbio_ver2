@@ -21,12 +21,24 @@ target 'sanhak_2' do
   post_install do |installer|
     react_native_post_install(installer)
 
-    # 필요 시 ReactCommon.modulemap을 지워야 할 수도 있음
-    # system("rm -f Pods/Headers/Public/ReactCommon/ReactCommon.modulemap")
-
     installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      # `react-native-video` 타겟을 찾아서
+      if target.name == 'react-native-video'
+        target.build_configurations.each do |config|
+          other_ldflags = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
+  
+          # -ObjC 플래그 추가
+          unless other_ldflags.include?('-ObjC')
+            other_ldflags << '-ObjC'
+          end
+  
+          # 필요하면 -force_load 로 특정 라이브러리를 강제 로드
+          # unless other_ldflags.any? { |flag| flag.include?('-force_load') }
+          #   other_ldflags << '-force_load Pods/React-Core/libReact-Core.a'
+          # end
+  
+          config.build_settings['OTHER_LDFLAGS'] = other_ldflags
+        end
       end
     end
   end
