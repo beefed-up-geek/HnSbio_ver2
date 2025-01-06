@@ -6,12 +6,12 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'sanhak_2' do
-  # config = use_native_modules!
+  config = use_native_modules!
 
   # Firebase 관련 Pods 추가
-  pod 'Firebase/Core', :modular_headers => true
-  pod 'Firebase/Auth', :modular_headers => true
-  pod 'Firebase/Database', :modular_headers => true
+  pod 'Firebase/Core', :modular_headers => false
+  pod 'Firebase/Auth', :modular_headers => false
+  pod 'Firebase/Database', :modular_headers => false
 
   # React Native 설정
   use_react_native!(
