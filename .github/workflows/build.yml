@@ -68,6 +68,11 @@ jobs:
           rm -rf Pods Podfile.lock
           pod repo update
           pod install --verbose
+
+      - name: Debug: List all .a files
+        run: |
+          cd ios
+          find . -name "*.a"
   
       - name: Set Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.4.app
