@@ -161,9 +161,7 @@ const Blood_test_input_screen = ({ route }) => {
 
       parsedData.blood_test_result = bloodTestResults;
 
-      // (5) AsyncStorage에 다시 저장
-      await AsyncStorage.setItem('user', JSON.stringify(parsedData));
-
+      
       // (6) 백엔드 API 호출 (PUT) - _id와 함께 id 속성도 전달
       await axios.put('http://98.82.55.237/blood_test/addBloodTestResultById', {
         _id,
@@ -173,6 +171,9 @@ const Blood_test_input_screen = ({ route }) => {
         GFR: parseFloat(gfr),
         date,
       });
+      
+      // (5) AsyncStorage에 다시 저장
+      await AsyncStorage.setItem('user', JSON.stringify(parsedData));
 
       // (7) refreshHealthData (다른 화면 재갱신)
       refreshHealthData?.();
