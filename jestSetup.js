@@ -170,9 +170,5 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => {
     };
 });
   
-jest.mock('kakao-sdk', () => ({
-    initializeKakaoSDK: jest.fn(),
-}));
-  
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
