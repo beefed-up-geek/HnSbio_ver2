@@ -55,6 +55,7 @@ jobs:
       # 4. 의존성 설치
       - name: Install dependencies
         run: |
+          rm -rf node_modules
           npm install
           cd android
           ./gradlew clean
