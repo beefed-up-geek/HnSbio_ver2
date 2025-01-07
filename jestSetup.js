@@ -46,4 +46,33 @@ jest.mock('react-native-geolocation-service', () => {
     };
 });
 
+jest.mock('react-native-blob-util', () => {
+    return {
+      DocumentDir: jest.fn(),
+      TemporaryDir: jest.fn(),
+      LibraryDir: jest.fn(),
+      CachesDir: jest.fn(),
+      MainBundleDir: jest.fn(),
+      PicturesDir: jest.fn(),
+      MusicDir: jest.fn(),
+      MoviesDir: jest.fn(),
+      DownloadDir: jest.fn(),
+      DCIMDir: jest.fn(),
+      SDCardDir: jest.fn(),
+      createFile: jest.fn(),
+      isDir: jest.fn(),
+      mkdir: jest.fn(),
+      moveFile: jest.fn(),
+      pathForAppGroup: jest.fn(),
+      readFile: jest.fn(),
+      unlink: jest.fn(),
+      writeFile: jest.fn(),
+      writeStream: jest.fn(),
+      session: jest.fn(),
+      fetch: jest.fn(),
+      base64: jest.fn(),
+      removeSession: jest.fn(),
+    };
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
