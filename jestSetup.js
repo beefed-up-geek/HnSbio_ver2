@@ -157,7 +157,7 @@ jest.mock('@react-native-seoul/naver-login', () => {
 });
 
 jest.mock('react-native/Libraries/LogBox/LogBox', () => ({
-    ignoreAllLogs: jest.fn(),
+    ignoreAllLogs: jest.fn(), // Jest 테스트 환경에서 LogBox mock 처리
 }));
   
 
