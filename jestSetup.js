@@ -95,4 +95,23 @@ jest.mock('react-native-vision-camera', () => {
     };
 });
 
+jest.mock('react-native-fs', () => {
+    return {
+      exists: jest.fn(() => Promise.resolve(true)),
+      mkdir: jest.fn(() => Promise.resolve()),
+      moveFile: jest.fn(() => Promise.resolve()),
+      pathForBundle: jest.fn(() => Promise.resolve('/mock/path')),
+      pathForGroup: jest.fn(() => Promise.resolve('/mock/group')),
+      readDir: jest.fn(() => Promise.resolve([])),
+      readFile: jest.fn(() => Promise.resolve('mocked file content')),
+      writeFile: jest.fn(() => Promise.resolve()),
+      unlink: jest.fn(() => Promise.resolve()),
+      stat: jest.fn(() => Promise.resolve({ isFile: () => true, size: 12345 })),
+      downloadFile: jest.fn(() => ({
+        promise: Promise.resolve(),
+      })),
+      uploadFiles: jest.fn(() => Promise.resolve()),
+    };
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
