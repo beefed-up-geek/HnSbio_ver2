@@ -1,3 +1,5 @@
+// jestSetup.js
+
 import 'react-native-gesture-handler/jestSetup';
 
 // Jest에서 기본 모듈 mock 처리
