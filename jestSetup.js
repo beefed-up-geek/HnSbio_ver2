@@ -75,4 +75,14 @@ jest.mock('react-native-blob-util', () => {
     };
 });
 
+jest.mock('react-native-webview', () => {
+    return {
+      WebView: jest.fn(() => null),
+    };
+});
+  
+jest.mock('react-native-youtube-iframe', () => {
+    return jest.fn(() => null);
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
