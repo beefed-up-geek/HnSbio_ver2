@@ -169,6 +169,13 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => {
         select: jest.fn((objs) => objs['test'] || objs.default),
     };
 });
-  
+
+jest.mock('@react-native-kakao/core', () => {
+    return {
+      // 실제 함수를 아예 빈 함수로 대체해도 되고,
+      // 필요 시 spyOn 등을 써서 호출 여부만 체크해도 됩니다.
+      initializeKakaoSDK: jest.fn(),
+    };
+});
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');

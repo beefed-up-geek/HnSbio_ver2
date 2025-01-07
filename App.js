@@ -27,14 +27,9 @@ const App = () => {
   useEffect(() => {
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
 
-    // LogBox는 테스트 환경에서 실행하지 않음
-    if (Platform.OS !== 'web' && Platform.OS !== 'test') {
-      try {
-        const { LogBox } = require('react-native');
-        LogBox.ignoreAllLogs(); // 앱 실행 환경에서만 LogBox 적용
-      } catch (e) {
-        console.error('LogBox 로드 중 에러 발생:', e);
-      }
+    // Platform.OS === 'test'면 아예 아무것도 안 한다
+    if (Platform.OS === 'test') {
+      return;
     }
 
     const initNotification = async () => {
