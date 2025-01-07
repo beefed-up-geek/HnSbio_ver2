@@ -148,4 +148,13 @@ jest.mock('@invertase/react-native-apple-authentication', () => {
     };
 });
 
+
+jest.mock('@react-native-seoul/naver-login', () => {
+    return {
+      initialize: jest.fn(() => Promise.resolve()),
+      login: jest.fn(() => Promise.resolve({ accessToken: 'mock-access-token' })),
+      logout: jest.fn(() => Promise.resolve()),
+    };
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
