@@ -17,7 +17,7 @@ import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Platform } from 'react-native';
 
 import { HomeProvider } from './src/components/homeContext';
 
@@ -26,7 +26,7 @@ const Stack = createStackNavigator();
 const App = () => {
   useEffect(() => {
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
-    
+
     if (Platform.OS !== 'web' && Platform.OS !== 'test') {
       LogBox.ignoreAllLogs(); // Jest 테스트 환경에서 실행되지 않음
     }
