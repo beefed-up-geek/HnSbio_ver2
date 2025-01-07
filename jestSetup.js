@@ -148,7 +148,6 @@ jest.mock('@invertase/react-native-apple-authentication', () => {
     };
 });
 
-
 jest.mock('@react-native-seoul/naver-login', () => {
     return {
       initialize: jest.fn(() => Promise.resolve()),
@@ -156,5 +155,12 @@ jest.mock('@react-native-seoul/naver-login', () => {
       logout: jest.fn(() => Promise.resolve()),
     };
 });
+
+jest.mock('react-native/Libraries/LogBox/LogBox', () => {
+    return {
+      ignoreAllLogs: jest.fn(),
+    };
+});
+  
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
