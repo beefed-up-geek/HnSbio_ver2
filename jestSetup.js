@@ -114,4 +114,18 @@ jest.mock('react-native-fs', () => {
     };
 });
 
+jest.mock('@notifee/react-native', () => {
+    return {
+      onBackgroundEvent: jest.fn(),
+      displayNotification: jest.fn(),
+      cancelNotification: jest.fn(),
+      createChannel: jest.fn(),
+      deleteChannel: jest.fn(),
+      getChannels: jest.fn(() => Promise.resolve([])),
+      setNotificationCategories: jest.fn(),
+      getInitialNotification: jest.fn(() => Promise.resolve(null)),
+    };
+});
+  
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
