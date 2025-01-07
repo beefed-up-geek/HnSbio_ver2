@@ -92,8 +92,3 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             clean build \
           | xcpretty --no-color --simple
-
-      - name: Debug - List all .a files
-        run: |
-          cd ios
-          find . -name "*.a"
