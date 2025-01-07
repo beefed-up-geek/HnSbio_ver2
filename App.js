@@ -17,7 +17,7 @@ import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { LogBox, Alert } from 'react-native';
 import PushNotification from './src/pushnotification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { LogBox, Platform } from 'react-native';
 
 import { HomeProvider } from './src/components/homeContext';
 
