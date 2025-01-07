@@ -26,7 +26,10 @@ const Stack = createStackNavigator();
 const App = () => {
   useEffect(() => {
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
-    LogBox.ignoreAllLogs();
+    
+    if (Platform.OS !== 'web' && Platform.OS !== 'test') {
+      LogBox.ignoreAllLogs(); // Jest 테스트 환경에서 실행되지 않음
+    }
 
     const initNotification = async () => {
       await checkApplicationPermission(); // 권한 요청
