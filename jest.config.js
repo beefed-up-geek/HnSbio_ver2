@@ -4,7 +4,7 @@ module.exports = {
   preset: 'react-native',
   setupFiles: ['./jestSetup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!react-native|react-navigation|@react-navigation|react-native-gesture-handler|react-native-reanimated|@react-native|@env)',
+    'node_modules/(?!react-native|react-navigation|@react-navigation|react-native-gesture-handler|react-native-reanimated|@react-native|@env|@mj-studio/js-util|@react-native-kakao/user)',
   ],
   transform: {
     '^.+\\.[jt]sx?$': 'babel-jest', // Babel로 파일 변환
