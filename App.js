@@ -24,7 +24,7 @@ import { HomeProvider } from './src/components/homeContext';
 
 const Stack = createStackNavigator();
 
-const App = () => {
+function RealApp() {
   useEffect(() => {
     if (Platform.OS === 'test') return;
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
@@ -90,6 +90,13 @@ const App = () => {
     </HomeProvider>
     
   );
-};
+}
 
-export default App;
+// 테스트용 Mock App
+function TestApp() {
+  // 아무것도 안 함
+  return null;
+}
+
+// 환경에 따라 내보낼 App 결정
+export default Platform.OS === 'test' ? TestApp : RealApp;
