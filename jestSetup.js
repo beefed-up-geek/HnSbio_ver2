@@ -156,16 +156,17 @@ jest.mock('@react-native-seoul/naver-login', () => {
     };
 });
 
-jest.mock('react-native/Libraries/LogBox/LogBox', () => {
-    return {
-      ignoreAllLogs: jest.fn(),
-    };
-});
+jest.mock('react-native/Libraries/LogBox/LogBox', () => ({
+    ignoreAllLogs: jest.fn(),
+  }));
   
 jest.mock('react-native/Libraries/Utilities/Platform', () => {
     const Platform = jest.requireActual('react-native/Libraries/Utilities/Platform');
-    Platform.OS = 'test'; // 테스트 환경으로 설정
-    return Platform;
+    return {
+        ...Platform,
+        OS: 'test', // Jest 테스트 환경에서 'test'로 설정
+        select: jest.fn((objs) => objs['test'] || objs.default),
+    };
 });
   
 
