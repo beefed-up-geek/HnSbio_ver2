@@ -33,6 +33,17 @@ jest.mock('@react-native-async-storage/async-storage', () => {
       multiGet: jest.fn(),
       multiMerge: jest.fn(),
     };
-  });
+});
+
+jest.mock('react-native-geolocation-service', () => {
+    return {
+      getCurrentPosition: jest.fn((success, error) =>
+        success({ coords: { latitude: 37.7749, longitude: -122.4194 } })
+      ),
+      watchPosition: jest.fn(),
+      clearWatch: jest.fn(),
+      stopObserving: jest.fn(),
+    };
+});
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
