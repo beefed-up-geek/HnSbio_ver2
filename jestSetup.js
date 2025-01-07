@@ -162,5 +162,11 @@ jest.mock('react-native/Libraries/LogBox/LogBox', () => {
     };
 });
   
+jest.mock('react-native/Libraries/Utilities/Platform', () => {
+    const Platform = jest.requireActual('react-native/Libraries/Utilities/Platform');
+    Platform.OS = 'test'; // 테스트 환경으로 설정
+    return Platform;
+});
+  
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
