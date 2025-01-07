@@ -52,11 +52,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 4. Android 테스트 실행
+      # 4. 의존성 설치
+      - name: Install dependencies
+        run: |
+          npm install
+          cd android
+          ./gradlew clean
+
+      # 5. Android 테스트 실행
       - name: Run Android Tests
         run: |
           cd android
-          ./gradlew test
+          ./gradlew test --stacktrace
 
   ios-test:
     runs-on: macos-latest
