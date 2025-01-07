@@ -26,6 +26,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   useEffect(() => {
+    if (Platform.OS === 'test') return;
     initializeKakaoSDK('1f96718a8d259618eec427c10f31719c');
 
     const initNotification = async () => {
