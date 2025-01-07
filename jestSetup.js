@@ -85,4 +85,14 @@ jest.mock('react-native-youtube-iframe', () => {
     return jest.fn(() => null);
 });
 
+jest.mock('react-native-vision-camera', () => {
+    return {
+      Camera: jest.fn(() => null),
+      useCameraDevice: jest.fn(() => ({
+        devices: [],
+      })),
+      useFrameProcessor: jest.fn(),
+    };
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
