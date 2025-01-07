@@ -127,5 +127,16 @@ jest.mock('@notifee/react-native', () => {
     };
 });
   
+jest.mock('@react-native-google-signin/google-signin', () => {
+    return {
+      GoogleSignin: {
+        configure: jest.fn(),
+        signIn: jest.fn(() => Promise.resolve({ idToken: 'mock-id-token' })),
+        signOut: jest.fn(),
+        isSignedIn: jest.fn(() => Promise.resolve(false)),
+        getCurrentUser: jest.fn(() => Promise.resolve(null)),
+      },
+    };
+});
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
