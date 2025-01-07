@@ -69,7 +69,7 @@ jobs:
           pod repo update
           pod install --verbose
 
-      - name: Debug: List all .a files
+      - name: Debug - List all .a files
         run: |
           cd ios
           find . -name "*.a"
