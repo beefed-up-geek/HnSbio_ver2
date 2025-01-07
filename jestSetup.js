@@ -139,4 +139,13 @@ jest.mock('@react-native-google-signin/google-signin', () => {
     };
 });
 
+jest.mock('@invertase/react-native-apple-authentication', () => {
+    return {
+      appleAuth: {
+        performRequest: jest.fn(() => Promise.resolve({})),
+        isSupported: jest.fn(() => true),
+      },
+    };
+});
+
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
