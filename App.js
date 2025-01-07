@@ -29,8 +29,12 @@ const App = () => {
 
     // LogBox는 테스트 환경에서 실행하지 않음
     if (Platform.OS !== 'web' && Platform.OS !== 'test') {
-      const { LogBox } = require('react-native');
-      LogBox.ignoreAllLogs(); // 앱 실행 환경에서만 LogBox 적용
+      try {
+        const { LogBox } = require('react-native');
+        LogBox.ignoreAllLogs(); // 앱 실행 환경에서만 LogBox 적용
+      } catch (e) {
+        console.error('LogBox 로드 중 에러 발생:', e);
+      }
     }
 
     const initNotification = async () => {
