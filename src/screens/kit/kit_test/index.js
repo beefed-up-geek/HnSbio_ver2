@@ -211,6 +211,13 @@ const KitTestScreen = ({navigation}) => {
       // 4-2) 업데이트된 userData를 저장
       await AsyncStorage.setItem('user', JSON.stringify(userData));
 
+      await axios.post('http://98.82.55.237/kit/addTestResultById', {
+        _id: userData._id,
+        id: resultId,           // => 키트 검사결과 식별자
+        testResult: newResult.result,// => 0 또는 1
+        datetime: newResult.datetime // => YYYY/MM/DD HH:mm:ss
+      });
+      
       // 5) @kit_results 도 동일하게 업데이트 (앱 내부 저장용)
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
@@ -224,20 +231,7 @@ const KitTestScreen = ({navigation}) => {
       console.log('업데이트된 user 데이터:', userData);
 
       // 7) 백엔드에도 추가 (/addTestResultById)
-      //    userData._id가 없으면 스킵
-      if (userData._id) {
-        // 백엔드 요청 (id -> kit_result의 유니크 아이디, testResult -> numericResult)
-        // form: { _id, id, testResult, datetime }
-        await axios.post('http://98.82.55.237/kit/addTestResultById', {
-          _id: userData._id,
-          id: resultId,           // => 키트 검사결과 식별자
-          testResult: newResult.result,// => 0 또는 1
-          datetime: newResult.datetime // => YYYY/MM/DD HH:mm:ss
-        });
-        console.log('백엔드에 kit_result 추가 성공');
-      } else {
-        console.log('userData._id가 없어, 백엔드로는 저장하지 않았습니다.');
-      }
+      console.log('백엔드에 kit_result 추가 성공');
 
       return {newResult};
     } catch (error) {
