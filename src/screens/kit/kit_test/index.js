@@ -189,8 +189,7 @@ const KitTestScreen = ({navigation}) => {
       const formattedDate = formatMyDateTime(now);
 
       // 3) 고유 ID (예: timestamp + random)
-      const resultId =
-        Date.now().toString() + Math.random().toString(36).substring(2);
+      const resultId = await Date.now().toString() + Math.random().toString(36).substring(2);
 
       const newResult = {
         id: resultId,
@@ -217,7 +216,7 @@ const KitTestScreen = ({navigation}) => {
         testResult: newResult.result,// => 0 또는 1
         datetime: newResult.datetime // => YYYY/MM/DD HH:mm:ss
       });
-      
+
       // 5) @kit_results 도 동일하게 업데이트 (앱 내부 저장용)
       const existingResults = await AsyncStorage.getItem('@kit_results');
       const results = existingResults ? JSON.parse(existingResults) : [];
@@ -236,7 +235,7 @@ const KitTestScreen = ({navigation}) => {
       return {newResult};
     } catch (error) {
       console.error('결과 저장 중 오류:', error);
-      return {newResult: null};
+      return {newResult};
     }
   };
 
