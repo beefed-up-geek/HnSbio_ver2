@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFS from 'react-native-fs';
+import notifee from '@notifee/react-native';
 
 import styles from './styles';
 
@@ -206,6 +207,16 @@ const KitTestScreen = ({navigation}) => {
 
       // 4-1) userData.kit_result에 새 데이터 맨 앞에 추가
       userData.kit_result.unshift(newResult);
+
+      if (!userData.pushNotificationSettings) {
+        userData.pushNotificationSettings = {};
+      }
+      userData.pushNotificationSettings.alarmEnabled = false;
+      userData.pushNotificationSettings.nextAlarmDate = null;
+  
+      // (알림 예약이 이미 있었다면 취소)
+      notifee.cancelAllNotifications() 
+      await notifee.cancelAllNotifications();
 
       // 4-2) 업데이트된 userData를 저장
       await AsyncStorage.setItem('user', JSON.stringify(userData));
