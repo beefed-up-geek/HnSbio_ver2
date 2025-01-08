@@ -1,6 +1,6 @@
 // src\screens\home\set_push_alarm\styles.js
 
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
 import theme from '../../../theme'; // 개발 규칙: 폰트 적용
 
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 15 * width_ratio,
     color: '#5D5D5D',
   },
-  
+
   saveButton: {
     position: 'absolute',
     bottom: 40 * height_ratio,
@@ -75,37 +75,36 @@ const styles = StyleSheet.create({
     fontSize: 15 * width_ratio,
   },
 
-    // 변경사항 저장 컨펌 모달 스타일
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    modalContainer: {
-      width: 300 * width_ratio,
-      backgroundColor: 'white',
-      borderRadius: 24,
-      paddingVertical: 30 * height_ratio,
-      paddingHorizontal: 32 * width_ratio,
-    },
-    modalMessage: {
-      ...theme.fonts.Regular,
-      fontSize: 16 * width_ratio,
-      textAlign: 'left',
-      marginBottom: 24 * height_ratio,
-      color: '#353535',
-    }, 
-    modalButtonContainer: {
-      alignSelf: 'center',
-      flexDirection: 'row',
-    },
-    modalButtonImage: {
-      height: 42 * width_ratio,
-      width: 105 * width_ratio,
-      resizeMode: 'contain',
-    },
-  
+  // 변경사항 저장 컨펌 모달 스타일
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: 300 * width_ratio,
+    backgroundColor: 'white',
+    borderRadius: 24,
+    paddingVertical: 30 * height_ratio,
+    paddingHorizontal: 32 * width_ratio,
+  },
+  modalMessage: {
+    ...theme.fonts.Regular,
+    fontSize: 16 * width_ratio,
+    textAlign: 'left',
+    marginBottom: 24 * height_ratio,
+    color: '#353535',
+  },
+  modalButtonContainer: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+  },
+  modalButtonImage: {
+    height: 42 * width_ratio,
+    width: 105 * width_ratio,
+    resizeMode: 'contain',
+  },
 });
 
 export default styles;

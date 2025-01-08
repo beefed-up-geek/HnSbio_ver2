@@ -1,42 +1,37 @@
 // src/screens/home/set_push_alarm/index.js
 
-import React, { useState, useEffect, useContext } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Alert,
-  Modal
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Switch } from 'react-native-switch';
+import React, {useState, useEffect, useContext} from 'react';
+import {View, Text, Image, TouchableOpacity, Alert, Modal} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {Switch} from 'react-native-switch';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, { TimestampTrigger, TriggerType } from '@notifee/react-native';
+import notifee, {TimestampTrigger, TriggerType} from '@notifee/react-native';
 
 import ModalComponent from '../../../components/ModalComponent';
 import styles from './styles.js';
 
 // ★ Context import
-import { HomeContext } from '../../../components/homeContext';
+import {HomeContext} from '../../../components/homeContext';
 
 const SetPushAlarmScreen = () => {
   const navigation = useNavigation();
 
+
   // ★ HomeContext에서 전역 변수/함수 가져오기
-  const { rerenderHome, setRerenderHome } = useContext(HomeContext);
+  const {rerenderHome, setRerenderHome} = useContext(HomeContext);
 
   // 화면 상태 변수
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [nextAlarmDate, setNextAlarmDate] = useState(new Date());
   const [initialSettings, setInitialSettings] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
   const [_id, setId] = useState('');
 
   // 날짜 포맷 함수
-  const formatDate = (date) => {
+  const formatDate = date => {
     if (!date || !(date instanceof Date)) {
       return '';
     }
@@ -66,10 +61,13 @@ const SetPushAlarmScreen = () => {
         setAlarmEnabled(localSettings.alarmEnabled);
         setNextAlarmDate(
           new Date(localSettings.nextAlarmDate) ||
-          new Date(Date.now() + 24 * 60 * 60 * 1000)
+            new Date(Date.now() + 24 * 60 * 60 * 1000),
         );
         setInitialSettings({
           alarmEnabled: localSettings.alarmEnabled,
+          nextAlarmDate:
+            new Date(localSettings.nextAlarmDate) ||
+            new Date(Date.now() + 24 * 60 * 60 * 1000),
           nextAlarmDate:
             new Date(localSettings.nextAlarmDate) ||
             new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -91,14 +89,14 @@ const SetPushAlarmScreen = () => {
 
   // 알람 상태 토글
   const toggleAlarm = async () => {
-    setAlarmEnabled((prev) => !prev);
+    setAlarmEnabled(prev => !prev);
     if (!alarmEnabled) {
       setNextAlarmDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
     }
   };
 
   // 키트 알림 스케줄
-  const scheduleKitNotifications = async (date) => {
+  const scheduleKitNotifications = async date => {
     const dayOf = new Date(nextAlarmDate);
     dayOf.setHours(0, 0, 0, 0);
     dayOf.setHours(9);
@@ -106,6 +104,7 @@ const SetPushAlarmScreen = () => {
     const dayBefore = new Date(dayOf);
     dayBefore.setDate(dayBefore.getDate() - 1);
 
+    const now = new Date();
     const now = new Date();
     console.log('dayOf:', dayOf.toString());
     console.log('now:', now.toString());
@@ -122,14 +121,17 @@ const SetPushAlarmScreen = () => {
           {
             title: '키트 검사 예정일 알림',
             body: '내일은 키트 검사일이에요! 키트가 준비되었는지 확인해보세요',
-            android: { channelId: 'default', smallIcon: 'hns', color: '#4CAF50' },
-            ios: { sound: 'default', badgeCount: 1 },
+            android: {channelId: 'default', smallIcon: 'hns', color: '#4CAF50'},
+            ios: {sound: 'default', badgeCount: 1},
           },
-          triggerBefore
+          triggerBefore,
         );
         console.log('Created Trigger Notification ID (dayBefore):', triggerId);
       } catch (error) {
-        console.error('Error creating trigger notification (dayBefore):', error);
+        console.error(
+          'Error creating trigger notification (dayBefore):',
+          error,
+        );
       }
     }
 
@@ -144,10 +146,10 @@ const SetPushAlarmScreen = () => {
           {
             title: '키트 검사 예정일 알림',
             body: '오늘은 키트 검사일이에요!',
-            android: { channelId: 'default', smallIcon: 'hns', color: '#4CAF50' },
-            ios: { sound: 'default', badgeCount: 1 },
+            android: {channelId: 'default', smallIcon: 'hns', color: '#4CAF50'},
+            ios: {sound: 'default', badgeCount: 1},
           },
-          triggerDayOf
+          triggerDayOf,
         );
         console.log('Created Trigger Notification ID (dayOf):', triggerId);
       } catch (error) {
@@ -159,15 +161,22 @@ const SetPushAlarmScreen = () => {
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
     try {
+  // 알림 설정 저장
+  const savePushNotificationSettings = async () => {
+    try {
       setConfirmationModalVisible(true);
-      setInitialSettings({ alarmEnabled, nextAlarmDate });
+      setInitialSettings({alarmEnabled, nextAlarmDate});
 
       // 백엔드에 설정 업데이트 요청
       const response = await fetch(
         'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
         {
+      const response = await fetch(
+        'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
+        {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -175,14 +184,20 @@ const SetPushAlarmScreen = () => {
             alarmEnabled,
             nextAlarmDate,
           }),
-        }
+        },
       );
 
       const result = await response.json();
 
       if (!response.ok) {
-        console.error('Error updating push notification settings:', result.error);
-        Alert.alert('Error', '푸시 알림 설정을 업데이트하는 중 오류가 발생했습니다.');
+        console.error(
+          'Error updating push notification settings:',
+          result.error,
+        );
+        Alert.alert(
+          'Error',
+          '푸시 알림 설정을 업데이트하는 중 오류가 발생했습니다.',
+        );
         return;
       }
 
@@ -194,23 +209,29 @@ const SetPushAlarmScreen = () => {
             alarmEnabled,
             nextAlarmDate,
           },
-        })
+        }),
       );
 
       // 알람 On이면 검사일 전날+당일 알림 예약
       if (alarmEnabled) {
         await notifee.cancelAllNotifications();
         await scheduleKitNotifications(nextAlarmDate);
+        await notifee.cancelAllNotifications();
+        await scheduleKitNotifications(nextAlarmDate);
       } else {
+        // 알람 Off이면 예약된 알림 모두 취소
+        await notifee.cancelAllNotifications();
         // 알람 Off이면 예약된 알림 모두 취소
         await notifee.cancelAllNotifications();
       }
 
       // HomeContext의 rerenderHome을 토글하여 홈화면 재렌더 트리거
-      setRerenderHome((prev) => !prev);
+      setRerenderHome(prev => !prev);
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
+    }
+  };
     }
   };
 
@@ -280,13 +301,13 @@ const SetPushAlarmScreen = () => {
         animationType="slide"
         transparent={true}
         visible={confirmationModalVisible}
-        onRequestClose={() => setConfirmationModalVisible(false)}
-      >
+        onRequestClose={() => setConfirmationModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalMessage}>알림 설정이 저장되었습니다.</Text>
             <View style={styles.modalButtonContainer}>
-              <TouchableOpacity onPress={() => setConfirmationModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setConfirmationModalVisible(false)}>
                 <Image
                   source={require('../../../images/home/set_push_alarm/확인.png')}
                   style={styles.modalButtonImage}
@@ -306,14 +327,12 @@ const SetPushAlarmScreen = () => {
           },
         ]}
         onPress={savePushNotificationSettings}
-        disabled={!hasChanges()}
-      >
+        disabled={!hasChanges()}>
         <Text
           style={[
             styles.saveButtonText,
-            { color: hasChanges() ? '#7596FF' : '#7F7F7F' },
-          ]}
-        >
+            {color: hasChanges() ? '#7596FF' : '#7F7F7F'},
+          ]}>
           변경사항 저장
         </Text>
       </TouchableOpacity>
@@ -322,7 +341,7 @@ const SetPushAlarmScreen = () => {
 };
 
 // DetailRow 컴포넌트
-const DetailRow = ({ icon, label, value, last, onPress }) => (
+const DetailRow = ({icon, label, value, last, onPress}) => (
   <View style={last ? styles.detailLastRow : styles.detailRow}>
     <View style={styles.labelContainer}>
       <Image source={icon} style={styles.icon} />
