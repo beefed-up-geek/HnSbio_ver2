@@ -17,7 +17,6 @@ import {HomeContext} from '../../../components/homeContext';
 const SetPushAlarmScreen = () => {
   const navigation = useNavigation();
 
-
   // ★ HomeContext에서 전역 변수/함수 가져오기
   const {rerenderHome, setRerenderHome} = useContext(HomeContext);
 
@@ -273,9 +272,9 @@ const SetPushAlarmScreen = () => {
           mode="date"
           display="inline"
           // iOS14+에서 텍스트/배경 색상을 지정
-          textColor="#000"                // 텍스트를 검정색으로
-          themeVariant="light"           // 라이트 모드로 고정 (다크 모드 이슈 방지)
-          style={{ backgroundColor: '#fff' }}  // 캘린더 배경 흰색
+          textColor="#000" // 텍스트를 검정색으로
+          themeVariant="light" // 라이트 모드로 고정 (다크 모드 이슈 방지)
+          style={{backgroundColor: '#fff'}} // 캘린더 배경 흰색
           minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);

@@ -190,7 +190,8 @@ const KitTestScreen = ({navigation}) => {
       const formattedDate = formatMyDateTime(now);
 
       // 3) 고유 ID (예: timestamp + random)
-      const resultId = await Date.now().toString() + Math.random().toString(36).substring(2);
+      const resultId =
+        (await Date.now().toString()) + Math.random().toString(36).substring(2);
 
       const newResult = {
         id: resultId,
@@ -213,9 +214,9 @@ const KitTestScreen = ({navigation}) => {
       }
       userData.pushNotificationSettings.alarmEnabled = false;
       userData.pushNotificationSettings.nextAlarmDate = null;
-  
+
       // (알림 예약이 이미 있었다면 취소)
-      notifee.cancelAllNotifications() 
+      notifee.cancelAllNotifications();
       await notifee.cancelAllNotifications();
 
       // 4-2) 업데이트된 userData를 저장
@@ -223,9 +224,9 @@ const KitTestScreen = ({navigation}) => {
 
       await axios.post('http://98.82.55.237/kit/addTestResultById', {
         _id: userData._id,
-        id: resultId,           // => 키트 검사결과 식별자
-        testResult: newResult.result,// => 0 또는 1
-        datetime: newResult.datetime // => YYYY/MM/DD HH:mm:ss
+        id: resultId, // => 키트 검사결과 식별자
+        testResult: newResult.result, // => 0 또는 1
+        datetime: newResult.datetime, // => YYYY/MM/DD HH:mm:ss
       });
 
       // 5) @kit_results 도 동일하게 업데이트 (앱 내부 저장용)

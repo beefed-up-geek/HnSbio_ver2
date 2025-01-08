@@ -1,5 +1,5 @@
 // src\screens\hospital\styles.js
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import theme from '../../theme';
 
 const width_ratio = Dimensions.get('screen').width / 390;
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   hospitalInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'flex-start',
     width: '86%',
   },

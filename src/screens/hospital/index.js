@@ -12,7 +12,7 @@ import {
   Image,
   Linking,
   ScrollView,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,7 +24,6 @@ import styles from './styles';
 const height_ratio = Dimensions.get('screen').height / 844;
 
 export default function Hospital_Screen({navigation}) {
-  
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [address, setAddress] = useState('');
@@ -78,7 +77,8 @@ export default function Hospital_Screen({navigation}) {
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
             title: '위치 권한',
-            message: '지도에서 사용자님의 위치를 보여드리기 위해 권한이 필요합니다.',
+            message:
+              '지도에서 사용자님의 위치를 보여드리기 위해 권한이 필요합니다.',
             buttonNegative: '아니요',
             buttonPositive: '네',
           },
@@ -89,7 +89,9 @@ export default function Hospital_Screen({navigation}) {
           return;
         }
       } else if (Platform.OS === 'ios') {
-        const hasPermission = await Geolocation.requestAuthorization('whenInUse');
+        const hasPermission = await Geolocation.requestAuthorization(
+          'whenInUse',
+        );
         if (hasPermission === 'denied' || hasPermission === 'restricted') {
           console.error('Location permission denied on iOS');
           setLoading(false);
@@ -131,7 +133,8 @@ export default function Hospital_Screen({navigation}) {
       );
       const address = response.data.documents[0]?.address?.address_name;
       const addressParts = address?.split(' ');
-      const dongName = (addressParts?.[2] || '') + ' ' + (addressParts?.[3] || address);
+      const dongName =
+        (addressParts?.[2] || '') + ' ' + (addressParts?.[3] || address);
       setAddress(dongName);
     } catch (error) {
       console.error('Error fetching address:', error);
@@ -210,9 +213,11 @@ export default function Hospital_Screen({navigation}) {
     }));
   };
 
-
   const handleLoadMore = () => {
-    if (!isFetchingMore && (totalItems === null || hospitalData.length < totalItems)) {
+    if (
+      !isFetchingMore &&
+      (totalItems === null || hospitalData.length < totalItems)
+    ) {
       setPage(prevPage => prevPage + 1);
     }
   };
@@ -227,31 +232,31 @@ export default function Hospital_Screen({navigation}) {
   };
 
   // 필터 적용 시 활성화된 필터 업데이트
-  const updateActiveFilters = (filters) => {
+  const updateActiveFilters = filters => {
     const newActiveFilters = [];
-    
+
     // 거리 필터
     newActiveFilters.push(`${filters.distance}km 이내`);
-    
+
     // 병원 종류 필터
     if (filters.type !== '모든 병원') {
       newActiveFilters.push(filters.type);
     }
-    
+
     // 병원 정보 필터
     if (filters.info && filters.info.length > 0) {
       newActiveFilters.push(...filters.info);
     }
-    
+
     // 등급 필터
     if (filters.rating && filters.rating.length > 0) {
       newActiveFilters.push(...filters.rating);
     }
-    
+
     setActiveFilters(newActiveFilters);
   };
 
-  const handleFilterApply = (newFilters) => {
+  const handleFilterApply = newFilters => {
     setFilters(newFilters); // 새로운 필터를 저장
     setPage(1); // 페이지를 초기화
     setHospitalData([]); // 기존 병원 데이터를 초기화
@@ -260,23 +265,22 @@ export default function Hospital_Screen({navigation}) {
   };
 
   const filterLabels = {
-    '1': '1등급',
-    '2': '2등급',
-    '3': '3등급',
-    '4': '4등급',
-    '5': '5등급',
+    1: '1등급',
+    2: '2등급',
+    3: '3등급',
+    4: '4등급',
+    5: '5등급',
     '5km': '5km 이내',
     '10km': '10km 이내',
     '20km': '20km 이내',
     '50km': '50km 이내',
     '100km': '100km 이내',
-    '전국': '전국',
+    전국: '전국',
     // 필요한 다른 필터들도 여기에 추가
   };
 
   return (
     <View style={styles.container}>
-
       {/* 항상 표시되는 검색 섹션 */}
       <View style={styles.searchSection}>
         <View style={styles.searchInputContainer}>
@@ -298,8 +302,7 @@ export default function Hospital_Screen({navigation}) {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.filterScrollView}
-        >
+          style={styles.filterScrollView}>
           <View style={styles.filterChipsContainer}>
             <View style={styles.filterChip}>
               <Icon name="gps-fixed" size={20} color="#5D5D62" />
@@ -321,7 +324,7 @@ export default function Hospital_Screen({navigation}) {
           />
         </TouchableOpacity>
       </View>
-      
+
       <Image
         source={require('../../images/hospital/background.png')} // 배경 이미지 경로
         style={styles.backgroundImage}
@@ -336,11 +339,7 @@ export default function Hospital_Screen({navigation}) {
         <FlatList
           data={hospitalData}
           keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <HospitalCard
-              hospital={item}
-            />
-          )}
+          renderItem={({item}) => <HospitalCard hospital={item} />}
           ListEmptyComponent={
             <View style={styles.blankBox}>
               <Text style={styles.noHospitalText}>병원을 검색하세요!</Text>
@@ -349,7 +348,7 @@ export default function Hospital_Screen({navigation}) {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          contentContainerStyle={{ paddingBottom: 90 * height_ratio }}
+          contentContainerStyle={{paddingBottom: 90 * height_ratio}}
         />
       )}
 
@@ -443,15 +442,16 @@ function HospitalCard({hospital}) {
             {backgroundColor: getGradeColor(hospital.rating)},
             {color: getGradeTextColor(hospital.rating)},
             {borderColor: getGradeBorderColor(hospital.rating)},
-          ]}
-        >
+          ]}>
           {hospital.rating ? `${hospital.rating}등급` : '등급 없음'}
         </Text>
       </View>
       <View style={styles.hospitalInfoContainer}>
         <Text style={styles.hospitalName}>{hospital['요양기관명']}</Text>
         <Text style={styles.distanceText}>
-          {hospital.distance ? `${hospital.distance.toFixed(1)}km` : '거리 정보 없음'}
+          {hospital.distance
+            ? `${hospital.distance.toFixed(1)}km`
+            : '거리 정보 없음'}
         </Text>
       </View>
       <View style={styles.hospitalAddressContainer}>
@@ -461,11 +461,11 @@ function HospitalCard({hospital}) {
         />
         <Text style={styles.hospitalAddress}>{hospital['주소']}</Text>
       </View>
-      <TouchableOpacity onPress={handlePhonePress} style={styles.phonecontainer}>
-        <Icon name="phone" size={20} color="#5D5D62"/>
-        <Text style={styles.phone}>
-          {hospital['전화번호']} 전화걸기
-        </Text>
+      <TouchableOpacity
+        onPress={handlePhonePress}
+        style={styles.phonecontainer}>
+        <Icon name="phone" size={20} color="#5D5D62" />
+        <Text style={styles.phone}>{hospital['전화번호']} 전화걸기</Text>
       </TouchableOpacity>
     </View>
   );
