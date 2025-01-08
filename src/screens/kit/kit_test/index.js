@@ -230,7 +230,7 @@ const KitTestScreen = ({navigation}) => {
         // form: { _id, id, testResult, datetime }
         await axios.post('http://98.82.55.237/kit/addTestResultById', {
           _id: userData._id,
-          id: newResult.id,           // => 키트 검사결과 식별자
+          id: resultId,           // => 키트 검사결과 식별자
           testResult: newResult.result,// => 0 또는 1
           datetime: newResult.datetime // => YYYY/MM/DD HH:mm:ss
         });
