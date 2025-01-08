@@ -1,6 +1,6 @@
 // src/screens/home/daily_check/index.js
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import styles from './styles.js'; 
-import { HomeContext } from '../../../components/homeContext'; 
+import styles from './styles.js';
+import {HomeContext} from '../../../components/homeContext';
 
 const Daily_check_screen = () => {
   const navigation = useNavigation();
 
-  const { rerenderHome, setRerenderHome } = useContext(HomeContext);
+  const {rerenderHome, setRerenderHome} = useContext(HomeContext);
 
   // 체크리스트 상태 관리
-  const [checks, setChecks] = useState(Array(6).fill(false)); 
+  const [checks, setChecks] = useState(Array(6).fill(false));
   const [modalVisible, setModalVisible] = useState(false);
   const [checkedCount, setCheckedCount] = useState(0);
 
@@ -44,7 +44,7 @@ const Daily_check_screen = () => {
     try {
       const savedData = await AsyncStorage.getItem('saveDailyCheckChanges');
       if (savedData !== null) {
-        const parsedData = JSON.parse(savedData); 
+        const parsedData = JSON.parse(savedData);
         // { date: 'Mon Dec 30 2024', checks: [true, false, ...] }
         if (parsedData.date === todayStr) {
           // 날짜가 오늘이면 저장된 체크 상태 불러오기
@@ -65,15 +65,18 @@ const Daily_check_screen = () => {
   // -----------------------------------------
   // 3) 체크 변경 시 => 상태 변경 후 Async Storage 저장
   // -----------------------------------------
-  const handleCheckChange = async (index) => {
+  const handleCheckChange = async index => {
     try {
       const newChecks = [...checks];
       newChecks[index] = !newChecks[index];
       setChecks(newChecks);
 
       // 날짜와 체크 상태를 함께 저장
-      const dataToSave = { date: todayStr, checks: newChecks };
-      await AsyncStorage.setItem('saveDailyCheckChanges', JSON.stringify(dataToSave));
+      const dataToSave = {date: todayStr, checks: newChecks};
+      await AsyncStorage.setItem(
+        'saveDailyCheckChanges',
+        JSON.stringify(dataToSave),
+      );
     } catch (error) {
       console.error('Failed to save daily check changes:', error);
     }
@@ -91,7 +94,7 @@ const Daily_check_screen = () => {
     try {
       await AsyncStorage.setItem('dailyCheckComplete', todayStr);
       // HomeContext에 있는 rerenderHome을 토글
-      setRerenderHome((prev) => !prev);
+      setRerenderHome(prev => !prev);
     } catch (error) {
       console.error('Failed to save check completion status:', error);
     }
@@ -112,7 +115,8 @@ const Daily_check_screen = () => {
       return (
         <>
           <Text style={styles.modalMessage}>
-            6가지 항목 중 <Text style={styles.boldText}>{checkedCount}가지</Text>에 해당해요.
+            6가지 항목 중{' '}
+            <Text style={styles.boldText}>{checkedCount}가지</Text>에 해당해요.
             {'\n'}
             지금 바로 키트 검사를 하거나 병원에 방문해보는 것을 권장해요.
           </Text>
@@ -136,8 +140,7 @@ const Daily_check_screen = () => {
           <TouchableOpacity
             key={index}
             style={styles.checklistItem}
-            onPress={() => handleCheckChange(index)}
-          >
+            onPress={() => handleCheckChange(index)}>
             <Image
               source={
                 checks[index]
@@ -163,8 +166,7 @@ const Daily_check_screen = () => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             {renderModalContent()}
@@ -177,9 +179,8 @@ const Daily_check_screen = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('BottomNavigation', { screen: 'KitStack' })
-                }
-              >
+                  navigation.navigate('BottomNavigation', {screen: 'KitStack'})
+                }>
                 <Image
                   source={require('../../../images/home/daily_check/키트.png')}
                   style={styles.modalButtonImage2}
