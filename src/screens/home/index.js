@@ -258,129 +258,156 @@ const HomeScreen = () => {
               style={styles.characterImage}
             />
           </Animated.View>
-          {alarmEnabled && nextAlarmDate !== null ? (
-            <>
-              {daysToNextAlarm > 0 ? (
-                // 예정일이 아직 남은 경우
-                <>
-                  <Text style={styles.nextCheckupText1}>
-                    다음 키트 검사일까지
+
+          {/* 홈 화면 메인 텍스트 */}
+          {
+            /* 1. [오늘 검사한 경우] → 가장 우선순위 높게 배치 */
+            latestKitTest && lastKitTestDaysAgo === 0 ? (
+              <>
+                <Text style={styles.nextCheckupText1}>다음 키트 검사일을</Text>
+                <View style={styles.lineWrapper}>
+                  <Text style={styles.nextCheckupText2}>
+                    미리 설정하고 알림을 받아보세요
                   </Text>
-                  <View style={styles.lineWrapper}>
-                    <Text style={styles.nextCheckupText2}>
-                      {daysToNextAlarm}일 남았습니다
+                  <TouchableOpacity
+                    style={styles.setPushAlarmButton}
+                    onPress={() =>
+                      navigation.navigate('NoTabs', {
+                        screen: 'set_push_alarm',
+                      })
+                    }>
+                    <Image
+                      source={require('../../images/home/gearIcon.png')}
+                      style={styles.setPushAlarmIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : /* 2. [알림이 설정되어 있는 경우] → 기존 로직 */
+            alarmEnabled && nextAlarmDate !== null ? (
+              <>
+                {daysToNextAlarm > 0 ? (
+                  <>
+                    <Text style={styles.nextCheckupText1}>
+                      다음 키트 검사일까지
                     </Text>
-                    <TouchableOpacity
-                      style={styles.setPushAlarmButton}
-                      onPress={() =>
-                        navigation.navigate('NoTabs', {
-                          screen: 'set_push_alarm',
-                        })
-                      }>
-                      <Image
-                        source={require('../../images/home/gearIcon.png')}
-                        style={styles.setPushAlarmIcon}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : daysToNextAlarm === 0 ? (
-                // 오늘이 예정일인 경우
-                <>
-                  <Text style={styles.nextCheckupText1}>
-                    오늘은 키트 검사일이에요!
-                  </Text>
-                  <View style={styles.lineWrapper}>
-                    <Text style={styles.nextCheckupText2}>
-                      지금 바로 검사를 받아보세요
+                    <View style={styles.lineWrapper}>
+                      <Text style={styles.nextCheckupText2}>
+                        {daysToNextAlarm}일 남았습니다
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.setPushAlarmButton}
+                        onPress={() =>
+                          navigation.navigate('NoTabs', {
+                            screen: 'set_push_alarm',
+                          })
+                        }>
+                        <Image
+                          source={require('../../images/home/gearIcon.png')}
+                          style={styles.setPushAlarmIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : daysToNextAlarm === 0 ? (
+                  <>
+                    <Text style={styles.nextCheckupText1}>
+                      오늘은 키트 검사일이에요!
                     </Text>
-                    <TouchableOpacity
-                      style={styles.setPushAlarmButton}
-                      onPress={() =>
-                        navigation.navigate('NoTabs', {
-                          screen: 'set_push_alarm',
-                        })
-                      }>
-                      <Image
-                        source={require('../../images/home/gearIcon.png')}
-                        style={styles.setPushAlarmIcon}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : (
-                // 예정일이 이미 지났다면(daysToNextAlarm < 0)
-                <>
-                  <Text style={styles.nextCheckupText1}>
-                    키트 검사 예정일로부터
-                  </Text>
-                  <View style={styles.lineWrapper}>
-                    <Text style={styles.nextCheckupText2}>
-                      {Math.abs(daysToNextAlarm)}일이 지났어요
+                    <View style={styles.lineWrapper}>
+                      <Text style={styles.nextCheckupText2}>
+                        지금 바로 검사를 받아보세요
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.setPushAlarmButton}
+                        onPress={() =>
+                          navigation.navigate('NoTabs', {
+                            screen: 'set_push_alarm',
+                          })
+                        }>
+                        <Image
+                          source={require('../../images/home/gearIcon.png')}
+                          style={styles.setPushAlarmIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.nextCheckupText1}>
+                      키트 검사 예정일로부터
                     </Text>
-                    <TouchableOpacity
-                      style={styles.setPushAlarmButton}
-                      onPress={() =>
-                        navigation.navigate('NoTabs', {
-                          screen: 'set_push_alarm',
-                        })
-                      }>
-                      <Image
-                        source={require('../../images/home/gearIcon.png')}
-                        style={styles.setPushAlarmIcon}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
-            </>
-          ) : latestKitTest ? (
-            <>
-              <Text style={styles.nextCheckupText1}>마지막 키트 검사일은</Text>
-              <View style={styles.lineWrapper}>
-                <Text style={styles.nextCheckupText2}>
-                  {lastKitTestDaysAgo !== null
-                    ? `${lastKitTestDaysAgo}일 전입니다`
-                    : '오늘입니다'}
+                    <View style={styles.lineWrapper}>
+                      <Text style={styles.nextCheckupText2}>
+                        {Math.abs(daysToNextAlarm)}일이 지났어요
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.setPushAlarmButton}
+                        onPress={() =>
+                          navigation.navigate('NoTabs', {
+                            screen: 'set_push_alarm',
+                          })
+                        }>
+                        <Image
+                          source={require('../../images/home/gearIcon.png')}
+                          style={styles.setPushAlarmIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </>
+            ) : /* 3. [알림 미설정 + 검사 이력은 있음(단, 오늘이 아님)] → 'X일 전입니다' */
+            latestKitTest ? (
+              <>
+                <Text style={styles.nextCheckupText1}>
+                  마지막 키트 검사일은
                 </Text>
-                <TouchableOpacity
-                  style={styles.setPushAlarmButton}
-                  onPress={() =>
-                    navigation.navigate('NoTabs', {
-                      screen: 'set_push_alarm',
-                    })
-                  }>
-                  <Image
-                    source={require('../../images/home/gearIcon.png')}
-                    style={styles.setPushAlarmIcon}
-                  />
-                </TouchableOpacity>
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={styles.nextCheckupText1}>
-                아직 검사를 하지 않았어요.
-              </Text>
-              <View style={styles.lineWrapper}>
-                <Text style={styles.nextCheckupText2}>
-                  콩팥 건강 관리를 시작해보세요
+                <View style={styles.lineWrapper}>
+                  <Text style={styles.nextCheckupText2}>
+                    {`${lastKitTestDaysAgo}일 전입니다`}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.setPushAlarmButton}
+                    onPress={() =>
+                      navigation.navigate('NoTabs', {
+                        screen: 'set_push_alarm',
+                      })
+                    }>
+                    <Image
+                      source={require('../../images/home/gearIcon.png')}
+                      style={styles.setPushAlarmIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              /* 4. [검사 이력 전혀 없는 경우] */
+              <>
+                <Text style={styles.nextCheckupText1}>
+                  아직 검사를 하지 않았어요.
                 </Text>
-                <TouchableOpacity
-                  style={styles.setPushAlarmButton}
-                  onPress={() =>
-                    navigation.navigate('NoTabs', {
-                      screen: 'set_push_alarm',
-                    })
-                  }>
-                  <Image
-                    source={require('../../images/home/gearIcon.png')}
-                    style={styles.setPushAlarmIcon}
-                  />
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
+                <View style={styles.lineWrapper}>
+                  <Text style={styles.nextCheckupText2}>
+                    콩팥 건강 관리를 시작해보세요
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.setPushAlarmButton}
+                    onPress={() =>
+                      navigation.navigate('NoTabs', {
+                        screen: 'set_push_alarm',
+                      })
+                    }>
+                    <Image
+                      source={require('../../images/home/gearIcon.png')}
+                      style={styles.setPushAlarmIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            )
+          }
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               onPress={() => Linking.openURL('https://hnsbiolab.com/device')}>
