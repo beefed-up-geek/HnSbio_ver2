@@ -105,7 +105,6 @@ const SetPushAlarmScreen = () => {
     dayBefore.setDate(dayBefore.getDate() - 1);
 
     const now = new Date();
-    const now = new Date();
     console.log('dayOf:', dayOf.toString());
     console.log('now:', now.toString());
     console.log('dayBefore:', dayBefore.toString());
@@ -161,9 +160,6 @@ const SetPushAlarmScreen = () => {
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
     try {
-  // 알림 설정 저장
-  const savePushNotificationSettings = async () => {
-    try {
       setConfirmationModalVisible(true);
       setInitialSettings({alarmEnabled, nextAlarmDate});
 
@@ -171,12 +167,8 @@ const SetPushAlarmScreen = () => {
       const response = await fetch(
         'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
         {
-      const response = await fetch(
-        'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
-        {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -230,8 +222,6 @@ const SetPushAlarmScreen = () => {
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
-    }
-  };
     }
   };
 
