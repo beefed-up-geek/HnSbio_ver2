@@ -159,8 +159,6 @@ const Examin_record_screen = ({ route }) => {
     const bmi = parseFloat(item.resBMI);
     if (bmi >= 30) {
       healthTags.push('비만');
-    } else if (bmi >= 23) {
-      healthTags.push('과체중');
     }
 
     const hemoglobin = parseFloat(item.resHemoglobin);
