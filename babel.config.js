@@ -1,3 +1,5 @@
+// babel.config.js
+
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
@@ -13,5 +15,11 @@ module.exports = {
       },
     ],
     'react-native-reanimated/plugin',
+  ],
+  overrides: [
+    {
+      test: /node_modules\/@invertase\/react-native-apple-authentication/,
+      presets: ['module:@babel/preset-env'],
+    },
   ],
 };

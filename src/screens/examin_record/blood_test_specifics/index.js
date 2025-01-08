@@ -32,6 +32,7 @@ const Blood_test_specifics_screen = () => {
 
   // state
   const [date, setDate] = useState(bloodTestResult.date || '');
+  const [id, setId] = useState(bloodTestResult.id || '');
   const [bun, setBun] = useState(bloodTestResult.BUN.toString() || '');
   const [creatinine, setCreatinine] = useState(bloodTestResult.creatinine.toString() || '');
   const [gfr, setGfr] = useState(bloodTestResult.GFR.toString() || '');
@@ -106,7 +107,7 @@ const Blood_test_specifics_screen = () => {
 
     // 수정될 결과
     const updatedTestResult = {
-      id: bloodTestResult.id,     // 기존 결과의 id
+      id,    // 기존 결과의 id
       date,
       BUN: parseFloat(bun),
       creatinine: parseFloat(creatinine),
@@ -123,7 +124,7 @@ const Blood_test_specifics_screen = () => {
       // (2) 서버에 업데이트 요청 (id 기준)
       await axios.put('http://98.82.55.237/blood_test/editBloodTestResultById', {
         _id,
-        id: bloodTestResult.id,  // 기존 혈액검사 결과의 식별자
+        id,  // 기존 혈액검사 결과의 식별자
         ...updatedTestResult,    // date, BUN, creatinine, GFR
       });
 

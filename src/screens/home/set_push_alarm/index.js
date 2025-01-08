@@ -17,6 +17,7 @@ import {HomeContext} from '../../../components/homeContext';
 const SetPushAlarmScreen = () => {
   const navigation = useNavigation();
 
+
   // ★ HomeContext에서 전역 변수/함수 가져오기
   const {rerenderHome, setRerenderHome} = useContext(HomeContext);
 
@@ -67,6 +68,9 @@ const SetPushAlarmScreen = () => {
           nextAlarmDate:
             new Date(localSettings.nextAlarmDate) ||
             new Date(Date.now() + 24 * 60 * 60 * 1000),
+          nextAlarmDate:
+            new Date(localSettings.nextAlarmDate) ||
+            new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
       } else {
         setAlarmEnabled(false);
@@ -101,6 +105,7 @@ const SetPushAlarmScreen = () => {
     dayBefore.setDate(dayBefore.getDate() - 1);
 
     const now = new Date();
+    const now = new Date();
     console.log('dayOf:', dayOf.toString());
     console.log('now:', now.toString());
     console.log('dayBefore:', dayBefore.toString());
@@ -129,6 +134,7 @@ const SetPushAlarmScreen = () => {
         );
       }
     }
+
     // 당일 알림
     if (dayOf > now) {
       const triggerDayOf = {
@@ -155,6 +161,9 @@ const SetPushAlarmScreen = () => {
   // 알림 설정 저장
   const savePushNotificationSettings = async () => {
     try {
+  // 알림 설정 저장
+  const savePushNotificationSettings = async () => {
+    try {
       setConfirmationModalVisible(true);
       setInitialSettings({alarmEnabled, nextAlarmDate});
 
@@ -162,8 +171,12 @@ const SetPushAlarmScreen = () => {
       const response = await fetch(
         'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
         {
+      const response = await fetch(
+        'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
+        {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -203,7 +216,11 @@ const SetPushAlarmScreen = () => {
       if (alarmEnabled) {
         await notifee.cancelAllNotifications();
         await scheduleKitNotifications(nextAlarmDate);
+        await notifee.cancelAllNotifications();
+        await scheduleKitNotifications(nextAlarmDate);
       } else {
+        // 알람 Off이면 예약된 알림 모두 취소
+        await notifee.cancelAllNotifications();
         // 알람 Off이면 예약된 알림 모두 취소
         await notifee.cancelAllNotifications();
       }
@@ -213,6 +230,8 @@ const SetPushAlarmScreen = () => {
     } catch (error) {
       console.error('Error saving push notification settings:', error);
       Alert.alert('Error', '설정을 저장하는 중 오류가 발생했습니다.');
+    }
+  };
     }
   };
 
@@ -262,7 +281,11 @@ const SetPushAlarmScreen = () => {
         <DateTimePicker
           value={nextAlarmDate}
           mode="date"
-          display="default"
+          display="inline"
+          // iOS14+에서 텍스트/배경 색상을 지정
+          textColor="#000"                // 텍스트를 검정색으로
+          themeVariant="light"           // 라이트 모드로 고정 (다크 모드 이슈 방지)
+          style={{ backgroundColor: '#fff' }}  // 캘린더 배경 흰색
           minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);

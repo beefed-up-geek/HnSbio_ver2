@@ -1,12 +1,37 @@
-name: Build React Native App
+name: Test React Native App
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  android-build:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Repository 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js 설정
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.12.1'
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Jest 테스트 실행 (공통 로직 테스트)
+      - name: Run Jest tests
+        run: npm test
+
+  android-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,63 +54,53 @@ jobs:
 
       # 4. 의존성 설치
       - name: Install dependencies
-        run: npm install
+        run: |
+          rm -rf node_modules
+          npm install
+          cd android
+          ./gradlew clean
 
-      # 5. Android 빌드
-      - name: Build Android App
+      # 5. Android 테스트 실행
+      - name: Run Android Tests
         run: |
           cd android
-          ./gradlew assembleRelease
+          ./gradlew test --stacktrace
 
-      # 6. APK 업로드
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
-  ios-build:
+  ios-test:
     runs-on: macos-latest
-  
+
     steps:
       # 1. Repository 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
-  
+
       # 2. Node.js 설정
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.12.1'
-  
-      # 3. CocoaPods 설치
+
+      # 3. Install CocoaPods
       - name: Install CocoaPods
         run: sudo gem install cocoapods
-  
-      # 4. 의존성 설치 및 정리
-      - name: Prepare iOS Dependencies
+
+      # 4. Install Dependencies
+      - name: Install Dependencies
         run: |
+          npm install
           cd ios
-          rm -rf Pods Podfile.lock
-          pod repo update
           pod install
-  
-      # 5. iOS 빌드
-      - name: Build iOS App
+
+      # 5. Run iOS Tests
+      - name: Run iOS Tests
         env:
-          XCODE_WORKSPACE: ios/sanhak_2.xcworkspace  # 워크스페이스 이름
-          XCODE_SCHEME: sanhak_2                    # 스킴 이름
+          XCODE_WORKSPACE: ios/sanhak_2.xcworkspace
+          XCODE_SCHEME: sanhak_2
         run: |
           xcodebuild \
             -workspace $XCODE_WORKSPACE \
             -scheme $XCODE_SCHEME \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath $PWD/build/sanhak_2.xcarchive \
-            archive
-  
-      # 6. IPA 업로드
-      - name: Upload IPA
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-ipa
-          path: ios/build/sanhak_2.xcarchive
+            -destination 'platform=iOS Simulator,name=iPhone 14' \
+            CODE_SIGNING_ALLOWED=NO \
+            test \
+            | xcpretty
