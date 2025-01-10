@@ -222,12 +222,27 @@ const KitTestScreen = ({navigation}) => {
       // 4-2) 업데이트된 userData를 저장
       await AsyncStorage.setItem('user', JSON.stringify(userData));
 
-      await axios.post('http://98.82.55.237/kit/addTestResultById', {
-        _id: userData._id,
-        id: resultId, // => 키트 검사결과 식별자
-        testResult: newResult.result, // => 0 또는 1
-        datetime: newResult.datetime, // => YYYY/MM/DD HH:mm:ss
-      });
+      try {
+        const response = await axios.post(
+          'http://98.82.55.237/kit/addTestResultById',
+          {
+            _id: userData._id,
+            id: resultId,
+            testResult: newResult.result,
+            datetime: newResult.datetime,
+          },
+        );
+
+        if (response.status === 200 && response.data.success) {
+          console.log('서버에 성공적으로 저장되었습니다.');
+        } else {
+          console.error('서버 저장 실패:', response.data);
+          throw new Error('서버 저장 실패');
+        }
+      } catch (error) {
+        console.error('서버 요청 중 오류 발생:', error.message);
+        Alert.alert('오류', '결과를 서버에 저장하지 못했습니다.');
+      }
 
       // 5) @kit_results 도 동일하게 업데이트 (앱 내부 저장용)
       const existingResults = await AsyncStorage.getItem('@kit_results');

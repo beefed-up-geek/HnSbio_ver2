@@ -49,10 +49,14 @@ const Kit_guide_2_screen = ({navigation}) => {
 
   useFocusEffect(
     useCallback(() => {
+      // 컴포넌트가 focus될 때 동작
+      setIsPlaying(false);
+
       return () => {
-        setIsPlaying(false);
+        // cleanup 작업
+        setIsPlaying(false); // 컴포넌트가 unfocus될 때 동작
       };
-    }, []),
+    }, []), // 빈 배열로 유지
   );
 
   useEffect(() => {
@@ -64,7 +68,7 @@ const Kit_guide_2_screen = ({navigation}) => {
       -1,
       true,
     );
-  }, [opacity]);
+  }, []); // 빈 배열로 변경
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
