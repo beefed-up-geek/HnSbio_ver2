@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white || '#fff',
     borderRadius: 10 * width_ratio,
     padding: 15 * width_ratio,
-    marginBottom: 10 * height_ratio,
+    marginBottom: 15 * height_ratio,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2 * height_ratio},
     shadowOpacity: 0.1,
