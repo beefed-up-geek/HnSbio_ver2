@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.white || '#fff',
     borderRadius: 10 * width_ratio,
-    padding: 15 * width_ratio,
+    padding: 16 * width_ratio,
     marginBottom: 15 * height_ratio,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2 * height_ratio},
