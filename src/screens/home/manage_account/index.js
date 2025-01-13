@@ -113,7 +113,7 @@ const ManageAccountScreen = () => {
         const {_id} = JSON.parse(userData);
 
         const response = await fetch(
-          'http://98.82.55.237/user_info/deleteUserById',
+          'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/user_info/deleteUserById',
           {
             method: 'DELETE',
             headers: {

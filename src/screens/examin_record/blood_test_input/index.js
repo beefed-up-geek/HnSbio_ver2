@@ -163,7 +163,7 @@ const Blood_test_input_screen = ({ route }) => {
 
       
       // (6) 백엔드 API 호출 (PUT) - _id와 함께 id 속성도 전달
-      await axios.put('http://98.82.55.237/blood_test/addBloodTestResultById', {
+      await axios.put('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/blood_test/addBloodTestResultById', {
         _id,
         id: uniqueId,
         BUN: parseFloat(bun),

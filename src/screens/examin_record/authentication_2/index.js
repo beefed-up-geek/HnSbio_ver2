@@ -164,7 +164,7 @@ const Authentication_2_screen = () => {
      };
      console.log(request_data);
      const response = await axios.post(
-       'http://98.82.55.237/health_checkup/step1ById',
+       'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/health_checkup/step1ById',
        request_data,
      );
      console.log("응답\n",response.data);

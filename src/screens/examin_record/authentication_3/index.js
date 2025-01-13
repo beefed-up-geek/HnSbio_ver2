@@ -57,7 +57,7 @@ const Authentication_3_screen = () => {
       };
 
       const response = await axios.post(
-        'http://98.82.55.237/health_checkup/step2ById',
+        'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/health_checkup/step2ById',
         request_data,
         {
           timeout: 180000, // 3 minutes in milliseconds

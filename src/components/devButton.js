@@ -36,9 +36,9 @@ const DevButton = ({ loadUserData }) => {
         if (newCount % 14 === 7) {
           console.log(`\n=== ${newCount}번째 클릭: 데이터 설정 ===`);
 
-          const kitResponse = await axios.post('http://98.82.55.237/kit/setTestResultsDevById', { _id });
-          const healthResponse = await axios.post('http://98.82.55.237/health_checkup/healthCheckupDevById', { _id });
-          const bloodResponse = await axios.post('http://98.82.55.237/blood_test/setBloodTestResultsDevById', { _id });
+          const kitResponse = await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/kit/setTestResultsDevById', { _id });
+          const healthResponse = await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/health_checkup/healthCheckupDevById', { _id });
+          const bloodResponse = await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/blood_test/setBloodTestResultsDevById', { _id });
 
           const updatedUserData = await AsyncStorage.getItem('user');
           const parsedData = JSON.parse(updatedUserData);
@@ -55,9 +55,9 @@ const DevButton = ({ loadUserData }) => {
         } else {
           console.log(`\n=== ${newCount}번째 클릭: 데이터 제거 ===`);
 
-          await axios.post('http://98.82.55.237/kit/clearTestResultsDevById', { _id });
-          await axios.post('http://98.82.55.237/health_checkup/healthCheckupDevRemoveById', { _id });
-          await axios.post('http://98.82.55.237/blood_test/clearBloodTestResultsDevById', { _id });
+          await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/kit/clearTestResultsDevById', { _id });
+          await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/health_checkup/healthCheckupDevRemoveById', { _id });
+          await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/blood_test/clearBloodTestResultsDevById', { _id });
 
           const updatedUserData = await AsyncStorage.getItem('user');
           const parsedData = JSON.parse(updatedUserData);

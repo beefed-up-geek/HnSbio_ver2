@@ -132,7 +132,7 @@ const GetUnderlyingDiseaseInfo = () => {
 
     try {
       const response = await axios.post(
-        'http://98.82.55.237/login/registerByBirthdateAndName',
+        'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/login/registerByBirthdateAndName',
         userData,
         {
           headers: {

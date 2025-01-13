@@ -162,7 +162,7 @@ const Kit_screen = ({onPress, navigation, route}) => {
       // 1-2) 백엔드 API 호출
       //      /kit/deleteKitResultById  (POST)
       //      body = { _id, id: idToDelete }
-      await axios.post('http://98.82.55.237/kit/deleteKitResultById', {
+      await axios.post('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/kit/deleteKitResultById', {
         _id,
         id: idToDelete,
       });

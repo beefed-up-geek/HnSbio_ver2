@@ -224,7 +224,7 @@ const KitTestScreen = ({navigation}) => {
 
       try {
         const response = await axios.post(
-          'http://98.82.55.237/kit/addTestResultById',
+          'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/kit/addTestResultById',
           {
             _id: userData._id,
             id: resultId,

@@ -145,7 +145,7 @@ export default function Hospital_Screen({navigation}) {
     try {
       setIsFetchingMore(true);
       const response = await axios.post(
-        `http://98.82.55.237/hospital`,
+        `https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/hospital`,
         {
           hospitalName: searchQuery,
           user_latitude: latitude,

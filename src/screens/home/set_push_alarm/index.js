@@ -164,7 +164,7 @@ const SetPushAlarmScreen = () => {
 
       // 백엔드에 설정 업데이트 요청
       const response = await fetch(
-        'http://98.82.55.237/user_info/updatePushNotificationSettingsById',
+        'https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/user_info/updatePushNotificationSettingsById',
         {
           method: 'PUT',
           headers: {

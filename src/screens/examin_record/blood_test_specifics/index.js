@@ -122,7 +122,7 @@ const Blood_test_specifics_screen = () => {
       const _id = parsedData._id;
 
       // (2) 서버에 업데이트 요청 (id 기준)
-      await axios.put('http://98.82.55.237/blood_test/editBloodTestResultById', {
+      await axios.put('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/blood_test/editBloodTestResultById', {
         _id,
         id,  // 기존 혈액검사 결과의 식별자
         ...updatedTestResult,    // date, BUN, creatinine, GFR
@@ -185,7 +185,7 @@ const Blood_test_specifics_screen = () => {
               const _id = parsedData._id;
 
               // (2) 서버에 삭제 요청 (id 기준)
-              await axios.delete('http://98.82.55.237/blood_test/deleteBloodTestResultById', {
+              await axios.delete('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/blood_test/deleteBloodTestResultById', {
                 data: { _id, id: bloodTestResult.id },
               });
 

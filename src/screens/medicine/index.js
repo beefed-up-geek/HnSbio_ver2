@@ -98,7 +98,7 @@ const MedicineScreen = () => {
     }
 
     try {
-      const response = await fetch('http://98.82.55.237/medicine/autocomplete', {
+      const response = await fetch('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/medicine/autocomplete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, searchType }),
@@ -140,7 +140,7 @@ const MedicineScreen = () => {
     addRecentSearch(searchQuery);
 
     try {
-      const response = await fetch('http://98.82.55.237/medicine', {
+      const response = await fetch('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/medicine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ medicine_name: searchQuery }),
@@ -218,7 +218,7 @@ const MedicineScreen = () => {
    */
   const incrementSearchCount = async (selectedItem) => {
     try {
-      await fetch('http://98.82.55.237/medicine/increment-search-count', {
+      await fetch('https://ec2-98-82-55-237.compute-1.amazonaws.com:5000/medicine/increment-search-count', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedItem }),
